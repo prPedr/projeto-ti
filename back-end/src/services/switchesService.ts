@@ -68,6 +68,12 @@ export const criarSwitch = (dadosEntrada: DadosCriacaoSwitch) => {
     return novoId;
   } catch (erro: any) {
     if (erro.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+      if (erro.message.includes('interfaces_rede.ip')) {
+        throw new Error('IP já cadastrado em outro dispositivo na rede.');
+      }
+      if (erro.message.includes('interfaces_rede.mac')) {
+        throw new Error('MAC já cadastrado em outro dispositivo na rede.');
+      }
       throw new Error('IP ou MAC já cadastrado em outro dispositivo na rede.');
     }
     throw erro;
