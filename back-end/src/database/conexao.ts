@@ -1,7 +1,9 @@
 import Database from 'better-sqlite3'
 import type { Database as TipoBanco } from 'better-sqlite3'
 import path from 'path'
+import { fileURLToPath } from 'url'
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const caminhoBanco = path.resolve(__dirname, 'app.db')
 
 const banco: TipoBanco = new Database(caminhoBanco)
