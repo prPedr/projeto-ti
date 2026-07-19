@@ -6,5 +6,5 @@ export const iniciarRotinasCron = () => {
     await realizarBackup()
   })
 
-  console.log('Rotina de backup automático inicializada (todos os dias às 02:00).')
+  console.log('Rotina de backup automático inicializada (todos os dias às 16:00).')
 }
