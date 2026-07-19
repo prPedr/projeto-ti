@@ -26,16 +26,17 @@ export function Login() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.card}>
+      <div className={styles.cartao}>
         <h1 className={styles.titulo}>Bem-vindo</h1>
         <p className={styles.subtitulo}>Entre com suas credenciais para continuar</p>
 
         <form className={styles.form} onSubmit={handleSubmit}>
-          <div className={styles.campo}>
+          <div className={styles.inputGroup}>
             <label htmlFor="email">E-mail</label>
             <input
               id="email"
               type="email"
+              className={styles.input}
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               placeholder="seu@email.com"
@@ -43,11 +44,12 @@ export function Login() {
             />
           </div>
 
-          <div className={styles.campo}>
+          <div className={styles.inputGroup}>
             <label htmlFor="senha">Senha</label>
             <input
               id="senha"
               type="password"
+              className={styles.input}
               value={senha}
               onChange={(event) => setSenha(event.target.value)}
               placeholder="••••••••"

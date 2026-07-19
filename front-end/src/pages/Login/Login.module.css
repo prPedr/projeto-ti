@@ -7,13 +7,13 @@
   padding: 16px;
 }
 
-.card {
+.cartao {
   width: 100%;
   max-width: 380px;
   background-color: var(--cor-cartao);
-  border-radius: 12px;
-  box-shadow: var(--sombra-elevada);
-  padding: 40px 32px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 3rem;
 }
 
 .titulo {
@@ -32,44 +32,48 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
 }
 
-.campo {
+.inputGroup {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  margin-bottom: 1.25rem;
 }
 
-.campo label {
+.inputGroup label {
   font-size: 13px;
   font-weight: 500;
   color: var(--cor-texto);
 }
 
-.campo input {
-  border: 1px solid var(--cor-borda);
+.input {
+  background-color: var(--cor-input-fundo);
+  border: 1px solid var(--cor-input-borda);
   border-radius: 8px;
-  padding: 10px 14px;
+  padding: 0.75rem;
   font-size: 14px;
   color: var(--cor-texto);
   outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.campo input:focus {
+.input:focus {
   border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
 }
 
 .botao {
-  margin-top: 8px;
+  width: 100%;
   border: none;
   border-radius: 8px;
-  padding: 12px;
+  padding: 1rem;
   font-size: 14px;
   font-weight: 600;
   color: #ffffff;
   background-color: var(--cor-primaria);
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .botao:hover {
