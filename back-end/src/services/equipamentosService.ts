@@ -42,6 +42,10 @@ export const listarEquipamentos = (filtros: FiltrosListagem): ResultadoListagemE
   if (filtros.status) {
     condicoes.push('e.status = @status')
     parametros.status = filtros.status
+  } else {
+    // Sem filtro explícito, esconde os descartados das listagens/dashboard por
+    // padrão; quem quiser vê-los, filtra status=DESCARTADO de propósito.
+    condicoes.push("e.status != 'DESCARTADO'")
   }
 
   if (filtros.busca) {
