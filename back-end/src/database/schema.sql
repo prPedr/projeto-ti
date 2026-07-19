@@ -42,7 +42,8 @@ CREATE TABLE equipamentos (
     observacao TEXT,
     cadastrado_por INTEGER NOT NULL,
     data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
-    
+    data_descarte DATETIME DEFAULT NULL,
+
     FOREIGN KEY (localizacao_id) REFERENCES localizacoes(id) ON DELETE SET NULL,
     FOREIGN KEY (cadastrado_por) REFERENCES usuarios_sistema(id)
 );
