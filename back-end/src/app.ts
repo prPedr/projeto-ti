@@ -16,7 +16,12 @@ const app = express()
 app.use(helmet())
 app.use(cors({ origin: origemPermitida }))
 app.use(express.json())
-app.use('/uploads', express.static(caminhoDaPastaUploads))
+
+// helmet() aplica Cross-Origin-Resource-Policy: same-origin por padrão, o que
+// bloqueia o front-end (outra origem) de carregar anexos via <img>/fetch. Como
+// só essa rota serve arquivos pensados para consumo cross-origin, relaxamos
+// a política apenas aqui, mantendo o resto da API na configuração estrita.
+app.use('/uploads', helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }), express.static(caminhoDaPastaUploads))
 app.use('/api', rotas)
 
 // Precisa ser o último app.use: captura os erros lançados nas rotas/services
