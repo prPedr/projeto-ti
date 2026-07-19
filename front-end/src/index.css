@@ -1,11 +1,13 @@
 :root {
-  --cor-primaria: #2563eb;
-  --cor-primaria-hover: #1d4ed8;
-  --cor-fundo: #f3f4f6;
+  --cor-primaria: #0f172a;
+  --cor-primaria-hover: #334155;
+  --cor-fundo: #f0f2f5;
   --cor-cartao: #ffffff;
-  --cor-texto: #1f2937;
+  --cor-texto: #334155;
   --cor-texto-suave: #6b7280;
   --cor-borda: #e5e7eb;
+  --cor-input-fundo: #f8fafc;
+  --cor-input-borda: #cbd5e1;
   --sombra: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
   --sombra-elevada: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
 }
