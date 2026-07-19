@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { PrivateRoute } from './PrivateRoute';
+import { Layout } from '../components/Layout/Layout';
 
 export function AppRoutes() {
   return (
@@ -11,7 +12,9 @@ export function AppRoutes() {
           path="/"
           element={
             <PrivateRoute>
-              <div>Dashboard Protegido</div>
+              <Layout>
+                <div>Dashboard Protegido</div>
+              </Layout>
             </PrivateRoute>
           }
         />
@@ -20,7 +23,9 @@ export function AppRoutes() {
           path="/equipamentos"
           element={
             <PrivateRoute>
-              <div>Listagem de Equipamentos</div>
+              <Layout>
+                <div>Listagem de Equipamentos</div>
+              </Layout>
             </PrivateRoute>
           }
         />
