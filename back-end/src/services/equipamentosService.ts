@@ -103,3 +103,17 @@ export const listarEquipamentos = (filtros: FiltrosListagem): ResultadoListagemE
     },
   }
 }
+
+export const descartarEquipamento = (id: number, usuarioId: number): number => {
+  const comando = banco.prepare(`
+    UPDATE equipamentos
+    SET
+      status = 'DESCARTADO',
+      data_descarte = CURRENT_TIMESTAMP,
+      observacao = COALESCE(observacao || ' ', '') || 'Descartado pelo usuário ID ' || CAST(@usuarioId AS INTEGER)
+    WHERE id = @id
+  `)
+
+  const resultado = comando.run({ id, usuarioId })
+  return resultado.changes
+}
