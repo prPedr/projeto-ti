@@ -1,12 +1,13 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { PrivateRoute } from './PrivateRoute';
 import { Layout } from '../components/Layout/Layout';
+import { Login } from '../pages/Login/Login';
 
 export function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<div>Tela de Login</div>} />
+        <Route path="/login" element={<Login />} />
 
         <Route
           path="/"

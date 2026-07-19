@@ -1,0 +1,77 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--cor-fundo);
+  padding: 16px;
+}
+
+.card {
+  width: 100%;
+  max-width: 380px;
+  background-color: var(--cor-cartao);
+  border-radius: 12px;
+  box-shadow: var(--sombra-elevada);
+  padding: 40px 32px;
+}
+
+.titulo {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--cor-texto);
+  margin-bottom: 4px;
+}
+
+.subtitulo {
+  font-size: 14px;
+  color: var(--cor-texto-suave);
+  margin-bottom: 32px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cor-texto);
+}
+
+.campo input {
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--cor-texto);
+  outline: none;
+}
+
+.campo input:focus {
+  border-color: var(--cor-primaria);
+}
+
+.botao {
+  margin-top: 8px;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: var(--cor-primaria);
+  cursor: pointer;
+}
+
+.botao:hover {
+  background-color: var(--cor-primaria-hover);
+}
