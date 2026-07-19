@@ -47,8 +47,8 @@ export const criarComputador = (dadosEntrada: DadosCriacaoComputador) => {
 
     // Inserir na tabela de detalhe (Computador)
     const comandoDetalhe = banco.prepare(`
-      INSERT INTO eq_computadores (equipamento_id, usuario_alocado, tag_patrimonio, numero_serie, processador, memoria, armazenamento, sistema_operacional)
-      VALUES (@equipamento_id, @usuario_alocado, @tag_patrimonio, @numero_serie, @processador, @memoria, @armazenamento, @sistema_operacional)
+      INSERT INTO eq_computadores (equipamento_id, usuario_alocado, tag_patrimonio, numero_serie, processador, memoria, armazenamento, sistema_operacional, antivirus_instalado)
+      VALUES (@equipamento_id, @usuario_alocado, @tag_patrimonio, @numero_serie, @processador, @memoria, @armazenamento, @sistema_operacional, @antivirus_instalado)
     `);
     comandoDetalhe.run({ ...dados.detalhe, equipamento_id: idEquipamento });
 

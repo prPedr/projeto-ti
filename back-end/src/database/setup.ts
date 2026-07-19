@@ -2,7 +2,7 @@ import Database from "better-sqlite3"
 import fs from "fs"
 import path from "path"
 
-const caminhoBanco = path.resolve(__dirname, "app.bd")
+const caminhoBanco = path.resolve(__dirname, "app.db")
 
 const banco = new Database(caminhoBanco, { verbose: console.log })
 
