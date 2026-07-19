@@ -3,10 +3,12 @@ import { uploadAnexo } from '../controllers/anexosController.js'
 import { listar } from '../controllers/equipamentosController.js'
 import { autenticar } from '../middlewares/authMiddleware.js'
 import { upload } from '../middlewares/uploadMiddleware.js'
+import { validarSchema } from '../middlewares/validacaoMiddleware.js'
+import { listarEquipamentosSchema } from '../schemas/equipamentosSchema.js'
 
 const rotasEquipamentos = Router()
 
-rotasEquipamentos.get('/', listar)
+rotasEquipamentos.get('/', validarSchema(listarEquipamentosSchema), listar)
 rotasEquipamentos.post('/:id/anexos', autenticar, upload.single('arquivo'), uploadAnexo)
 
 export default rotasEquipamentos
