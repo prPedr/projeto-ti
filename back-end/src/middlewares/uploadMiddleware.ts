@@ -12,10 +12,10 @@ if (!fs.existsSync(pastaUploads)) {
 }
 
 const armazenamento = multer.diskStorage({
-  destination: (requisicao, arquivo, callback) => {
+  destination: (_requisicao, _arquivo, callback) => {
     callback(null, pastaUploads)
   },
-  filename: (requisicao, arquivo, callback) => {
+  filename: (_requisicao, arquivo, callback) => {
     const nomeUnico = `${Date.now()}-${arquivo.originalname}`
     callback(null, nomeUnico)
   },
@@ -23,7 +23,7 @@ const armazenamento = multer.diskStorage({
 
 const tiposPermitidos = ['application/pdf', 'image/jpeg', 'image/png']
 
-const filtroArquivo = (requisicao: Request, arquivo: Express.Multer.File, callback: FileFilterCallback) => {
+const filtroArquivo = (_requisicao: Request, arquivo: Express.Multer.File, callback: FileFilterCallback) => {
   if (!tiposPermitidos.includes(arquivo.mimetype)) {
     callback(new Error('Tipo de arquivo não suportado. Envie apenas PDF, JPEG ou PNG.'))
     return
