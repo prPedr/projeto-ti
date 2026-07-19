@@ -2,7 +2,7 @@ import cron from 'node-cron'
 import { realizarBackup } from '../services/backupService.js'
 
 export const iniciarRotinasCron = () => {
-  cron.schedule('0 2 * * *', async () => {
+  cron.schedule('0 16 * * *', async () => {
     await realizarBackup()
   })
 
