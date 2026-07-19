@@ -108,16 +108,55 @@ export const listarEquipamentos = (filtros: FiltrosListagem): ResultadoListagemE
   }
 }
 
-export const descartarEquipamento = (id: number, usuarioId: number): number => {
-  const comando = banco.prepare(`
-    UPDATE equipamentos
-    SET
-      status = 'DESCARTADO',
-      data_descarte = CURRENT_TIMESTAMP,
-      observacao = COALESCE(observacao || ' ', '') || 'Descartado pelo usuário ID ' || CAST(@usuarioId AS INTEGER)
-    WHERE id = @id
-  `)
+export type ResultadoDescarte = 'NAO_ENCONTRADO' | 'JA_DESCARTADO' | 'DESCARTADO'
 
-  const resultado = comando.run({ id, usuarioId })
-  return resultado.changes
+export const descartarEquipamento = (id: number, usuarioId: number): ResultadoDescarte => {
+  // Checa o status antes de gravar: sem isso, descartar duas vezes o mesmo
+  // equipamento reescreve data_descarte e duplica o texto em observacao a
+  // cada chamada (changes sempre voltava 1, escondendo o problema).
+  const equipamento = banco.prepare('SELECT status FROM equipamentos WHERE id = @id').get({ id }) as
+    | { status: string }
+    | undefined
+
+  if (!equipamento) {
+    return 'NAO_ENCONTRADO'
+  }
+
+  if (equipamento.status === 'DESCARTADO') {
+    return 'JA_DESCARTADO'
+  }
+
+  const transacao = banco.transaction(() => {
+    const interfaces = banco.prepare('SELECT ip, mac FROM interfaces_rede WHERE equipamento_id = @id').all({ id }) as Array<{
+      ip: string | null
+      mac: string | null
+    }>
+
+    const enderecosLiberados = interfaces.flatMap((interfaceRede) => [interfaceRede.ip, interfaceRede.mac]).filter((valor): valor is string => valor !== null)
+
+    const notaEnderecos = enderecosLiberados.length > 0 ? ` (IP/MAC liberados para reuso: ${enderecosLiberados.join(', ')})` : ''
+
+    // Zera ip/mac em vez de deletar a interface: libera o UNIQUE(ip)/UNIQUE(mac)
+    // para outro equipamento (ex.: reaproveitar a placa wifi de um notebook
+    // quebrado em outro), já que o SQLite trata cada NULL como valor distinto
+    // e não bloqueia a constraint. O valor liberado fica registrado abaixo.
+    banco.prepare('UPDATE interfaces_rede SET ip = NULL, mac = NULL WHERE equipamento_id = @id').run({ id })
+
+    banco
+      .prepare(
+        `
+        UPDATE equipamentos
+        SET
+          status = 'DESCARTADO',
+          data_descarte = CURRENT_TIMESTAMP,
+          observacao = COALESCE(observacao || ' ', '') || 'Descartado pelo usuário ID ' || CAST(@usuarioId AS INTEGER) || @notaEnderecos
+        WHERE id = @id
+      `
+      )
+      .run({ id, usuarioId, notaEnderecos })
+  })
+
+  transacao()
+
+  return 'DESCARTADO'
 }

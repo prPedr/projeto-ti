@@ -38,10 +38,14 @@ export const descartar = (requisicao: Request, resposta: Response) => {
     throw criarErro('ID do equipamento inválido.', 400)
   }
 
-  const linhasAfetadas = descartarEquipamento(id, requisicao.usuarioId as number)
+  const resultado = descartarEquipamento(id, requisicao.usuarioId as number)
 
-  if (linhasAfetadas === 0) {
+  if (resultado === 'NAO_ENCONTRADO') {
     throw criarErro('Equipamento não encontrado.', 404)
+  }
+
+  if (resultado === 'JA_DESCARTADO') {
+    throw criarErro('Equipamento já está descartado.', 409)
   }
 
   resposta.status(200).json({ sucesso: true, mensagem: 'Equipamento descartado com sucesso e mantido no histórico' })
