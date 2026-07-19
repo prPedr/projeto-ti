@@ -15,14 +15,59 @@ export interface DadosCriacaoLocalizacao {
   descricao?: string
 }
 
-export const listarLocalizacoes = (): Localizacao[] => {
+export interface FiltrosListagemLocalizacoes {
+  pagina: number
+  limite: number
+  busca?: string
+}
+
+export interface ResultadoListagemLocalizacoes {
+  dados: Localizacao[]
+  metadados: {
+    totalRegistros: number
+    paginaAtual: number
+    limite: number
+    totalPaginas: number
+  }
+}
+
+export const listarLocalizacoes = (filtros: FiltrosListagemLocalizacoes): ResultadoListagemLocalizacoes => {
+  const condicoes: string[] = []
+  const parametros: any = {}
+
+  if (filtros.busca) {
+    condicoes.push('(filial LIKE @busca OR predio LIKE @busca OR sala LIKE @busca OR descricao LIKE @busca)')
+    parametros.busca = `%${filtros.busca}%`
+  }
+
+  const clausulaWhere = condicoes.length > 0 ? `WHERE ${condicoes.join(' AND ')}` : ''
+
+  const consultaContagem = banco.prepare(`SELECT COUNT(id) AS total FROM localizacoes ${clausulaWhere}`)
+  const { total: totalRegistros } = consultaContagem.get(parametros) as { total: number }
+
+  const offset = (filtros.pagina - 1) * filtros.limite
+  parametros.limite = filtros.limite
+  parametros.offset = offset
+
   const consulta = banco.prepare(`
     SELECT id, filial, predio, sala, descricao
     FROM localizacoes
+    ${clausulaWhere}
     ORDER BY filial, predio, sala
+    LIMIT @limite OFFSET @offset
   `)
 
-  return consulta.all() as Localizacao[]
+  const dados = consulta.all(parametros) as Localizacao[]
+
+  return {
+    dados,
+    metadados: {
+      totalRegistros,
+      paginaAtual: filtros.pagina,
+      limite: filtros.limite,
+      totalPaginas: Math.ceil(totalRegistros / filtros.limite),
+    },
+  }
 }
 
 export const criarLocalizacao = (dados: DadosCriacaoLocalizacao) => {

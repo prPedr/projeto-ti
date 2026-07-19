@@ -1,9 +1,23 @@
 import { Request, Response } from 'express'
-import { criarLocalizacao, listarLocalizacoes } from '../services/localizacoesService.js'
+import { z } from 'zod'
+import { listarLocalizacoesQuerySchema } from '../schemas/localizacoesSchema.js'
+import { criarLocalizacao, FiltrosListagemLocalizacoes, listarLocalizacoes } from '../services/localizacoesService.js'
 
-export const listar = (_requisicao: Request, resposta: Response) => {
-  const localizacoes = listarLocalizacoes()
-  resposta.status(200).json({ sucesso: true, localizacoes })
+type DadosValidadosListagem = {
+  query: z.infer<typeof listarLocalizacoesQuerySchema>
+}
+
+export const listar = (requisicao: Request, resposta: Response) => {
+  const { pagina, limite, busca } = (requisicao.dadosValidados as DadosValidadosListagem).query
+
+  const filtros: FiltrosListagemLocalizacoes = {
+    pagina,
+    limite,
+    ...(busca ? { busca } : {}),
+  }
+
+  const { dados, metadados } = listarLocalizacoes(filtros)
+  resposta.status(200).json({ sucesso: true, dados, metadados })
 }
 
 export const criar = (requisicao: Request, resposta: Response) => {
