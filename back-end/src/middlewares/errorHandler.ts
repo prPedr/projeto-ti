@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 
 interface ErroComCodigoSqlite extends Error {
   code?: string
+  statusCode?: number
 }
 
 // Códigos estendidos que o better-sqlite3/SQLite retornam em violações de constraint
@@ -39,7 +40,7 @@ export const tratadorDeErros = (
     return
   }
 
-  resposta.status(400).json({
+  resposta.status(erro.statusCode ?? 400).json({
     sucesso: false,
     mensagem: erro.message || 'Ocorreu um erro inesperado.',
   })
