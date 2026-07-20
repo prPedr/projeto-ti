@@ -35,10 +35,16 @@ export const criarSwitch = (dadosEntrada: DadosCriacaoSwitch) => {
 
     // Inserir na tabela mestre
     const comandoMestre = banco.prepare(`
-      INSERT INTO equipamentos (categoria, marca, modelo, status, localizacao_id, cadastrado_por)
-      VALUES (@categoria, @marca, @modelo, @status, @localizacao_id, @cadastrado_por)
+      INSERT INTO equipamentos (categoria, marca, modelo, status, localizacao_id, cadastrado_por, nome, fornecedor, data_garantia, observacao)
+      VALUES (@categoria, @marca, @modelo, @status, @localizacao_id, @cadastrado_por, @nome, @fornecedor, @data_garantia, @observacao)
     `);
-    const resultadoMestre = comandoMestre.run(dados.mestre);
+    const resultadoMestre = comandoMestre.run({
+      ...dados.mestre,
+      nome: dados.mestre.nome ?? null,
+      fornecedor: dados.mestre.fornecedor ?? null,
+      data_garantia: dados.mestre.data_garantia ?? null,
+      observacao: dados.mestre.observacao ?? null,
+    });
     const idEquipamento = resultadoMestre.lastInsertRowid;
 
     // Inserir na tabela de detalhe (Switch)
@@ -46,7 +52,13 @@ export const criarSwitch = (dadosEntrada: DadosCriacaoSwitch) => {
       INSERT INTO eq_switches (equipamento_id, numero_portas, portas_em_uso, firmware, vlans_configuradas)
       VALUES (@equipamento_id, @numero_portas, @portas_em_uso, @firmware, @vlans_configuradas)
     `);
-    comandoDetalhe.run({ ...dados.detalhe, equipamento_id: idEquipamento });
+    comandoDetalhe.run({
+      numero_portas: dados.detalhe.numero_portas ?? null,
+      portas_em_uso: dados.detalhe.portas_em_uso ?? null,
+      firmware: dados.detalhe.firmware ?? null,
+      vlans_configuradas: dados.detalhe.vlans_configuradas ?? null,
+      equipamento_id: idEquipamento,
+    });
 
     // Inserir Interfaces de Rede
     if (dados.interfaces && dados.interfaces.length > 0) {
@@ -56,7 +68,12 @@ export const criarSwitch = (dadosEntrada: DadosCriacaoSwitch) => {
       `);
 
       for (const interfaceRede of dados.interfaces) {
-        comandoRede.run({ ...interfaceRede, equipamento_id: idEquipamento });
+        comandoRede.run({
+          nome_interface: interfaceRede.nome_interface,
+          ip: interfaceRede.ip ?? null,
+          mac: interfaceRede.mac ?? null,
+          equipamento_id: idEquipamento,
+        });
       }
     }
 

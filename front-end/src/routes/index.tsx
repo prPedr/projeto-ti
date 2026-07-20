@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { PrivateRoute } from './PrivateRoute';
 import { Layout } from '../components/Layout/Layout';
 import { Login } from '../pages/Login/Login';
+import Cadastro from '../pages/Equipamentos/Cadastro';
 
 export function AppRoutes() {
   return (
@@ -26,6 +27,17 @@ export function AppRoutes() {
             <PrivateRoute>
               <Layout>
                 <div>Listagem de Equipamentos</div>
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/equipamentos/cadastro"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <Cadastro />
               </Layout>
             </PrivateRoute>
           }

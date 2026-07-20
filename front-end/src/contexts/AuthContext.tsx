@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { AuthContextData, Usuario } from '../types/auth';
 
@@ -12,18 +12,25 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [usuario, setUsuario] = useState<Usuario | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  // Lidos via inicializador "preguiçoso" (em vez de useEffect) para que
+  // token/usuario já estejam corretos na primeira renderização — se a leitura
+  // ficasse num useEffect, o PrivateRoute veria token=null nesse primeiro
+  // render e redirecionaria para /login mesmo com uma sessão válida salva.
+  const [usuario, setUsuario] = useState<Usuario | null>(() => {
+    const usuarioArmazenado = localStorage.getItem(USUARIO_KEY);
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem(TOKEN_KEY);
-    const storedUsuario = localStorage.getItem(USUARIO_KEY);
-
-    if (storedToken && storedUsuario) {
-      setToken(storedToken);
-      setUsuario(JSON.parse(storedUsuario));
+    if (!usuarioArmazenado) {
+      return null;
     }
-  }, []);
+
+    try {
+      return JSON.parse(usuarioArmazenado);
+    } catch {
+      // Dado corrompido/inválido não deve derrubar a aplicação inteira.
+      return null;
+    }
+  });
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem(TOKEN_KEY));
 
   function login(token: string, usuario: Usuario) {
     localStorage.setItem(TOKEN_KEY, token);

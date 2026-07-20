@@ -39,10 +39,16 @@ export const criarCelular = (dadosEntrada: DadosCriacaoCelular) => {
 
     // Inserir na tabela mestre
     const comandoMestre = banco.prepare(`
-      INSERT INTO equipamentos (categoria, marca, modelo, status, localizacao_id, cadastrado_por)
-      VALUES (@categoria, @marca, @modelo, @status, @localizacao_id, @cadastrado_por)
+      INSERT INTO equipamentos (categoria, marca, modelo, status, localizacao_id, cadastrado_por, nome, fornecedor, data_garantia, observacao)
+      VALUES (@categoria, @marca, @modelo, @status, @localizacao_id, @cadastrado_por, @nome, @fornecedor, @data_garantia, @observacao)
     `);
-    const resultadoMestre = comandoMestre.run(dados.mestre);
+    const resultadoMestre = comandoMestre.run({
+      ...dados.mestre,
+      nome: dados.mestre.nome ?? null,
+      fornecedor: dados.mestre.fornecedor ?? null,
+      data_garantia: dados.mestre.data_garantia ?? null,
+      observacao: dados.mestre.observacao ?? null,
+    });
     const idEquipamento = resultadoMestre.lastInsertRowid;
 
     // Inserir na tabela de detalhe (Celular)
@@ -50,7 +56,17 @@ export const criarCelular = (dadosEntrada: DadosCriacaoCelular) => {
       INSERT INTO eq_celulares (equipamento_id, usuario_alocado, imei, numero_serie, memoria, armazenamento, operadora_numero, modalidade, sistema_operacional)
       VALUES (@equipamento_id, @usuario_alocado, @imei, @numero_serie, @memoria, @armazenamento, @operadora_numero, @modalidade, @sistema_operacional)
     `);
-    comandoDetalhe.run({ ...dados.detalhe, equipamento_id: idEquipamento });
+    comandoDetalhe.run({
+      usuario_alocado: dados.detalhe.usuario_alocado ?? null,
+      imei: dados.detalhe.imei ?? null,
+      numero_serie: dados.detalhe.numero_serie ?? null,
+      memoria: dados.detalhe.memoria ?? null,
+      armazenamento: dados.detalhe.armazenamento ?? null,
+      operadora_numero: dados.detalhe.operadora_numero ?? null,
+      modalidade: dados.detalhe.modalidade ?? null,
+      sistema_operacional: dados.detalhe.sistema_operacional ?? null,
+      equipamento_id: idEquipamento,
+    });
 
     // Inserir Interfaces de Rede
     if (dados.interfaces && dados.interfaces.length > 0) {
@@ -60,7 +76,12 @@ export const criarCelular = (dadosEntrada: DadosCriacaoCelular) => {
       `);
 
       for (const interfaceRede of dados.interfaces) {
-        comandoRede.run({ ...interfaceRede, equipamento_id: idEquipamento });
+        comandoRede.run({
+          nome_interface: interfaceRede.nome_interface,
+          ip: interfaceRede.ip ?? null,
+          mac: interfaceRede.mac ?? null,
+          equipamento_id: idEquipamento,
+        });
       }
     }
 

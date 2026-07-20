@@ -29,17 +29,29 @@ export interface DadosCriacaoCftv {
 export const criarCftv = (dadosEntrada: DadosCriacaoCftv) => {
   const transacao = banco.transaction((dados: DadosCriacaoCftv) => {
     const comandoMestre = banco.prepare(`
-      INSERT INTO equipamentos (categoria, marca, modelo, status, localizacao_id, cadastrado_por)
-      VALUES (@categoria, @marca, @modelo, @status, @localizacao_id, @cadastrado_por)
+      INSERT INTO equipamentos (categoria, marca, modelo, status, localizacao_id, cadastrado_por, nome, fornecedor, data_garantia, observacao)
+      VALUES (@categoria, @marca, @modelo, @status, @localizacao_id, @cadastrado_por, @nome, @fornecedor, @data_garantia, @observacao)
     `)
-    const resultadoMestre = comandoMestre.run(dados.mestre)
+    const resultadoMestre = comandoMestre.run({
+      ...dados.mestre,
+      nome: dados.mestre.nome ?? null,
+      fornecedor: dados.mestre.fornecedor ?? null,
+      data_garantia: dados.mestre.data_garantia ?? null,
+      observacao: dados.mestre.observacao ?? null,
+    })
     const idEquipamento = resultadoMestre.lastInsertRowid
 
     const comandoDetalhe = banco.prepare(`
       INSERT INTO eq_cftv (equipamento_id, identificacao_extra, capacidade_armazenamento, quantidade_canais_resolucao, firmware)
       VALUES (@equipamento_id, @identificacao_extra, @capacidade_armazenamento, @quantidade_canais_resolucao, @firmware)
     `)
-    comandoDetalhe.run({ ...dados.detalhe, equipamento_id: idEquipamento })
+    comandoDetalhe.run({
+      identificacao_extra: dados.detalhe.identificacao_extra ?? null,
+      capacidade_armazenamento: dados.detalhe.capacidade_armazenamento ?? null,
+      quantidade_canais_resolucao: dados.detalhe.quantidade_canais_resolucao ?? null,
+      firmware: dados.detalhe.firmware ?? null,
+      equipamento_id: idEquipamento,
+    })
 
     if (dados.interfaces && dados.interfaces.length > 0) {
       const comandoRede = banco.prepare(`
@@ -48,7 +60,12 @@ export const criarCftv = (dadosEntrada: DadosCriacaoCftv) => {
       `)
 
       for (const interfaceRede of dados.interfaces) {
-        comandoRede.run({ ...interfaceRede, equipamento_id: idEquipamento })
+        comandoRede.run({
+          nome_interface: interfaceRede.nome_interface,
+          ip: interfaceRede.ip ?? null,
+          mac: interfaceRede.mac ?? null,
+          equipamento_id: idEquipamento,
+        })
       }
     }
 
