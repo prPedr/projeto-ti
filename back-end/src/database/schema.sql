@@ -25,6 +25,15 @@ CREATE TABLE localizacoes (
     descricao TEXT
 );
 
+-- "Dicionário de dados": opções pré-definidas para popular selects do front-end
+-- (ex: categoria='MARCA', valor='Dell'), evitando digitação livre repetida.
+CREATE TABLE opcoes_predefinidas (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    categoria TEXT NOT NULL,
+    valor TEXT NOT NULL,
+    UNIQUE(categoria, valor)
+);
+
 -- ==========================================
 -- TABELA MESTRE
 -- ==========================================
