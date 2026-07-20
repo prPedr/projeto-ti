@@ -19,6 +19,9 @@ export function Layout({ children }: LayoutProps) {
           <li className={styles.menuItem}>
             <Link to="/equipamentos">Equipamentos</Link>
           </li>
+          <li className={styles.menuItem}>
+            <Link to="/equipamentos/cadastro">Novo Equipamento</Link>
+          </li>
         </ul>
       </aside>
 
