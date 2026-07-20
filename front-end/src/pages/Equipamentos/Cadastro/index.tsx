@@ -3,6 +3,8 @@ import type { ChangeEvent, SubmitEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { criarEquipamento, listarLocalizacoes } from '../../../services/equipamentos';
 import type { CategoriaEquipamento } from '../../../services/equipamentos';
+import { listarOpcoes } from '../../../services/opcoes';
+import type { OpcoesAgrupadas } from '../../../services/opcoes';
 import { formatarMAC, formatarIMEI, formatarIP, formatarTag } from '../../../utils/formatadores';
 import styles from './Cadastro.module.css';
 
@@ -67,11 +69,16 @@ export default function Cadastro() {
   const [dadosDetalhe, setDadosDetalhe] = useState<Record<string, string>>({});
   const [interfacesRede, setInterfacesRede] = useState<InterfaceRede[]>([{ ...INTERFACE_REDE_INICIAL }]);
   const [localizacoes, setLocalizacoes] = useState<Localizacao[]>([]);
+  const [opcoesSugeridas, setOpcoesSugeridas] = useState<OpcoesAgrupadas>({});
 
   useEffect(() => {
     listarLocalizacoes()
       .then((dados) => setLocalizacoes(dados))
       .catch((erro) => console.error('Erro ao carregar localizações:', erro));
+
+    listarOpcoes()
+      .then((dados) => setOpcoesSugeridas(dados))
+      .catch((erro) => console.error('Erro ao carregar opções sugeridas:', erro));
   }, []);
 
   useEffect(() => {
@@ -197,10 +204,16 @@ export default function Cadastro() {
               id="marca"
               name="marca"
               className={styles.input}
+              list="lista-marcas"
               value={dadosMestre.marca}
               onChange={handleMestreChange}
               required
             />
+            <datalist id="lista-marcas">
+              {(opcoesSugeridas.MARCA ?? []).map((opcao) => (
+                <option key={opcao} value={opcao} />
+              ))}
+            </datalist>
           </div>
 
           <div className={styles.campo}>
@@ -322,9 +335,15 @@ export default function Cadastro() {
                   id="processador"
                   name="processador"
                   className={styles.input}
+                  list="lista-processadores"
                   value={dadosDetalhe.processador ?? ''}
                   onChange={handleDetalheChange}
                 />
+                <datalist id="lista-processadores">
+                  {(opcoesSugeridas.PROCESSADOR ?? []).map((opcao) => (
+                    <option key={opcao} value={opcao} />
+                  ))}
+                </datalist>
               </div>
               <div className={styles.campo}>
                 <label htmlFor="memoria">Memória</label>
@@ -332,10 +351,16 @@ export default function Cadastro() {
                   id="memoria"
                   name="memoria"
                   className={styles.input}
+                  list="lista-memorias"
                   placeholder="Ex: 16GB DDR4"
                   value={dadosDetalhe.memoria ?? ''}
                   onChange={handleDetalheChange}
                 />
+                <datalist id="lista-memorias">
+                  {(opcoesSugeridas.MEMORIA ?? []).map((opcao) => (
+                    <option key={opcao} value={opcao} />
+                  ))}
+                </datalist>
               </div>
               <div className={styles.campo}>
                 <label htmlFor="armazenamento">Armazenamento</label>
@@ -343,10 +368,16 @@ export default function Cadastro() {
                   id="armazenamento"
                   name="armazenamento"
                   className={styles.input}
+                  list="lista-armazenamentos"
                   placeholder="Ex: 512GB NVMe"
                   value={dadosDetalhe.armazenamento ?? ''}
                   onChange={handleDetalheChange}
                 />
+                <datalist id="lista-armazenamentos">
+                  {(opcoesSugeridas.ARMAZENAMENTO ?? []).map((opcao) => (
+                    <option key={opcao} value={opcao} />
+                  ))}
+                </datalist>
               </div>
               <div className={styles.campo}>
                 <label htmlFor="sistema_operacional">Sistema Operacional</label>
