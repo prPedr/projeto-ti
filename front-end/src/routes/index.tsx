@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet, Link } from 'react-router-dom';
 import { PrivateRoute } from './PrivateRoute';
 import { Layout } from '../components/Layout/Layout';
 import { Login } from '../pages/Login/Login';
@@ -20,7 +20,15 @@ export function AppRoutes() {
           }
         >
           <Route index element={<div>Dashboard em construção</div>} />
-          <Route path="/equipamentos" element={<div>Listagem de Equipamentos</div>} />
+          <Route
+            path="/equipamentos"
+            element={
+              <div>
+                <p>Listagem de Equipamentos</p>
+                <Link to="/equipamentos/cadastro">+ Novo Equipamento</Link>
+              </div>
+            }
+          />
           <Route path="/equipamentos/cadastro" element={<Cadastro />} />
         </Route>
       </Routes>
