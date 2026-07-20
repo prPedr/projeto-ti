@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import { PrivateRoute } from './PrivateRoute';
 import { Layout } from '../components/Layout/Layout';
 import { Login } from '../pages/Login/Login';
@@ -11,37 +11,18 @@ export function AppRoutes() {
         <Route path="/login" element={<Login />} />
 
         <Route
-          path="/"
           element={
             <PrivateRoute>
               <Layout>
-                <div>Dashboard Protegido</div>
+                <Outlet />
               </Layout>
             </PrivateRoute>
           }
-        />
-
-        <Route
-          path="/equipamentos"
-          element={
-            <PrivateRoute>
-              <Layout>
-                <div>Listagem de Equipamentos</div>
-              </Layout>
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/equipamentos/cadastro"
-          element={
-            <PrivateRoute>
-              <Layout>
-                <Cadastro />
-              </Layout>
-            </PrivateRoute>
-          }
-        />
+        >
+          <Route index element={<div>Dashboard em construção</div>} />
+          <Route path="/equipamentos" element={<div>Listagem de Equipamentos</div>} />
+          <Route path="/equipamentos/cadastro" element={<Cadastro />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
