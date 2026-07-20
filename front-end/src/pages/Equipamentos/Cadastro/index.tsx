@@ -61,9 +61,9 @@ function mapCategoriaParaEndpoint(categoria: Categoria): CategoriaEquipamento {
 export default function Cadastro() {
   const navigate = useNavigate();
 
-  const [categoria, setCategoria] = useState<Categoria | ''>('');
+  const [categoria, setCategoria] = useState<Categoria>('COMPUTADOR');
   const [dadosMestre, setDadosMestre] = useState<DadosMestre>(DADOS_MESTRE_INICIAIS);
-  const [dadosDetalhe, setDadosDetalhe] = useState<Record<string, string | boolean>>({});
+  const [dadosDetalhe, setDadosDetalhe] = useState<Record<string, string>>({});
   const [interfacesRede, setInterfacesRede] = useState<InterfaceRede[]>([{ ...INTERFACE_REDE_INICIAL }]);
   const [localizacoes, setLocalizacoes] = useState<Localizacao[]>([]);
 
@@ -83,9 +83,8 @@ export default function Cadastro() {
   }
 
   function handleDetalheChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
-    const { name, value, type } = event.target;
-    const valor = type === 'checkbox' ? (event.target as HTMLInputElement).checked : value;
-    setDadosDetalhe((anterior) => ({ ...anterior, [name]: valor }));
+    const { name, value } = event.target;
+    setDadosDetalhe((anterior) => ({ ...anterior, [name]: value }));
   }
 
   function handleInterfaceChange(indice: number, campo: keyof InterfaceRede, valor: string) {
@@ -95,7 +94,7 @@ export default function Cadastro() {
   }
 
   function adicionarInterface() {
-    setInterfacesRede((anterior) => [...anterior, { ...INTERFACE_REDE_INICIAL }]);
+    setInterfacesRede((anterior) => [...anterior, { nome_interface: '', ip: '', mac: '' }]);
   }
 
   function removerInterface(indice: number) {
@@ -105,9 +104,11 @@ export default function Cadastro() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!categoria) {
-      alert('Selecione uma categoria de equipamento.');
-      return;
+    // O <select> só produz strings; o back-end espera booleano de verdade
+    // para antivirus_instalado, então convertemos só na hora de montar o payload.
+    const detalhe: Record<string, string | boolean> = { ...dadosDetalhe };
+    if (categoria === 'COMPUTADOR' && 'antivirus_instalado' in detalhe) {
+      detalhe.antivirus_instalado = detalhe.antivirus_instalado === 'true';
     }
 
     const payload = {
@@ -122,7 +123,7 @@ export default function Cadastro() {
         ...(dadosMestre.data_garantia && { data_garantia: dadosMestre.data_garantia }),
         ...(dadosMestre.observacao && { observacao: dadosMestre.observacao }),
       },
-      detalhe: dadosDetalhe,
+      detalhe,
       interfaces: interfacesRede.filter((item) => item.nome_interface || item.ip || item.mac),
     };
 
@@ -149,9 +150,6 @@ export default function Cadastro() {
               onChange={(event) => setCategoria(event.target.value as Categoria)}
               required
             >
-              <option value="" disabled>
-                Selecione...
-              </option>
               <option value="COMPUTADOR">Computador</option>
               <option value="SWITCH">Switch</option>
               <option value="CELULAR">Celular</option>
@@ -255,6 +253,17 @@ export default function Cadastro() {
               onChange={handleMestreChange}
             />
           </div>
+
+          <div className={styles.campo}>
+            <label htmlFor="observacao">Observação</label>
+            <input
+              id="observacao"
+              name="observacao"
+              className={styles.input}
+              value={dadosMestre.observacao}
+              onChange={handleMestreChange}
+            />
+          </div>
         </div>
 
         {categoria === 'COMPUTADOR' && (
@@ -267,7 +276,7 @@ export default function Cadastro() {
                   id="usuario_alocado"
                   name="usuario_alocado"
                   className={styles.input}
-                  value={(dadosDetalhe.usuario_alocado as string) ?? ''}
+                  value={dadosDetalhe.usuario_alocado ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -277,7 +286,7 @@ export default function Cadastro() {
                   id="tag_patrimonio"
                   name="tag_patrimonio"
                   className={styles.input}
-                  value={(dadosDetalhe.tag_patrimonio as string) ?? ''}
+                  value={dadosDetalhe.tag_patrimonio ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -287,7 +296,7 @@ export default function Cadastro() {
                   id="numero_serie"
                   name="numero_serie"
                   className={styles.input}
-                  value={(dadosDetalhe.numero_serie as string) ?? ''}
+                  value={dadosDetalhe.numero_serie ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -297,7 +306,7 @@ export default function Cadastro() {
                   id="processador"
                   name="processador"
                   className={styles.input}
-                  value={(dadosDetalhe.processador as string) ?? ''}
+                  value={dadosDetalhe.processador ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -308,7 +317,7 @@ export default function Cadastro() {
                   name="memoria"
                   className={styles.input}
                   placeholder="Ex: 16GB DDR4"
-                  value={(dadosDetalhe.memoria as string) ?? ''}
+                  value={dadosDetalhe.memoria ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -319,7 +328,7 @@ export default function Cadastro() {
                   name="armazenamento"
                   className={styles.input}
                   placeholder="Ex: 512GB NVMe"
-                  value={(dadosDetalhe.armazenamento as string) ?? ''}
+                  value={dadosDetalhe.armazenamento ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -329,19 +338,23 @@ export default function Cadastro() {
                   id="sistema_operacional"
                   name="sistema_operacional"
                   className={styles.input}
-                  value={(dadosDetalhe.sistema_operacional as string) ?? ''}
+                  value={dadosDetalhe.sistema_operacional ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
               <div className={styles.campo}>
                 <label htmlFor="antivirus_instalado">Antivírus Instalado</label>
-                <input
+                <select
                   id="antivirus_instalado"
                   name="antivirus_instalado"
-                  type="checkbox"
-                  checked={Boolean(dadosDetalhe.antivirus_instalado)}
+                  className={styles.select}
+                  value={dadosDetalhe.antivirus_instalado ?? ''}
                   onChange={handleDetalheChange}
-                />
+                >
+                  <option value="">Selecione...</option>
+                  <option value="true">Sim</option>
+                  <option value="false">Não</option>
+                </select>
               </div>
             </div>
           </>
@@ -358,7 +371,7 @@ export default function Cadastro() {
                   name="numero_portas"
                   type="number"
                   className={styles.input}
-                  value={(dadosDetalhe.numero_portas as string) ?? ''}
+                  value={dadosDetalhe.numero_portas ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -369,7 +382,7 @@ export default function Cadastro() {
                   name="portas_em_uso"
                   type="number"
                   className={styles.input}
-                  value={(dadosDetalhe.portas_em_uso as string) ?? ''}
+                  value={dadosDetalhe.portas_em_uso ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -379,7 +392,7 @@ export default function Cadastro() {
                   id="firmware"
                   name="firmware"
                   className={styles.input}
-                  value={(dadosDetalhe.firmware as string) ?? ''}
+                  value={dadosDetalhe.firmware ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -389,7 +402,7 @@ export default function Cadastro() {
                   id="vlans_configuradas"
                   name="vlans_configuradas"
                   className={styles.input}
-                  value={(dadosDetalhe.vlans_configuradas as string) ?? ''}
+                  value={dadosDetalhe.vlans_configuradas ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -407,7 +420,7 @@ export default function Cadastro() {
                   id="usuario_alocado"
                   name="usuario_alocado"
                   className={styles.input}
-                  value={(dadosDetalhe.usuario_alocado as string) ?? ''}
+                  value={dadosDetalhe.usuario_alocado ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -418,7 +431,7 @@ export default function Cadastro() {
                   name="imei"
                   className={styles.input}
                   placeholder="15 dígitos"
-                  value={(dadosDetalhe.imei as string) ?? ''}
+                  value={dadosDetalhe.imei ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -428,7 +441,7 @@ export default function Cadastro() {
                   id="numero_serie"
                   name="numero_serie"
                   className={styles.input}
-                  value={(dadosDetalhe.numero_serie as string) ?? ''}
+                  value={dadosDetalhe.numero_serie ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -438,7 +451,7 @@ export default function Cadastro() {
                   id="memoria"
                   name="memoria"
                   className={styles.input}
-                  value={(dadosDetalhe.memoria as string) ?? ''}
+                  value={dadosDetalhe.memoria ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -448,7 +461,7 @@ export default function Cadastro() {
                   id="armazenamento"
                   name="armazenamento"
                   className={styles.input}
-                  value={(dadosDetalhe.armazenamento as string) ?? ''}
+                  value={dadosDetalhe.armazenamento ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -458,7 +471,7 @@ export default function Cadastro() {
                   id="operadora_numero"
                   name="operadora_numero"
                   className={styles.input}
-                  value={(dadosDetalhe.operadora_numero as string) ?? ''}
+                  value={dadosDetalhe.operadora_numero ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -468,7 +481,7 @@ export default function Cadastro() {
                   id="modalidade"
                   name="modalidade"
                   className={styles.select}
-                  value={(dadosDetalhe.modalidade as string) ?? ''}
+                  value={dadosDetalhe.modalidade ?? ''}
                   onChange={handleDetalheChange}
                 >
                   <option value="">Selecione...</option>
@@ -482,7 +495,7 @@ export default function Cadastro() {
                   id="sistema_operacional"
                   name="sistema_operacional"
                   className={styles.input}
-                  value={(dadosDetalhe.sistema_operacional as string) ?? ''}
+                  value={dadosDetalhe.sistema_operacional ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -500,7 +513,7 @@ export default function Cadastro() {
                   id="identificacao_extra"
                   name="identificacao_extra"
                   className={styles.input}
-                  value={(dadosDetalhe.identificacao_extra as string) ?? ''}
+                  value={dadosDetalhe.identificacao_extra ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -511,7 +524,7 @@ export default function Cadastro() {
                   name="capacidade_armazenamento"
                   className={styles.input}
                   placeholder="Ex: HD 4TB"
-                  value={(dadosDetalhe.capacidade_armazenamento as string) ?? ''}
+                  value={dadosDetalhe.capacidade_armazenamento ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -522,7 +535,7 @@ export default function Cadastro() {
                   name="quantidade_canais_resolucao"
                   className={styles.input}
                   placeholder="Ex: 16 Canais ou 1080p"
-                  value={(dadosDetalhe.quantidade_canais_resolucao as string) ?? ''}
+                  value={dadosDetalhe.quantidade_canais_resolucao ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
@@ -532,7 +545,7 @@ export default function Cadastro() {
                   id="firmware"
                   name="firmware"
                   className={styles.input}
-                  value={(dadosDetalhe.firmware as string) ?? ''}
+                  value={dadosDetalhe.firmware ?? ''}
                   onChange={handleDetalheChange}
                 />
               </div>
