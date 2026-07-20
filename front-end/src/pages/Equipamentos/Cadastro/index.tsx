@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { ChangeEvent, FormEvent } from 'react';
+import type { ChangeEvent, SubmitEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { criarEquipamento, listarLocalizacoes } from '../../../services/equipamentos';
 import type { CategoriaEquipamento } from '../../../services/equipamentos';
@@ -101,7 +101,7 @@ export default function Cadastro() {
     setInterfacesRede((anterior) => anterior.filter((_, i) => i !== indice));
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     // O <select> só produz strings; o back-end espera booleano de verdade
