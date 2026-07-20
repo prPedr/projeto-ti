@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { SubmitEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { realizarLogin } from '../../services/auth';
 import styles from './Login.module.css';
 
 export function Login() {
@@ -11,17 +12,16 @@ export function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
-  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    login('token-fake', {
-      id: '1',
-      nome: 'Usuário de Teste',
-      email,
-      perfil: 'admin',
-    });
-
-    navigate('/');
+    try {
+      const resultado = await realizarLogin(email, senha);
+      login(resultado.token, resultado.usuario);
+      navigate('/');
+    } catch (erro) {
+      alert(erro instanceof Error ? erro.message : 'Erro ao entrar.');
+    }
   }
 
   return (

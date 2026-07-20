@@ -48,6 +48,7 @@
   height: 64px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 32px;
   background-color: var(--cor-cartao);
   border-bottom: 1px solid var(--cor-borda);
@@ -56,6 +57,22 @@
 .cabecalho h1 {
   font-size: 16px;
   font-weight: 600;
+}
+
+.botaoSair {
+  border: 1px solid var(--cor-input-borda);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cor-texto);
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.botaoSair:hover {
+  background-color: var(--cor-fundo);
 }
 
 .conteudo {

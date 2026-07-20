@@ -7,6 +7,7 @@ const JWT_EXPIRA_EM = '8h'
 
 interface UsuarioSistema {
   id: number
+  nome: string
   email: string
   senha_hash: string
   perfil: string
@@ -17,6 +18,7 @@ export interface ResultadoLogin {
   token: string
   usuario: {
     id: number
+    nome: string
     email: string
     perfil: string
   }
@@ -35,7 +37,7 @@ export class ErroAutenticacao extends Error {
 
 export const realizarLogin = async (email: string, senha: string): Promise<ResultadoLogin> => {
   const usuario = banco
-    .prepare('SELECT id, email, senha_hash, perfil, ativo FROM usuarios_sistema WHERE email = ?')
+    .prepare('SELECT id, nome, email, senha_hash, perfil, ativo FROM usuarios_sistema WHERE email = ?')
     .get(email) as UsuarioSistema | undefined
 
   if (!usuario) {
@@ -60,6 +62,7 @@ export const realizarLogin = async (email: string, senha: string): Promise<Resul
     token,
     usuario: {
       id: usuario.id,
+      nome: usuario.nome,
       email: usuario.email,
       perfil: usuario.perfil,
     },

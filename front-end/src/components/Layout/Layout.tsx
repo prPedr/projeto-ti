@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import styles from './Layout.module.css';
 
@@ -8,7 +8,13 @@ interface LayoutProps {
 }
 
 export function Layout({ children }: LayoutProps) {
-  const { usuario } = useAuth();
+  const { usuario, logout } = useAuth();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+    navigate('/login');
+  }
 
   return (
     <div className={styles.container}>
@@ -36,6 +42,9 @@ export function Layout({ children }: LayoutProps) {
       <div className={styles.conteudoPrincipal}>
         <header className={styles.cabecalho}>
           <h1>Painel de Controle</h1>
+          <button type="button" className={styles.botaoSair} onClick={handleLogout}>
+            Sair
+          </button>
         </header>
 
         <main className={styles.conteudo}>{children}</main>
