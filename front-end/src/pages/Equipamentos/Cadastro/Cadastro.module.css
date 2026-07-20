@@ -1,0 +1,102 @@
+/* As variáveis de design system (--cor-primaria, --cor-cartao, etc.) vêm de
+   src/index.css, que é global — não precisam ser importadas aqui. */
+
+.cartao {
+  background-color: var(--cor-cartao);
+  border-radius: 8px;
+  box-shadow: var(--sombra);
+  padding: 2rem;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.secaoTitulo {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cor-texto);
+  border-bottom: 1px solid var(--cor-borda);
+  padding-bottom: 0.5rem;
+  margin: 2rem 0 1.5rem;
+}
+
+.secaoTitulo:first-child {
+  margin-top: 0;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 1.25rem;
+}
+
+.campo label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cor-texto);
+}
+
+.input,
+.select {
+  background-color: var(--cor-input-fundo);
+  border: 1px solid var(--cor-input-borda);
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 14px;
+  color: var(--cor-texto);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input:focus,
+.select:focus {
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+}
+
+.select {
+  cursor: pointer;
+}
+
+.botoesAcao {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.botaoSalvar {
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: var(--cor-primaria);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.botaoSalvar:hover {
+  background-color: var(--cor-primaria-hover);
+}
+
+.botaoCancelar {
+  border: 1px solid var(--cor-input-borda);
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cor-texto);
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.botaoCancelar:hover {
+  background-color: var(--cor-fundo);
+}
