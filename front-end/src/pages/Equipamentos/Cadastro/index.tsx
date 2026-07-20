@@ -3,6 +3,7 @@ import type { ChangeEvent, SubmitEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { criarEquipamento, listarLocalizacoes } from '../../../services/equipamentos';
 import type { CategoriaEquipamento } from '../../../services/equipamentos';
+import { formatarMAC, formatarIMEI, formatarIP, formatarTag } from '../../../utils/formatadores';
 import styles from './Cadastro.module.css';
 
 type Categoria = 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR' | 'CAMERA';
@@ -84,12 +85,27 @@ export default function Cadastro() {
 
   function handleDetalheChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const { name, value } = event.target;
-    setDadosDetalhe((anterior) => ({ ...anterior, [name]: value }));
+
+    let valorFormatado = value;
+    if (name === 'imei') {
+      valorFormatado = formatarIMEI(value);
+    } else if (name === 'tag_patrimonio') {
+      valorFormatado = formatarTag(value);
+    }
+
+    setDadosDetalhe((anterior) => ({ ...anterior, [name]: valorFormatado }));
   }
 
   function handleInterfaceChange(indice: number, campo: keyof InterfaceRede, valor: string) {
+    let valorFormatado = valor;
+    if (campo === 'mac') {
+      valorFormatado = formatarMAC(valor);
+    } else if (campo === 'ip') {
+      valorFormatado = formatarIP(valor);
+    }
+
     setInterfacesRede((anterior) =>
-      anterior.map((item, i) => (i === indice ? { ...item, [campo]: valor } : item)),
+      anterior.map((item, i) => (i === indice ? { ...item, [campo]: valorFormatado } : item)),
     );
   }
 
