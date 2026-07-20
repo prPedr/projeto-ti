@@ -1,0 +1,110 @@
+/* Variáveis de design system (--cor-primaria, --cor-cartao, etc.) vêm de
+   src/index.css, que é global — não precisam ser importadas aqui. */
+
+.cartao {
+  background-color: var(--cor-cartao);
+  border-radius: 8px;
+  box-shadow: var(--sombra);
+  padding: 2rem;
+}
+
+.formulario {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.campo label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cor-texto);
+}
+
+.input,
+.select {
+  background-color: var(--cor-input-fundo);
+  border: 1px solid var(--cor-input-borda);
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 14px;
+  color: var(--cor-texto);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input:focus,
+.select:focus {
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+}
+
+.select {
+  cursor: pointer;
+}
+
+.botaoAdicionar {
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: var(--cor-primaria);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.botaoAdicionar:hover {
+  background-color: var(--cor-primaria-hover);
+}
+
+.categorias {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.categoriaCard {
+  background-color: var(--cor-cartao);
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+
+.categoriaTitulo {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cor-texto);
+  border-bottom: 1px solid var(--cor-borda);
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.itemLista {
+  font-size: 14px;
+  color: var(--cor-texto);
+  background-color: var(--cor-input-fundo);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+}
+
+.listaVazia {
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
