@@ -1,20 +1,71 @@
 .container {
   display: grid;
   grid-template-columns: 240px 1fr;
+  transition: grid-template-columns 0.2s ease;
   min-height: 100vh;
 }
 
+.container.recolhida {
+  grid-template-columns: 72px 1fr;
+}
+
 .sidebar {
-  background-color: var(--cor-cartao);
+  display: flex;
+  flex-direction: column;
+  background-color: var(--cor-sidebar-fundo);
+  border-radius: var(--raio-lg);
   box-shadow: var(--sombra);
+  margin: 16px;
   padding: 24px 16px;
+  overflow: hidden;
+}
+
+.recolhida .sidebar {
+  padding: 24px 12px;
+}
+
+.cabecalhoSidebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 32px;
 }
 
 .logo {
   font-size: 20px;
   font-weight: 600;
-  color: var(--cor-primaria);
-  margin-bottom: 32px;
+  color: var(--cor-sidebar-texto-ativo);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.botaoRecolher {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--raio-sm);
+  background-color: transparent;
+  color: var(--cor-sidebar-texto);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.botaoRecolher:hover {
+  background-color: var(--cor-sidebar-fundo-hover);
+  color: var(--cor-sidebar-texto-ativo);
+}
+
+.botaoRecolher svg {
+  transition: transform 0.2s ease;
+}
+
+.recolhida .botaoRecolher svg {
+  transform: rotate(180deg);
 }
 
 .menu {
@@ -25,17 +76,46 @@
 }
 
 .menuItem a {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 10px 12px;
-  border-radius: 6px;
-  color: var(--cor-texto-suave);
+  border-radius: var(--raio-sm);
+  color: var(--cor-sidebar-texto);
   text-decoration: none;
   font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .menuItem a:hover {
-  background-color: var(--cor-fundo);
-  color: var(--cor-texto);
+  background-color: var(--cor-sidebar-fundo-hover);
+  color: var(--cor-sidebar-texto-ativo);
+}
+
+.menuItem a.ativo {
+  background-color: var(--cor-sidebar-fundo-hover);
+  color: var(--cor-sidebar-texto-ativo);
+  font-weight: 600;
+}
+
+.iconeInicial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--raio-sm);
+  background-color: rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rotulo {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .conteudoPrincipal {
