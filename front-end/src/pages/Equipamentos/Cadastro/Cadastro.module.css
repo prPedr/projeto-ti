@@ -3,7 +3,7 @@
 
 .cartao {
   background-color: var(--cor-cartao);
-  border-radius: 8px;
+  border-radius: var(--raio-lg);
   box-shadow: var(--sombra);
   padding: 2rem;
 }
@@ -44,7 +44,7 @@
 .select {
   background-color: var(--cor-input-fundo);
   border: 1px solid var(--cor-input-borda);
-  border-radius: 8px;
+  border-radius: var(--raio-sm);
   padding: 0.75rem;
   font-size: 14px;
   color: var(--cor-texto);
@@ -71,7 +71,7 @@
 
 .botaoSalvar {
   border: none;
-  border-radius: 8px;
+  border-radius: var(--raio-md);
   padding: 0.75rem 1.5rem;
   font-size: 14px;
   font-weight: 600;
@@ -87,7 +87,7 @@
 
 .botaoCancelar {
   border: 1px solid var(--cor-input-borda);
-  border-radius: 8px;
+  border-radius: var(--raio-md);
   padding: 0.75rem 1.5rem;
   font-size: 14px;
   font-weight: 600;

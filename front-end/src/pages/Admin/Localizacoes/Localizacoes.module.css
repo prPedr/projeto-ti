@@ -3,7 +3,7 @@
 
 .cartao {
   background-color: var(--cor-cartao);
-  border-radius: 8px;
+  border-radius: var(--raio-lg);
   box-shadow: var(--sombra);
   padding: 2rem;
 }
@@ -33,7 +33,7 @@
 .input {
   background-color: var(--cor-input-fundo);
   border: 1px solid var(--cor-input-borda);
-  border-radius: 8px;
+  border-radius: var(--raio-sm);
   padding: 0.75rem;
   font-size: 14px;
   color: var(--cor-texto);
@@ -48,7 +48,7 @@
 
 .botaoAdicionar {
   border: none;
-  border-radius: 8px;
+  border-radius: var(--raio-md);
   padding: 0.75rem 1.5rem;
   font-size: 14px;
   font-weight: 600;
@@ -75,7 +75,7 @@
 .tabelaWrapper {
   overflow-x: auto;
   border: 1px solid var(--cor-borda);
-  border-radius: 8px;
+  border-radius: var(--raio-sm);
 }
 
 .tabela {
@@ -122,7 +122,7 @@
 .botaoPaginacao {
   border: 1px solid var(--cor-input-borda);
   background-color: var(--cor-cartao);
-  border-radius: 6px;
+  border-radius: var(--raio-md);
   padding: 0.4rem 0.9rem;
   font-size: 13px;
   cursor: pointer;
