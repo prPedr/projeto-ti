@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { excluirEquipamento, listarEquipamentos } from '../../../services/equipamentos';
 import styles from './Listagem.module.css';
 
@@ -16,6 +16,7 @@ interface Equipamento {
 }
 
 export default function Listagem() {
+  const navigate = useNavigate();
   const [equipamentos, setEquipamentos] = useState<Equipamento[]>([]);
   const [carregando, setCarregando] = useState(true);
 
@@ -96,7 +97,27 @@ export default function Listagem() {
                     <button
                       type="button"
                       className={styles.botaoIcone}
-                      onClick={() => alert('Edição em breve!')}
+                      onClick={() => navigate(`/equipamentos/${eq.id}`, { state: { modo: 'visualizar' } })}
+                      title="Visualizar"
+                    >
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.botaoIcone}
+                      onClick={() => navigate(`/equipamentos/${eq.id}`, { state: { modo: 'editar' } })}
                       title="Editar"
                     >
                       <svg
