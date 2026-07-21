@@ -31,7 +31,9 @@ CREATE TABLE opcoes_predefinidas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     categoria TEXT NOT NULL,
     valor TEXT NOT NULL,
-    UNIQUE(categoria, valor)
+    dependencia_id INTEGER DEFAULT NULL,
+    UNIQUE(categoria, valor),
+    FOREIGN KEY (dependencia_id) REFERENCES opcoes_predefinidas(id) ON DELETE SET NULL
 );
 
 -- ==========================================
