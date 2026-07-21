@@ -1,13 +1,29 @@
 :root {
+  /* Cores primárias (botões pretos — não alterar) */
   --cor-primaria: #0f172a;
   --cor-primaria-hover: #334155;
-  --cor-fundo: #f0f2f5;
-  --cor-cartao: #ffffff;
+
+  /* Paleta de cinzas — camadas com mais contraste */
+  --cor-fundo: #e9ebf0;
+  --cor-cartao: #f7f8fa;
   --cor-texto: #334155;
   --cor-texto-suave: #6b7280;
   --cor-borda: #e5e7eb;
   --cor-input-fundo: #f8fafc;
   --cor-input-borda: #cbd5e1;
+
+  /* Sidebar */
+  --cor-sidebar-fundo: #1c1f26;
+  --cor-sidebar-fundo-hover: #2a2e37;
+  --cor-sidebar-texto: #9ca3af;
+  --cor-sidebar-texto-ativo: #f7f8fa;
+
+  /* Raios de borda */
+  --raio-sm: 8px;
+  --raio-md: 12px;
+  --raio-lg: 20px;
+
+  /* Sombras */
   --sombra: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
   --sombra-elevada: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
 }
