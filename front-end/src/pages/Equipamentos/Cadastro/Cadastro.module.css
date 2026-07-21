@@ -6,6 +6,24 @@
   border-radius: var(--raio-lg);
   box-shadow: var(--sombra);
   padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 8rem);
+  overflow: hidden;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.areaRolagem {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 1rem;
+  margin-bottom: 1rem;
 }
 
 .grid2 {
@@ -66,7 +84,9 @@
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--cor-input-borda);
 }
 
 .botaoSalvar {
