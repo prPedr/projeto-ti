@@ -166,8 +166,9 @@ export default function Cadastro() {
 
   return (
     <div className={styles.cartao}>
-      <form onSubmit={handleSubmit}>
-        <h2 className={styles.secaoTitulo}>Dados Básicos</h2>
+      <form className={styles.form} onSubmit={handleSubmit}>
+        <div className={styles.areaRolagem}>
+          <h2 className={styles.secaoTitulo}>Dados Básicos</h2>
         <div className={styles.grid2}>
           <div className={styles.campo}>
             <label htmlFor="categoria">Categoria</label>
@@ -658,10 +659,11 @@ export default function Cadastro() {
           </div>
         ))}
 
-        <div className={styles.botoesAcao}>
+        <div className={styles.botoesAcao} style={{ borderTop: 'none', paddingTop: 0, marginTop: 0 }}>
           <button type="button" className={styles.botaoCancelar} onClick={adicionarInterface}>
             + Adicionar Interface
           </button>
+        </div>
         </div>
 
         <div className={styles.botoesAcao}>
