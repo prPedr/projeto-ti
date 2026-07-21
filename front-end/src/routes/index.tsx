@@ -6,6 +6,7 @@ import Cadastro from '../pages/Equipamentos/Cadastro';
 import Opcoes from '../pages/Admin/Opcoes';
 import Localizacoes from '../pages/Admin/Localizacoes';
 import Listagem from '../pages/Equipamentos/Listagem';
+import Detalhes from '../pages/Equipamentos/Detalhes';
 
 export function AppRoutes() {
   return (
@@ -25,6 +26,7 @@ export function AppRoutes() {
           <Route index element={<div>Dashboard em construção</div>} />
           <Route path="/equipamentos" element={<Listagem />} />
           <Route path="/equipamentos/cadastro" element={<Cadastro />} />
+          <Route path="/equipamentos/:id" element={<Detalhes />} />
           <Route path="/admin/opcoes" element={<Opcoes />} />
           <Route path="/admin/localizacoes" element={<Localizacoes />} />
         </Route>

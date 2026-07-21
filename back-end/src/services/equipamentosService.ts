@@ -160,3 +160,90 @@ export const descartarEquipamento = (id: number, usuarioId: number): ResultadoDe
 
   return 'DESCARTADO'
 }
+
+export const buscarEquipamentoPorId = (id: number) => {
+  // Ajuste: A tabela real é 'equipamentos' e a coluna de exclusão é 'data_descarte'
+  const mestre = banco.prepare('SELECT * FROM equipamentos WHERE id = ? AND data_descarte IS NULL').get(id) as any;
+  
+  if (!mestre) {
+    throw new Error('Equipamento não encontrado');
+  }
+
+  let detalhe = null;
+  switch (mestre.categoria) {
+    case 'COMPUTADOR':
+      detalhe = banco.prepare('SELECT * FROM eq_computadores WHERE equipamento_id = ?').get(id);
+      break;
+    case 'SWITCH':
+      detalhe = banco.prepare('SELECT * FROM eq_switches WHERE equipamento_id = ?').get(id);
+      break;
+    case 'CELULAR':
+      detalhe = banco.prepare('SELECT * FROM eq_celulares WHERE equipamento_id = ?').get(id);
+      break;
+    case 'NVR':
+    case 'CAMERA':
+      detalhe = banco.prepare('SELECT * FROM eq_cftv WHERE equipamento_id = ?').get(id);
+      break;
+  }
+
+  const interfaces = banco.prepare('SELECT * FROM interfaces_rede WHERE equipamento_id = ?').all(id);
+
+  return { mestre, detalhe, interfaces };
+}
+
+export const atualizarEquipamento = (id: number, payload: any) => {
+  const transacao = banco.transaction(() => {
+    // 1. Atualizar Mestre
+    if (payload.mestre && Object.keys(payload.mestre).length > 0) {
+      const keysMestre = Object.keys(payload.mestre);
+      const setMestre = keysMestre.map(k => `${k} = @${k}`).join(', ');
+      banco.prepare(`UPDATE equipamentos SET ${setMestre} WHERE id = @id`).run({ ...payload.mestre, id });
+    }
+
+    // 2. Atualizar Detalhes
+    if (payload.detalhe && Object.keys(payload.detalhe).length > 0) {
+      // Se a categoria não vier no payload, buscamos do banco para saber qual tabela atualizar
+      let categoria = payload.mestre?.categoria;
+      if (!categoria) {
+        const equipamento = banco.prepare('SELECT categoria FROM equipamentos WHERE id = ?').get(id) as any;
+        categoria = equipamento?.categoria;
+      }
+
+      let tabelaDetalhe = '';
+      switch (categoria) {
+        case 'COMPUTADOR': tabelaDetalhe = 'eq_computadores'; break;
+        case 'SWITCH': tabelaDetalhe = 'eq_switches'; break;
+        case 'CELULAR': tabelaDetalhe = 'eq_celulares'; break;
+        case 'NVR':
+        case 'CAMERA': tabelaDetalhe = 'eq_cftv'; break;
+      }
+
+      if (tabelaDetalhe) {
+        const keysDetalhe = Object.keys(payload.detalhe);
+        const setDetalhe = keysDetalhe.map(k => `${k} = @${k}`).join(', ');
+        banco.prepare(`UPDATE ${tabelaDetalhe} SET ${setDetalhe} WHERE equipamento_id = @id`).run({ ...payload.detalhe, id });
+      }
+    }
+
+    // 3. Atualizar Interfaces de Rede
+    if (payload.interfaces) {
+      banco.prepare('DELETE FROM interfaces_rede WHERE equipamento_id = ?').run(id);
+      
+      const insertInterface = banco.prepare(`
+        INSERT INTO interfaces_rede (equipamento_id, nome_interface, ip, mac)
+        VALUES (@equipamento_id, @nome_interface, @ip, @mac)
+      `);
+      
+      for (const intf of payload.interfaces) {
+        insertInterface.run({
+          equipamento_id: id,
+          nome_interface: intf.nome_interface,
+          ip: intf.ip || null,
+          mac: intf.mac || null
+        });
+      }
+    }
+  });
+
+  transacao();
+}
