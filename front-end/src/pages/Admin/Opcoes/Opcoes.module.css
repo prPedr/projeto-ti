@@ -10,6 +10,7 @@
 
 .formulario {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-end;
   gap: 1rem;
   margin-bottom: 2rem;
@@ -97,11 +98,48 @@
 }
 
 .itemLista {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
   font-size: 14px;
   color: var(--cor-texto);
   background-color: var(--cor-input-fundo);
   border-radius: var(--raio-sm);
   padding: 0.5rem 0.75rem;
+}
+
+.itemTexto {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemAcoes {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.botaoAcao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--raio-sm);
+  background-color: transparent;
+  color: var(--cor-texto-suave);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.botaoAcao:hover {
+  background-color: var(--cor-borda);
+  color: var(--cor-texto);
 }
 
 .listaVazia {
