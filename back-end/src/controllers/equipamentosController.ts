@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { z } from 'zod'
 import { listarEquipamentosQuerySchema } from '../schemas/equipamentosSchema.js'
-import { descartarEquipamento, FiltrosListagem, listarEquipamentos } from '../services/equipamentosService.js'
+import { descartarEquipamento, FiltrosListagem, listarEquipamentos, buscarEquipamentoPorId, atualizarEquipamento } from '../services/equipamentosService.js'
 
 type DadosValidadosListagem = {
   query: z.infer<typeof listarEquipamentosQuerySchema>
@@ -49,4 +49,26 @@ export const descartar = (requisicao: Request, resposta: Response) => {
   }
 
   resposta.status(200).json({ sucesso: true, mensagem: 'Equipamento descartado com sucesso e mantido no histórico' })
+}
+
+export const buscarPorId = (requisicao: Request, resposta: Response) => {
+  const id = Number(requisicao.params.id)
+  
+  if (!requisicao.params.id || Number.isNaN(id)) {
+    throw criarErro('ID do equipamento inválido.', 400)
+  }
+
+  const equipamento = buscarEquipamentoPorId(id)
+  resposta.status(200).json({ sucesso: true, dados: equipamento })
+}
+
+export const atualizar = (requisicao: Request, resposta: Response) => {
+  const id = Number(requisicao.params.id)
+  
+  if (!requisicao.params.id || Number.isNaN(id)) {
+    throw criarErro('ID do equipamento inválido.', 400)
+  }
+
+  atualizarEquipamento(id, requisicao.body)
+  resposta.status(200).json({ sucesso: true, mensagem: 'Equipamento atualizado com sucesso' })
 }
