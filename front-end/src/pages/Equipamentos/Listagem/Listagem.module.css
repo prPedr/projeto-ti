@@ -72,3 +72,21 @@
   background-color: var(--cor-input-borda); /* Fundo padrão genérico */
   color: var(--cor-texto);
 }
+
+.botaoNovo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--cor-primaria);
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--raio-md);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.botaoNovo:hover {
+  background-color: var(--cor-primaria-hover);
+}
