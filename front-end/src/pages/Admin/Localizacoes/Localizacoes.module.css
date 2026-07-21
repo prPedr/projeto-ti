@@ -1,0 +1,140 @@
+/* Variáveis de design system (--cor-primaria, --cor-cartao, etc.) vêm de
+   src/index.css, que é global — não precisam ser importadas aqui. */
+
+.cartao {
+  background-color: var(--cor-cartao);
+  border-radius: 8px;
+  box-shadow: var(--sombra);
+  padding: 2rem;
+}
+
+.formulario {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 160px;
+}
+
+.campo label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cor-texto);
+}
+
+.input {
+  background-color: var(--cor-input-fundo);
+  border: 1px solid var(--cor-input-borda);
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 14px;
+  color: var(--cor-texto);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input:focus {
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+}
+
+.botaoAdicionar {
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: var(--cor-primaria);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.botaoAdicionar:hover {
+  background-color: var(--cor-primaria-hover);
+}
+
+.barraBusca {
+  margin-bottom: 1.25rem;
+}
+
+.barraBusca .input {
+  width: 100%;
+  max-width: 320px;
+}
+
+.tabelaWrapper {
+  overflow-x: auto;
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tabela th,
+.tabela td {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--cor-borda);
+  white-space: nowrap;
+}
+
+.tabela th {
+  background-color: var(--cor-input-fundo);
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+
+.tabela tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.listaVazia {
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+.botaoPaginacao {
+  border: 1px solid var(--cor-input-borda);
+  background-color: var(--cor-cartao);
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--cor-texto);
+  transition: background-color 0.2s ease;
+}
+
+.botaoPaginacao:hover:not(:disabled) {
+  background-color: var(--cor-input-fundo);
+}
+
+.botaoPaginacao:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

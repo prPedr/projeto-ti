@@ -4,6 +4,7 @@ import { Layout } from '../components/Layout/Layout';
 import { Login } from '../pages/Login/Login';
 import Cadastro from '../pages/Equipamentos/Cadastro';
 import Opcoes from '../pages/Admin/Opcoes';
+import Localizacoes from '../pages/Admin/Localizacoes';
 
 export function AppRoutes() {
   return (
@@ -32,6 +33,7 @@ export function AppRoutes() {
           />
           <Route path="/equipamentos/cadastro" element={<Cadastro />} />
           <Route path="/admin/opcoes" element={<Opcoes />} />
+          <Route path="/admin/localizacoes" element={<Localizacoes />} />
         </Route>
       </Routes>
     </BrowserRouter>
