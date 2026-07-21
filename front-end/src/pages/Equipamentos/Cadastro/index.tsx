@@ -71,6 +71,12 @@ export default function Cadastro() {
   const [localizacoes, setLocalizacoes] = useState<Localizacao[]>([]);
   const [opcoesSugeridas, setOpcoesSugeridas] = useState<OpcoesAgrupadas>({});
 
+  // Deriva o id da marca escolhida pelo texto digitado — usado para filtrar os modelos
+  const marcaId =
+    opcoesSugeridas.MARCA?.find(
+      (m) => m.valor.toLowerCase() === dadosMestre.marca.trim().toLowerCase(),
+    )?.id ?? null;
+
   useEffect(() => {
     listarLocalizacoes()
       .then((dados) => setLocalizacoes(dados))
@@ -211,7 +217,7 @@ export default function Cadastro() {
             />
             <datalist id="lista-marcas">
               {(opcoesSugeridas.MARCA ?? []).map((opcao) => (
-                <option key={opcao} value={opcao} />
+                <option key={opcao.id} value={opcao.valor} />
               ))}
             </datalist>
           </div>
@@ -222,10 +228,18 @@ export default function Cadastro() {
               id="modelo"
               name="modelo"
               className={styles.input}
+              list="lista-modelos"
               value={dadosMestre.modelo}
               onChange={handleMestreChange}
               required
             />
+            <datalist id="lista-modelos">
+              {(opcoesSugeridas.MODELO ?? [])
+                .filter((m) => marcaId === null || m.dependencia_id === marcaId)
+                .map((opcao) => (
+                  <option key={opcao.id} value={opcao.valor} />
+                ))}
+            </datalist>
           </div>
 
           <div className={styles.campo}>
@@ -341,7 +355,7 @@ export default function Cadastro() {
                 />
                 <datalist id="lista-processadores">
                   {(opcoesSugeridas.PROCESSADOR ?? []).map((opcao) => (
-                    <option key={opcao} value={opcao} />
+                    <option key={opcao.id} value={opcao.valor} />
                   ))}
                 </datalist>
               </div>
@@ -358,7 +372,7 @@ export default function Cadastro() {
                 />
                 <datalist id="lista-memorias">
                   {(opcoesSugeridas.MEMORIA ?? []).map((opcao) => (
-                    <option key={opcao} value={opcao} />
+                    <option key={opcao.id} value={opcao.valor} />
                   ))}
                 </datalist>
               </div>
@@ -375,7 +389,7 @@ export default function Cadastro() {
                 />
                 <datalist id="lista-armazenamentos">
                   {(opcoesSugeridas.ARMAZENAMENTO ?? []).map((opcao) => (
-                    <option key={opcao} value={opcao} />
+                    <option key={opcao.id} value={opcao.valor} />
                   ))}
                 </datalist>
               </div>
