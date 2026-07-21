@@ -19,11 +19,11 @@ const CHAVE_SIDEBAR_RECOLHIDA = 'appti:sidebar-recolhida';
 const ITENS_MENU: ItemMenu[] = [
   { to: '/', rotulo: 'Dashboard', inicial: 'D' },
   { to: '/equipamentos', rotulo: 'Equipamentos', inicial: 'E' },
-  { to: '/equipamentos/cadastro', rotulo: 'Novo Equipamento', inicial: 'N' },
+  { to: '/equipamentos/cadastro', rotulo: 'Novo', inicial: 'N' },
 ];
 
 const ITENS_MENU_ADMIN: ItemMenu[] = [
-  { to: '/admin/opcoes', rotulo: 'Opções Pré-definidas', inicial: 'O' },
+  { to: '/admin/opcoes', rotulo: 'Opções', inicial: 'O' },
   { to: '/admin/localizacoes', rotulo: 'Localizações', inicial: 'L' },
 ];
 
