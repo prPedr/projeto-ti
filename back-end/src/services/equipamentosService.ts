@@ -192,12 +192,15 @@ export const buscarEquipamentoPorId = (id: number) => {
 }
 
 export const atualizarEquipamento = (id: number, payload: any) => {
+  const higienizarValores = (valores: any[]) => valores.map(v => typeof v === 'boolean' ? (v ? 1 : 0) : v);
+
   const transacao = banco.transaction(() => {
     // 1. Atualizar Mestre
     if (payload.mestre && Object.keys(payload.mestre).length > 0) {
       const keysMestre = Object.keys(payload.mestre);
-      const setMestre = keysMestre.map(k => `${k} = @${k}`).join(', ');
-      banco.prepare(`UPDATE equipamentos SET ${setMestre} WHERE id = @id`).run({ ...payload.mestre, id });
+      const setMestre = keysMestre.map(k => `${k} = ?`).join(', ');
+      const valoresMestre = higienizarValores([...Object.values(payload.mestre), id]);
+      banco.prepare(`UPDATE equipamentos SET ${setMestre} WHERE id = ?`).run(...valoresMestre);
     }
 
     // 2. Atualizar Detalhes
@@ -220,8 +223,9 @@ export const atualizarEquipamento = (id: number, payload: any) => {
 
       if (tabelaDetalhe) {
         const keysDetalhe = Object.keys(payload.detalhe);
-        const setDetalhe = keysDetalhe.map(k => `${k} = @${k}`).join(', ');
-        banco.prepare(`UPDATE ${tabelaDetalhe} SET ${setDetalhe} WHERE equipamento_id = @id`).run({ ...payload.detalhe, id });
+        const setDetalhe = keysDetalhe.map(k => `${k} = ?`).join(', ');
+        const valoresDetalhe = higienizarValores([...Object.values(payload.detalhe), id]);
+        banco.prepare(`UPDATE ${tabelaDetalhe} SET ${setDetalhe} WHERE equipamento_id = ?`).run(...valoresDetalhe);
       }
     }
 

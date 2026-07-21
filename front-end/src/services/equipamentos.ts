@@ -49,27 +49,8 @@ export async function buscarEquipamentoPorId(id: number) {
   return resposta.dados;
 }
 
-export async function atualizarEquipamento(id: number, categoria: CategoriaEquipamento, payload: unknown) {
-  let endpoint: string;
-
-  switch (categoria) {
-    case 'computador':
-      endpoint = `/api/computadores/${id}`;
-      break;
-    case 'switch':
-      endpoint = `/api/switches/${id}`;
-      break;
-    case 'celular':
-      endpoint = `/api/celulares/${id}`;
-      break;
-    case 'cftv':
-      endpoint = `/api/cftv/${id}`;
-      break;
-    default:
-      throw new Error(`Categoria de equipamento desconhecida: ${categoria}`);
-  }
-
-  return fetchComToken(endpoint, {
+export async function atualizarEquipamento(id: number, categoria: string, payload: unknown) {
+  return fetchComToken(`/api/equipamentos/${id}`, {
     method: 'PUT',
     body: JSON.stringify(payload),
   });
