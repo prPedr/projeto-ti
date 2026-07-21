@@ -81,10 +81,6 @@ export function Layout({ children }: LayoutProps) {
       </aside>
 
       <div className={styles.conteudoPrincipal}>
-        <header className={styles.cabecalho}>
-          <h1>Painel de Controle</h1>
-        </header>
-
         <main className={styles.conteudo}>{children}</main>
       </div>
     </div>
