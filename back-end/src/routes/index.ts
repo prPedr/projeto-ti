@@ -3,6 +3,7 @@ import rotasAuth from './authRoutes.js'
 import rotasCelulares from './celularesRoutes.js'
 import rotasCftv from './cftvRoutes.js'
 import rotasComputadores from './computadoresRoutes.js'
+import rotasDashboard from './dashboardRoutes.js'
 import rotasEquipamentos from './equipamentosRoutes.js'
 import rotasLocalizacoes from './localizacoesRoutes.js'
 import rotasOpcoes from './opcoesRoutes.js'
@@ -14,6 +15,7 @@ rotas.use('/auth', rotasAuth)
 rotas.use('/celulares', rotasCelulares)
 rotas.use('/cftv', rotasCftv)
 rotas.use('/computadores', rotasComputadores)
+rotas.use('/dashboard', rotasDashboard)
 rotas.use('/equipamentos', rotasEquipamentos)
 rotas.use('/localizacoes', rotasLocalizacoes)
 rotas.use('/opcoes', rotasOpcoes)
