@@ -1,0 +1,74 @@
+.cartao {
+  background-color: var(--cor-cartao);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra);
+  padding: 2rem;
+}
+
+.cabecalhoAcoes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabela th {
+  text-align: left;
+  padding: 1rem;
+  border-bottom: 2px solid var(--cor-borda);
+  color: var(--cor-texto-suave);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.tabela td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--cor-borda);
+  font-size: 14px;
+  color: var(--cor-texto);
+}
+
+.tabela tbody tr:hover {
+  background-color: var(--cor-input-fundo);
+}
+
+.grupoAcoes {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.botaoIcone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0.25rem;
+  color: var(--cor-texto);
+  cursor: pointer;
+  transition: color 0.2s ease, opacity 0.2s ease;
+  opacity: 0.7;
+}
+
+.botaoIcone:hover {
+  color: var(--cor-primaria);
+  opacity: 1;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--raio-sm);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  background-color: var(--cor-input-borda); /* Fundo padrão genérico */
+  color: var(--cor-texto);
+}
