@@ -5,6 +5,7 @@ import { Login } from '../pages/Login/Login';
 import Cadastro from '../pages/Equipamentos/Cadastro';
 import Opcoes from '../pages/Admin/Opcoes';
 import Localizacoes from '../pages/Admin/Localizacoes';
+import Listagem from '../pages/Equipamentos/Listagem';
 
 export function AppRoutes() {
   return (
@@ -22,15 +23,7 @@ export function AppRoutes() {
           }
         >
           <Route index element={<div>Dashboard em construção</div>} />
-          <Route
-            path="/equipamentos"
-            element={
-              <div>
-                <p>Listagem de Equipamentos</p>
-                <Link to="/equipamentos/cadastro">+ Novo Equipamento</Link>
-              </div>
-            }
-          />
+          <Route path="/equipamentos" element={<Listagem />} />
           <Route path="/equipamentos/cadastro" element={<Cadastro />} />
           <Route path="/admin/opcoes" element={<Opcoes />} />
           <Route path="/admin/localizacoes" element={<Localizacoes />} />
