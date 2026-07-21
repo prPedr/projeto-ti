@@ -4,10 +4,11 @@ import { criarOpcao, listarOpcoes } from '../../../services/opcoes';
 import type { OpcoesAgrupadas } from '../../../services/opcoes';
 import styles from './Opcoes.module.css';
 
-type CategoriaOpcao = 'MARCA' | 'PROCESSADOR' | 'MEMORIA' | 'ARMAZENAMENTO';
+type CategoriaOpcao = 'MARCA' | 'MODELO' | 'PROCESSADOR' | 'MEMORIA' | 'ARMAZENAMENTO';
 
 const CATEGORIAS: Array<{ valor: CategoriaOpcao; rotulo: string }> = [
   { valor: 'MARCA', rotulo: 'Marca' },
+  { valor: 'MODELO', rotulo: 'Modelo' },
   { valor: 'PROCESSADOR', rotulo: 'Processador' },
   { valor: 'MEMORIA', rotulo: 'Memória' },
   { valor: 'ARMAZENAMENTO', rotulo: 'Armazenamento' },
