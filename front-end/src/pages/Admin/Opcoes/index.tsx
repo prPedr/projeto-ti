@@ -168,10 +168,10 @@ export default function Opcoes() {
                     <li className={styles.itemLista} key={opcao.id}>
                       <span className={styles.itemTexto}>{opcao.valor}</span>
 
-                      <div className={styles.itemAcoes}>
+                      <div className={styles.grupoAcoes}>
                         <button
                           type="button"
-                          className={styles.botaoAcao}
+                          className={styles.botaoIcone}
                           title="Editar"
                           onClick={() => handleEditar(opcao.id, opcao.valor)}
                         >
@@ -182,7 +182,7 @@ export default function Opcoes() {
 
                         <button
                           type="button"
-                          className={styles.botaoAcao}
+                          className={styles.botaoIcone}
                           title="Excluir"
                           onClick={() => handleExcluir(opcao.id, opcao.valor)}
                         >

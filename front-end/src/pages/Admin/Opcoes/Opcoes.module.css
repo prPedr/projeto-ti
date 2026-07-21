@@ -117,29 +117,27 @@
   white-space: nowrap;
 }
 
-.itemAcoes {
+.grupoAcoes {
   display: flex;
-  gap: 4px;
+  gap: 0.75rem;
   flex-shrink: 0;
 }
 
-.botaoAcao {
+.botaoIcone {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  background: transparent;
   border: none;
-  border-radius: var(--raio-sm);
-  background-color: transparent;
-  color: var(--cor-texto-suave);
+  box-shadow: none;
+  padding: 0.25rem;
+  color: var(--cor-texto);
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: color 0.2s ease;
 }
 
-.botaoAcao:hover {
-  background-color: var(--cor-borda);
-  color: var(--cor-texto);
+.botaoIcone:hover {
+  color: var(--cor-primaria);
 }
 
 .listaVazia {

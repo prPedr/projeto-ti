@@ -32,3 +32,14 @@ export async function listarLocalizacoes() {
   const resposta = await fetchComToken('/api/localizacoes');
   return resposta.dados;
 }
+
+export async function listarEquipamentos() {
+  const resposta = await fetchComToken('/api/equipamentos');
+  return resposta.dados;
+}
+
+export async function excluirEquipamento(id: number) {
+  return fetchComToken(`/api/equipamentos/${id}`, {
+    method: 'DELETE',
+  });
+}
