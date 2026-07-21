@@ -2,7 +2,11 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import banco from '../database/conexao.js'
 
-const JWT_SECRET = process.env.JWT_SECRET ?? 'segredo_dev_trocar_em_producao'
+const JWT_SECRET = process.env.JWT_SECRET
+
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET não definida. Configure a variável de ambiente antes de iniciar o servidor.')
+}
 const JWT_EXPIRA_EM = '8h'
 
 interface UsuarioSistema {

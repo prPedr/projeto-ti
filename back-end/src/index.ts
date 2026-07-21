@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { iniciarRotinasCron } from './cron/backupCron.js'
 import app from './app.js'
 
