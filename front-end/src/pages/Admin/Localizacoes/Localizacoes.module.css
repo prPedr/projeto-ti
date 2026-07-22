@@ -1,5 +1,12 @@
 /* Variáveis de design system (--cor-primaria, --cor-cartao, etc.) vêm de
-   src/index.css, que é global — não precisam ser importadas aqui. */
+   src/index.css, que é global — não precisam ser importadas aqui.
+
+ * Variantes de botão disponíveis neste módulo:
+ *  - .botaoAdicionar  → ação primária (ex: "Adicionar") — fundo preto sólido.
+ *  - .botaoPaginacao  → controles de paginação — borda cinza leve, sem fill.
+ *  - .botaoSecundario → ações secundárias (ex: "Cancelar", "Voltar", filtros)
+ *                       — transparente com borda; destaque no hover via acento.
+ */
 
 .cartao {
   background-color: var(--cor-cartao);
@@ -138,3 +145,23 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ─── Botão Secundário ───────────────────────────────────────────────────── */
+/* Use para ações secundárias: "Cancelar", "Voltar", filtros opcionais, etc.  */
+.botaoSecundario {
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-md);
+  padding: 0.75rem 1.5rem;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cor-texto);
+  background-color: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.botaoSecundario:hover {
+  border-color: var(--cor-acento);
+  color: var(--cor-acento);
+}

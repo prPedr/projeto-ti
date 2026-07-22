@@ -1,3 +1,11 @@
+/*
+ * Variantes de botão disponíveis neste módulo:
+ *  - .botaoNovo       → ação primária (ex: "Novo Equipamento") — fundo preto sólido.
+ *  - .botaoIcone      → ações inline em linhas da tabela (editar/excluir) — ghost.
+ *  - .botaoSecundario → ações secundárias (ex: "Cancelar", "Voltar", filtros)
+ *                       — transparente com borda; destaque no hover via acento.
+ */
+
 .cartao {
   background-color: var(--cor-cartao);
   border-radius: var(--raio-lg);
@@ -89,4 +97,27 @@
 
 .botaoNovo:hover {
   background-color: var(--cor-primaria-hover);
+}
+
+/* ─── Botão Secundário ───────────────────────────────────────────────────── */
+/* Use para ações secundárias: filtros, "Cancelar", "Voltar", exportão, etc.  */
+.botaoSecundario {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-md);
+  padding: 0.75rem 1.5rem;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cor-texto);
+  background-color: transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.botaoSecundario:hover {
+  border-color: var(--cor-acento);
+  color: var(--cor-acento);
 }

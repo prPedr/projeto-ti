@@ -1,5 +1,12 @@
 /* As variáveis de design system (--cor-primaria, --cor-cartao, etc.) vêm de
-   src/index.css, que é global — não precisam ser importadas aqui. */
+   src/index.css, que é global — não precisam ser importadas aqui.
+
+ * Variantes de botão disponíveis neste módulo:
+ *  - .botaoSalvar     → ação primária (ex: "Salvar", "Confirmar") — fundo preto sólido.
+ *  - .botaoCancelar   → ação destrutiva/neutra já existente — borda cinza, sem fill.
+ *  - .botaoSecundario → ações secundárias genéricas (ex: "Voltar", filtros)
+ *                       — transparente com borda; destaque no hover via acento.
+ */
 
 .cartao {
   background-color: var(--cor-cartao);
@@ -119,4 +126,25 @@
 
 .botaoCancelar:hover {
   background-color: var(--cor-fundo);
+}
+
+/* ─── Botão Secundário ───────────────────────────────────────────────────── */
+/* Use para ações não-destrutivas de baixa prioridade: "Voltar", filtros,     */
+/* links de navegação, ações que não alteram dados. Diferente de .botaoCancelar,*/
+/* este é o padrão reutilizável do design system com hover via --cor-acento.  */
+.botaoSecundario {
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-md);
+  padding: 0.75rem 1.5rem;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cor-texto);
+  background-color: transparent;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.botaoSecundario:hover {
+  border-color: var(--cor-acento);
+  color: var(--cor-acento);
 }

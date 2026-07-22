@@ -1,3 +1,10 @@
+/*
+ * Variantes de botão disponíveis neste módulo:
+ *  - .botao          → ação primária (ex: "Entrar") — fundo preto sólido.
+ *  - .botaoSecundario → ações secundárias (ex: "Cancelar", "Voltar", filtros)
+ *                       — transparente com borda; destaque no hover via acento.
+ */
+
 .container {
   display: flex;
   align-items: center;
@@ -78,4 +85,25 @@
 
 .botao:hover {
   background-color: var(--cor-primaria-hover);
+}
+
+/* ─── Botão Secundário ────────────────────────────────────────────────────── */
+/* Use para ações não-destrutivas de baixa prioridade: "Cancelar", "Voltar",  */
+/* links de navegação lateral, filtros opcionais, etc.                         */
+.botaoSecundario {
+  width: 100%;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-md);
+  padding: 1rem;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cor-texto);
+  background-color: transparent;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.botaoSecundario:hover {
+  border-color: var(--cor-acento);
+  color: var(--cor-acento);
 }

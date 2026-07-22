@@ -1,9 +1,19 @@
 :root {
-  /* Cores primárias (botões pretos — não alterar) */
+  /* ─── Tipografia ─────────────────────────────────────────────────────────── */
+  --fonte-corpo:   'Inter', system-ui, sans-serif;
+  --fonte-display: 'Manrope', 'Inter', system-ui, sans-serif;
+  --fonte-mono:    'JetBrains Mono', 'Courier New', monospace;
+
+  /* ─── Cores primárias (botões pretos — não alterar) ─────────────────────── */
   --cor-primaria: #0f172a;
   --cor-primaria-hover: #334155;
 
-  /* Paleta de cinzas — camadas com mais contraste */
+  /* ─── Cores de acento (dourado/âmbar) ───────────────────────────────────── */
+  --cor-acento:       #B08A4E;
+  --cor-acento-hover: #9C7A42;
+  --cor-acento-suave: #F5EFE4;
+
+  /* ─── Paleta de cinzas — camadas com mais contraste ─────────────────────── */
   --cor-fundo: #e9ebf0;
   --cor-cartao: #f7f8fa;
   --cor-texto: #334155;
@@ -12,18 +22,18 @@
   --cor-input-fundo: #f8fafc;
   --cor-input-borda: #cbd5e1;
 
-  /* Sidebar */
+  /* ─── Sidebar ────────────────────────────────────────────────────────────── */
   --cor-sidebar-fundo: #1c1f26;
   --cor-sidebar-fundo-hover: #2a2e37;
   --cor-sidebar-texto: #9ca3af;
   --cor-sidebar-texto-ativo: #f7f8fa;
 
-  /* Raios de borda */
+  /* ─── Raios de borda ─────────────────────────────────────────────────────── */
   --raio-sm: 8px;
   --raio-md: 12px;
   --raio-lg: 20px;
 
-  /* Sombras */
+  /* ─── Sombras ────────────────────────────────────────────────────────────── */
   --sombra: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
   --sombra-elevada: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
 }
@@ -35,7 +45,14 @@
 }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--fonte-corpo);
   background-color: var(--cor-fundo);
   color: var(--cor-texto);
+}
+
+/* Headings usam a família display (Manrope) para hierarquia visual mais forte */
+h1,
+h2,
+h3 {
+  font-family: var(--fonte-display);
 }
