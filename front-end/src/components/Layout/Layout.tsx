@@ -65,7 +65,10 @@ export function Layout({ children }: LayoutProps) {
 
         <ul className={styles.menu}>
           {itens.map((item) => {
-            const ativo = location.pathname === item.to;
+            const ativo =
+              item.to === '/admin/opcoes'
+                ? location.pathname.startsWith('/admin/opcoes')
+                : location.pathname === item.to;
 
             return (
               <li className={styles.menuItem} key={item.to}>

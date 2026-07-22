@@ -182,3 +182,77 @@
   border-color: var(--cor-acento);
   color: var(--cor-acento);
 }
+
+/* ─── Cabeçalho & Hub de Opções ───────────────────────────────────────────── */
+.cabecalhoPagina {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.tituloPagina {
+  font-family: var(--fonte-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--cor-texto);
+}
+
+.subtituloPagina {
+  font-size: 14px;
+  color: var(--cor-texto-suave);
+  margin-top: 4px;
+}
+
+.hubGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.hubCard {
+  background-color: var(--cor-cartao);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-cartao);
+  padding: 1.5rem;
+  text-decoration: none;
+  color: var(--cor-texto);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.hubCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-elevada);
+  border-color: var(--cor-acento);
+}
+
+.hubCardIcone {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--raio-md);
+  background-color: var(--cor-input-fundo);
+  color: var(--cor-acento);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--fonte-display);
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.hubCardTitulo {
+  font-family: var(--fonte-display);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.hubCardDescricao {
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+  line-height: 1.4;
+}

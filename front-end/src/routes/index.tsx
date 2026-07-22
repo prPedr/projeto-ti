@@ -4,6 +4,10 @@ import { Layout } from '../components/Layout/Layout';
 import { Login } from '../pages/Login/Login';
 import Cadastro from '../pages/Equipamentos/Cadastro';
 import Opcoes from '../pages/Admin/Opcoes';
+import ComputadoresOpcoes from '../pages/Admin/Opcoes/Computadores';
+import SwitchesOpcoes from '../pages/Admin/Opcoes/Switches';
+import CelularesOpcoes from '../pages/Admin/Opcoes/Celulares';
+import NvrCameraOpcoes from '../pages/Admin/Opcoes/NvrCamera';
 import Localizacoes from '../pages/Admin/Localizacoes';
 import Listagem from '../pages/Equipamentos/Listagem';
 import Detalhes from '../pages/Equipamentos/Detalhes';
@@ -29,6 +33,10 @@ export function AppRoutes() {
           <Route path="/equipamentos/cadastro" element={<Cadastro />} />
           <Route path="/equipamentos/:id" element={<Detalhes />} />
           <Route path="/admin/opcoes" element={<Opcoes />} />
+          <Route path="/admin/opcoes/computadores" element={<ComputadoresOpcoes />} />
+          <Route path="/admin/opcoes/switches" element={<SwitchesOpcoes />} />
+          <Route path="/admin/opcoes/celulares" element={<CelularesOpcoes />} />
+          <Route path="/admin/opcoes/nvr-camera" element={<NvrCameraOpcoes />} />
           <Route path="/admin/localizacoes" element={<Localizacoes />} />
         </Route>
       </Routes>

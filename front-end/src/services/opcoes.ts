@@ -9,8 +9,9 @@ export interface OpcaoItem {
 
 export type OpcoesAgrupadas = Record<string, OpcaoItem[]>;
 
-export async function listarOpcoes(): Promise<OpcoesAgrupadas> {
-  const resposta = await fetchComToken('/api/opcoes');
+export async function listarOpcoes(tipoEquipamento?: string): Promise<OpcoesAgrupadas> {
+  const query = tipoEquipamento ? `?tipo_equipamento=${tipoEquipamento}` : '';
+  const resposta = await fetchComToken(`/api/opcoes${query}`);
   return resposta.dados;
 }
 
@@ -18,10 +19,16 @@ export async function criarOpcao(
   categoria: string,
   valor: string,
   dependencia_id?: number | null,
+  tipo_equipamento?: string | null,
 ) {
   return fetchComToken('/api/opcoes', {
     method: 'POST',
-    body: JSON.stringify({ categoria, valor, dependencia_id: dependencia_id ?? null }),
+    body: JSON.stringify({
+      categoria,
+      valor,
+      dependencia_id: dependencia_id ?? null,
+      tipo_equipamento: tipo_equipamento ?? null,
+    }),
   });
 }
 
