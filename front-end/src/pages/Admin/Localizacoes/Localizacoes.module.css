@@ -11,7 +11,7 @@
 .cartao {
   background-color: var(--cor-cartao);
   border-radius: var(--raio-lg);
-  box-shadow: var(--sombra);
+  box-shadow: var(--sombra-cartao);
   padding: 2rem;
 }
 

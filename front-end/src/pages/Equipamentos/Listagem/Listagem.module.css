@@ -9,7 +9,7 @@
 .cartao {
   background-color: var(--cor-cartao);
   border-radius: var(--raio-lg);
-  box-shadow: var(--sombra);
+  box-shadow: var(--sombra-cartao);
   padding: 2rem;
 }
 
@@ -77,8 +77,7 @@
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  background-color: var(--cor-input-borda); /* Fundo padrão genérico */
-  color: var(--cor-texto);
+  /* fundo e texto são injetados via style inline por corDoStatus() em index.tsx */
 }
 
 .botaoNovo {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { excluirEquipamento, listarEquipamentos } from '../../../services/equipamentos';
 import styles from './Listagem.module.css';
@@ -55,6 +55,33 @@ export default function Listagem() {
     return partes.length > 0 ? partes.join(' - ') : 'Não definida';
   }
 
+  /**
+   * Retorna o style inline de fundo + texto para o badge de status,
+   * consumindo os tokens CSS de --status-* definidos em index.css.
+   * Valores válidos (conforme CHECK no schema.sql):
+   *   'ATIVO' | 'ESTOQUE' | 'MANUTENCAO' | 'DESCARTADO'
+   */
+  function corDoStatus(status: string): React.CSSProperties {
+    const mapa: Record<string, React.CSSProperties> = {
+      ATIVO:      { backgroundColor: 'var(--status-ativo-fundo)',       color: 'var(--status-ativo-texto)' },
+      ESTOQUE:    { backgroundColor: 'var(--status-estoque-fundo)',     color: 'var(--status-estoque-texto)' },
+      MANUTENCAO: { backgroundColor: 'var(--status-manutencao-fundo)',  color: 'var(--status-manutencao-texto)' },
+      DESCARTADO: { backgroundColor: 'var(--status-descartado-fundo)',  color: 'var(--status-descartado-texto)' },
+    };
+    return mapa[status] ?? { backgroundColor: 'var(--cor-input-borda)', color: 'var(--cor-texto)' };
+  }
+
+  /** Converte o valor uppercase do banco para rótulo legivel em português. */
+  function rotuloDoStatus(status: string): string {
+    const rotulos: Record<string, string> = {
+      ATIVO:      'Ativo',
+      ESTOQUE:    'Em estoque',
+      MANUTENCAO: 'Manutenção',
+      DESCARTADO: 'Descartado',
+    };
+    return rotulos[status] ?? status;
+  }
+
   return (
     <div className={styles.cartao}>
       <div className={styles.cabecalhoAcoes}>
@@ -90,7 +117,9 @@ export default function Listagem() {
                 <td>{eq.modelo}</td>
                 <td>{formatarLocalizacao(eq)}</td>
                 <td>
-                  <span className={styles.statusBadge}>{eq.status}</span>
+                  <span className={styles.statusBadge} style={corDoStatus(eq.status)}>
+                    {rotuloDoStatus(eq.status)}
+                  </span>
                 </td>
                 <td>
                   <div className={styles.grupoAcoes}>

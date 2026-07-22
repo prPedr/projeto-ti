@@ -13,6 +13,12 @@
   --cor-acento-hover: #9C7A42;
   --cor-acento-suave: #F5EFE4;
 
+  /* ─── Status semânticos de equipamento ──────────────────────────────────── */
+  --status-ativo-fundo:        #DCFCE7;  --status-ativo-texto:        #15803D;
+  --status-manutencao-fundo:   #FEF3C7;  --status-manutencao-texto:   #B45309;
+  --status-estoque-fundo:      #DBEAFE;  --status-estoque-texto:      #1D4ED8;
+  --status-descartado-fundo:   #FEE2E2;  --status-descartado-texto:   #B91C1C;
+
   /* ─── Paleta de cinzas — camadas com mais contraste ─────────────────────── */
   --cor-fundo: #e9ebf0;
   --cor-cartao: #f7f8fa;
@@ -36,6 +42,8 @@
   /* ─── Sombras ────────────────────────────────────────────────────────────── */
   --sombra: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
   --sombra-elevada: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  /* Sombra refinada para cards — mais suave no near, mais ampla no far */
+  --sombra-cartao: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 16px rgba(15, 23, 42, 0.06);
 }
 
 * {
