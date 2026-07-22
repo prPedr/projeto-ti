@@ -45,7 +45,10 @@ export function Layout({ children }: LayoutProps) {
     <div className={`${styles.container} ${recolhida ? styles.recolhida : ''}`}>
       <aside className={styles.sidebar}>
         <div className={styles.cabecalhoSidebar}>
-          <span className={styles.logo}>{recolhida ? 'A' : 'AppTI'}</span>
+          <div className={styles.logo}>
+            <span className={styles.logoMarca} aria-hidden="true">TI</span>
+            {!recolhida && <span className={styles.logoTexto}>AppTI</span>}
+          </div>
 
           <button
             type="button"

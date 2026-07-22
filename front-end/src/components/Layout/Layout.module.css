@@ -38,9 +38,37 @@
   margin-bottom: 32px;
 }
 
+/* ─── Logo composta ──────────────────────────────────────────────────────── */
 .logo {
-  font-size: 20px;
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* Quadrado de marca: fundo de acento + iniciais "TI" em branco */
+.logoMarca {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--raio-sm);
+  background-color: var(--cor-acento);
+  color: #ffffff;
+  font-family: var(--fonte-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+
+/* Texto "AppTI" ao lado da marca — oculto no modo recolhido via JSX */
+.logoTexto {
+  font-size: 18px;
+  font-weight: 700;
+  font-family: var(--fonte-display);
   color: var(--cor-sidebar-texto-ativo);
   white-space: nowrap;
   overflow: hidden;
@@ -82,6 +110,7 @@
 }
 
 .menuItem a {
+  position: relative; /* ancora o ::before da barrinha de acento */
   display: flex;
   align-items: center;
   gap: 10px;
@@ -109,6 +138,19 @@
   background-color: var(--cor-sidebar-fundo-hover);
   color: var(--cor-sidebar-texto-ativo);
   font-weight: 600;
+}
+
+/* Barrinha de acento à esquerda do item ativo */
+.menuItem a.ativo::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  border-radius: 0 2px 2px 0;
+  background-color: var(--cor-acento);
 }
 
 .iconeInicial {
