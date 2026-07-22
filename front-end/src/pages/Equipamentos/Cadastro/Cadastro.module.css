@@ -135,6 +135,7 @@
   font-weight: 600;
   color: var(--cor-texto);
   background-color: transparent;
+  text-decoration: none;
   cursor: pointer;
   transition: border-color 0.2s ease, color 0.2s ease;
 }

@@ -173,12 +173,35 @@
   font-weight: 600;
   color: var(--cor-texto);
   background-color: transparent;
+  text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
   transition: border-color 0.2s ease, color 0.2s ease;
 }
 
 .botaoSecundario:hover {
+  border-color: var(--cor-acento);
+  color: var(--cor-acento);
+}
+
+.botaoVoltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-md);
+  padding: 0.5rem 1rem;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cor-texto);
+  background-color: transparent;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.botaoVoltar:hover {
   border-color: var(--cor-acento);
   color: var(--cor-acento);
 }

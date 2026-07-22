@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import type { SubmitEvent } from 'react';
-import { Link } from 'react-router-dom';
 import { criarOpcao, editarOpcao, excluirOpcao, listarOpcoes } from '../../../services/opcoes';
 import type { OpcoesAgrupadas, OpcaoItem } from '../../../services/opcoes';
 import styles from './Opcoes.module.css';
@@ -134,9 +133,6 @@ export function OpcoesPorTipo({
   return (
     <>
       <div className={styles.cabecalhoPagina}>
-        <Link to="/admin/opcoes" className={styles.botaoSecundario} style={{ padding: '0.5rem 1rem' }}>
-          ← Voltar
-        </Link>
         <div>
           <h1 className={styles.tituloPagina}>{titulo}</h1>
           {subtitulo && <p className={styles.subtituloPagina}>{subtitulo}</p>}

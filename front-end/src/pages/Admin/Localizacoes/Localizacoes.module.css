@@ -151,6 +151,7 @@
   font-weight: 600;
   color: var(--cor-texto);
   background-color: transparent;
+  text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
   transition: border-color 0.2s ease, color 0.2s ease;
