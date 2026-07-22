@@ -7,6 +7,7 @@ import Opcoes from '../pages/Admin/Opcoes';
 import Localizacoes from '../pages/Admin/Localizacoes';
 import Listagem from '../pages/Equipamentos/Listagem';
 import Detalhes from '../pages/Equipamentos/Detalhes';
+import Dashboard from '../pages/Dashboard';
 
 export function AppRoutes() {
   return (
@@ -23,7 +24,7 @@ export function AppRoutes() {
             </PrivateRoute>
           }
         >
-          <Route index element={<div>Dashboard em construção</div>} />
+          <Route index element={<Dashboard />} />
           <Route path="/equipamentos" element={<Listagem />} />
           <Route path="/equipamentos/cadastro" element={<Cadastro />} />
           <Route path="/equipamentos/:id" element={<Detalhes />} />
