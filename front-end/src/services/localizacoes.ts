@@ -22,11 +22,16 @@ export interface MetadadosPaginacao {
   totalPaginas: number;
 }
 
+export interface RespostaListagemLocalizacoes {
+  dados: Localizacao[];
+  metadados: MetadadosPaginacao;
+}
+
 export async function listarLocalizacoesAdmin(
-  pagina: number,
-  limite: number,
+  pagina = 1,
+  limite = 20,
   busca?: string,
-): Promise<{ dados: Localizacao[]; metadados: MetadadosPaginacao }> {
+): Promise<RespostaListagemLocalizacoes> {
   const parametros = new URLSearchParams({
     pagina: String(pagina),
     limite: String(limite),
