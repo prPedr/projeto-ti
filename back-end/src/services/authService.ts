@@ -45,7 +45,7 @@ export const realizarLogin = async (email: string, senha: string): Promise<Resul
     .get(email) as UsuarioSistema | undefined
 
   if (!usuario) {
-    throw new ErroAutenticacao('Usuário não encontrado.', 404)
+    throw new ErroAutenticacao('E-mail ou senha inválidos.', 401)
   }
 
   if (!usuario.ativo) {
@@ -55,7 +55,7 @@ export const realizarLogin = async (email: string, senha: string): Promise<Resul
   const senhaCorreta = await bcrypt.compare(senha, usuario.senha_hash)
 
   if (!senhaCorreta) {
-    throw new ErroAutenticacao('Senha incorreta.', 401)
+    throw new ErroAutenticacao('E-mail ou senha inválidos.', 401)
   }
 
   const token = jwt.sign({ id: usuario.id, perfil: usuario.perfil }, JWT_SECRET, {
