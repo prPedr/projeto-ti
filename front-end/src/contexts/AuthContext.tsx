@@ -18,8 +18,8 @@ import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { AuthContextData, Usuario } from '../types/auth';
 
-const TOKEN_KEY = '@AppTI:token';
-const USUARIO_KEY = '@AppTI:usuario';
+export const TOKEN_KEY = '@AppTI:token';
+export const USUARIO_KEY = '@AppTI:usuario';
 
 const AuthContext = createContext<AuthContextData | undefined>(undefined);
 

@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET
 if (!JWT_SECRET) {
   throw new Error('JWT_SECRET não definida. Configure a variável de ambiente antes de iniciar o servidor.')
 }
-const JWT_EXPIRA_EM = '8h'
+const JWT_EXPIRA_EM = '5s'
 
 interface UsuarioSistema {
   id: number

@@ -10,5 +10,6 @@ export async function realizarLogin(email: string, senha: string): Promise<Respo
   return fetchComToken('/api/auth/login', {
     method: 'POST',
     body: JSON.stringify({ email, senha }),
+    pularTratamento401: true,
   });
 }
