@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
+import multer from 'multer'
 
 interface ErroComCodigoSqlite extends Error {
   code?: string
@@ -31,6 +32,14 @@ export const tratadorDeErros = (
   }
 
   console.error(erro)
+
+  if (erro.code === 'LIMIT_FILE_SIZE' || (erro instanceof multer.MulterError && erro.code === 'LIMIT_FILE_SIZE')) {
+    resposta.status(400).json({
+      sucesso: false,
+      mensagem: 'Arquivo muito grande. Tamanho máximo permitido: 10MB.',
+    })
+    return
+  }
 
   if (erro.code?.startsWith('SQLITE_')) {
     resposta.status(400).json({
