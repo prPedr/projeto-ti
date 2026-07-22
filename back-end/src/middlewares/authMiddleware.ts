@@ -16,6 +16,7 @@ declare global {
   namespace Express {
     interface Request {
       usuarioId?: number
+      usuarioPerfil?: string
     }
   }
 }
@@ -38,6 +39,7 @@ export const autenticar = (requisicao: Request, resposta: Response, proximo: Nex
   try {
     const payload = jwt.verify(token, JWT_SECRET) as PayloadToken
     requisicao.usuarioId = payload.id
+    requisicao.usuarioPerfil = payload.perfil
     proximo()
   } catch (erro) {
     if (erro instanceof jwt.TokenExpiredError) {

@@ -32,12 +32,21 @@ export function AppRoutes() {
           <Route path="/equipamentos" element={<Listagem />} />
           <Route path="/equipamentos/cadastro" element={<Cadastro />} />
           <Route path="/equipamentos/:id" element={<Detalhes />} />
-          <Route path="/admin/opcoes" element={<Opcoes />} />
-          <Route path="/admin/opcoes/computadores" element={<ComputadoresOpcoes />} />
-          <Route path="/admin/opcoes/switches" element={<SwitchesOpcoes />} />
-          <Route path="/admin/opcoes/celulares" element={<CelularesOpcoes />} />
-          <Route path="/admin/opcoes/nvr-camera" element={<NvrCameraOpcoes />} />
-          <Route path="/admin/localizacoes" element={<Localizacoes />} />
+
+          <Route
+            element={
+              <PrivateRoute perfilExigido="ADMIN">
+                <Outlet />
+              </PrivateRoute>
+            }
+          >
+            <Route path="/admin/opcoes" element={<Opcoes />} />
+            <Route path="/admin/opcoes/computadores" element={<ComputadoresOpcoes />} />
+            <Route path="/admin/opcoes/switches" element={<SwitchesOpcoes />} />
+            <Route path="/admin/opcoes/celulares" element={<CelularesOpcoes />} />
+            <Route path="/admin/opcoes/nvr-camera" element={<NvrCameraOpcoes />} />
+            <Route path="/admin/localizacoes" element={<Localizacoes />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
