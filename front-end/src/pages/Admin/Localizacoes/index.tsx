@@ -75,7 +75,7 @@ export default function Localizacoes() {
   }
 
   return (
-    <div className={styles.cartao}>
+    <>
       <form className={styles.formulario} onSubmit={handleSubmit}>
         <div className={styles.campo}>
           <label htmlFor="filial">Filial</label>
@@ -186,6 +186,6 @@ export default function Localizacoes() {
           </button>
         </div>
       )}
-    </div>
+    </>
   );
 }

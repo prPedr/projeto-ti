@@ -8,27 +8,14 @@
  *                       — transparente com borda; destaque no hover via acento.
  */
 
-.cartao {
-  background-color: var(--cor-cartao);
-  border-radius: var(--raio-lg);
-  box-shadow: var(--sombra);
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  max-height: calc(100vh - 8rem);
-  overflow: hidden;
-}
+
 
 .form {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: hidden;
 }
 
 .areaRolagem {
-  flex: 1;
-  overflow-y: auto;
   padding-right: 1rem;
   margin-bottom: 1rem;
 }

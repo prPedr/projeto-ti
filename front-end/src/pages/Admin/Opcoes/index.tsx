@@ -100,7 +100,7 @@ export default function Opcoes() {
   const marcas = opcoes['MARCA'] ?? [];
 
   return (
-    <div className={styles.cartao}>
+    <>
       <form className={styles.formulario} onSubmit={handleSubmit}>
         <div className={styles.campo}>
           <label htmlFor="categoria">Categoria</label>
@@ -202,6 +202,6 @@ export default function Opcoes() {
           );
         })}
       </div>
-    </div>
+    </>
   );
 }

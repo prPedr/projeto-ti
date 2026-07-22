@@ -187,8 +187,7 @@ export default function Detalhes() {
   if (carregando) return <p>Carregando dados...</p>;
 
   return (
-    <div className={styles.cartao}>
-      <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
         <fieldset disabled={desabilitado} style={{ border: 'none', padding: 0, margin: 0 }}>
           <h2 className={styles.secaoTitulo}>Dados Básicos</h2>
           <div className={styles.grid2}>
@@ -707,6 +706,5 @@ export default function Detalhes() {
           )}
         </div>
       </form>
-    </div>
   );
 }

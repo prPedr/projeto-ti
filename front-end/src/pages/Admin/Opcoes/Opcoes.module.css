@@ -8,12 +8,7 @@
  *                       — transparente com borda; destaque no hover via acento.
  */
 
-.cartao {
-  background-color: var(--cor-cartao);
-  border-radius: var(--raio-lg);
-  box-shadow: var(--sombra-cartao);
-  padding: 2rem;
-}
+
 
 .formulario {
   display: flex;

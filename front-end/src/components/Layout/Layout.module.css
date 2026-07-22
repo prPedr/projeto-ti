@@ -2,7 +2,8 @@
   display: grid;
   grid-template-columns: 280px 1fr;
   transition: grid-template-columns 0.2s ease;
-  min-height: 100vh;
+  height: 100vh;     /* fixa a página na viewport — sem scroll no body */
+  overflow: hidden;  /* impede que filhos estourem para fora */
 }
 
 .container.recolhida {
@@ -13,9 +14,8 @@
   display: flex;
   flex-direction: column;
   background-color: var(--cor-sidebar-fundo);
-  border-radius: var(--raio-lg);
-  box-shadow: var(--sombra);
-  margin: 16px;
+  border-radius: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
   padding: 24px 24px;
   overflow: hidden;
 }
@@ -176,10 +176,38 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
-
+/* ─── Área de conteúdo ───────────────────────────────────────────────────── */
+/* Mesma margem de 16px que a sidebar usa (margin: 16px), sem margin-left     */
+/* pois a sidebar já cobre o espaçamento à esquerda via grid.                */
+/* height: 100% com min-height: 0 no flex container permite que o card       */
+/* acompanhe perfeitamente a altura da sidebar sem cálculo manual em calc().  */
 .conteudo {
+  display: flex;
+  flex-direction: column;
   flex: 1;
-  padding: 40px 32px;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 24px;
+  box-sizing: border-box;
+  background-color: var(--cor-cartao);
+  overflow-y: auto;
+
+  /* Scrollbar discreta — Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--cor-borda) transparent;
 }
+
+/* Scrollbar discreta — Chrome / Edge / Safari */
+.conteudo::-webkit-scrollbar        { width: 6px; }
+.conteudo::-webkit-scrollbar-track  { background: transparent; }
+.conteudo::-webkit-scrollbar-thumb  {
+  background-color: var(--cor-borda);
+  border-radius: 3px;
+}
+

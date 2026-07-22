@@ -83,7 +83,7 @@ export default function Listagem() {
   }
 
   return (
-    <div className={styles.cartao}>
+    <>
       <div className={styles.cabecalhoAcoes}>
         <h2>Equipamentos</h2>
         <Link to="/equipamentos/cadastro" className={styles.botaoNovo}>
@@ -189,6 +189,6 @@ export default function Listagem() {
           </tbody>
         </table>
       )}
-    </div>
+    </>
   );
 }

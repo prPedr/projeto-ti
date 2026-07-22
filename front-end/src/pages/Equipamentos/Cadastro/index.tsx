@@ -165,8 +165,7 @@ export default function Cadastro() {
   }
 
   return (
-    <div className={styles.cartao}>
-      <form className={styles.form} onSubmit={handleSubmit}>
+    <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.areaRolagem}>
           <h2 className={styles.secaoTitulo}>Dados Básicos</h2>
         <div className={styles.grid2}>
@@ -675,6 +674,5 @@ export default function Cadastro() {
           </button>
         </div>
       </form>
-    </div>
   );
 }
