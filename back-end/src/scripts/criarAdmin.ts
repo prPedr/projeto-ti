@@ -2,12 +2,26 @@ import bcrypt from 'bcrypt'
 import banco from '../database/conexao.js'
 
 const NOME = 'Administrador'
-const EMAIL = 'admin@admin.com'
-const SENHA = 'admin123'
+const envEmail = process.env.ADMIN_EMAIL
+const envSenha = process.env.ADMIN_SENHA
+
+if (!envEmail || !envSenha) {
+  console.warn(
+    'ADMIN_EMAIL/ADMIN_SENHA não definidos — usando credenciais padrão INSEGURAS. Defina essas variáveis antes de rodar em produção.',
+  )
+}
+
+const EMAIL = envEmail || 'admin@admin.com'
+const SENHA = envSenha || 'admin123'
 const PERFIL = 'ADMIN'
 
 ;(async () => {
   try {
+    if (SENHA.length < 8) {
+      console.error('Erro: A senha do administrador deve ter no mínimo 8 caracteres.')
+      return
+    }
+
     const senhaHash = bcrypt.hashSync(SENHA, 10)
 
     banco
