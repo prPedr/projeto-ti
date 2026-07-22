@@ -109,39 +109,50 @@
   list-style: none;
 }
 
-.menuItem a {
+.menuItem a,
+.menuItemBotao {
   position: relative; /* ancora o ::before da barrinha de acento */
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%;
   padding: 10px 20px;
+  border: none;
   border-radius: var(--raio-sm);
+  background: transparent;
   color: var(--cor-sidebar-texto);
   text-decoration: none;
+  font-family: inherit;
   font-size: 14px;
+  text-align: left;
   white-space: nowrap;
+  cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.recolhida .menuItem a {
+.recolhida .menuItem a,
+.recolhida .menuItemBotao {
   justify-content: center;
   padding: 8px;
   gap: 0;
 }
 
-.menuItem a:hover {
+.menuItem a:hover,
+.menuItemBotao:hover {
   background-color: var(--cor-sidebar-fundo-hover);
   color: var(--cor-sidebar-texto-ativo);
 }
 
-.menuItem a.ativo {
+.menuItem a.ativo,
+.menuItemBotao.ativo {
   background-color: var(--cor-sidebar-fundo-hover);
   color: var(--cor-sidebar-texto-ativo);
   font-weight: 600;
 }
 
 /* Barrinha de acento à esquerda do item ativo */
-.menuItem a.ativo::before {
+.menuItem a.ativo::before,
+.menuItemBotao.ativo::before {
   content: '';
   position: absolute;
   left: 0;
@@ -153,46 +164,20 @@
   background-color: var(--cor-acento);
 }
 
-.menuItemLinha {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-.menuItemLinha a {
-  flex: 1;
-}
-
-.botaoExpandir {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
+/* Indicador de seta dentro do botão do item pai com submenu */
+.indicadorSeta {
+  margin-left: auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  border: none;
-  border-radius: var(--raio-sm);
-  background: transparent;
   color: var(--cor-sidebar-texto);
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
-  z-index: 2;
 }
 
-.botaoExpandir:hover {
-  background-color: var(--cor-sidebar-fundo-hover);
-  color: var(--cor-sidebar-texto-ativo);
-}
-
-.botaoExpandir svg {
+.indicadorSeta svg {
   transition: transform 0.2s ease;
 }
 
-.botaoExpandir.expandido svg {
+.indicadorSeta.expandido svg {
   transform: rotate(90deg);
 }
 

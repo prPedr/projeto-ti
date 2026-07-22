@@ -95,7 +95,31 @@ export function Layout({ children }: LayoutProps) {
 
             return (
               <li className={styles.menuItem} key={item.to}>
-                <div className={styles.menuItemLinha}>
+                {temSubItens ? (
+                  <button
+                    type="button"
+                    className={`${styles.menuItemBotao} ${paiAtivo ? styles.ativo : ''}`}
+                    title={recolhida ? item.rotulo : undefined}
+                    onClick={() => {
+                      if (recolhida) {
+                        setRecolhida(false);
+                        setItemExpandido(item.to);
+                      } else {
+                        setItemExpandido((prev) => (prev === item.to ? null : item.to));
+                      }
+                    }}
+                  >
+                    <span className={styles.iconeInicial}>{item.inicial}</span>
+                    {!recolhida && <span className={styles.rotulo}>{item.rotulo}</span>}
+                    {!recolhida && (
+                      <span className={`${styles.indicadorSeta} ${expandido ? styles.expandido : ''}`}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                      </span>
+                    )}
+                  </button>
+                ) : (
                   <Link
                     to={item.to}
                     className={paiAtivo ? styles.ativo : undefined}
@@ -104,25 +128,7 @@ export function Layout({ children }: LayoutProps) {
                     <span className={styles.iconeInicial}>{item.inicial}</span>
                     {!recolhida && <span className={styles.rotulo}>{item.rotulo}</span>}
                   </Link>
-
-                  {!recolhida && temSubItens && (
-                    <button
-                      type="button"
-                      className={`${styles.botaoExpandir} ${expandido ? styles.expandido : ''}`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setItemExpandido((prev) => (prev === item.to ? null : item.to));
-                      }}
-                      aria-label={expandido ? 'Recolher submenu' : 'Expandir submenu'}
-                      title={expandido ? 'Recolher submenu' : 'Expandir submenu'}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="9 18 15 12 9 6" />
-                      </svg>
-                    </button>
-                  )}
-                </div>
+                )}
 
                 {expandido && temSubItens && (
                   <ul className={styles.subMenu}>
