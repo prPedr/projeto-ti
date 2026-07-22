@@ -32,6 +32,7 @@ CREATE TABLE opcoes_predefinidas (
     categoria TEXT NOT NULL,
     valor TEXT NOT NULL,
     dependencia_id INTEGER DEFAULT NULL,
+    tipo_equipamento TEXT CHECK (tipo_equipamento IN ('COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR_CAMERA')),
     UNIQUE(categoria, valor),
     FOREIGN KEY (dependencia_id) REFERENCES opcoes_predefinidas(id) ON DELETE SET NULL
 );

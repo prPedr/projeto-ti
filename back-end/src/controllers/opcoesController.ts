@@ -8,16 +8,16 @@ type DadosValidadosListagem = {
 }
 
 export const listar = (requisicao: Request, resposta: Response) => {
-  const { categoria } = (requisicao.dadosValidados as DadosValidadosListagem).query
+  const { categoria, tipo_equipamento } = (requisicao.dadosValidados as DadosValidadosListagem).query
 
-  const dados = listarOpcoes(categoria)
+  const dados = listarOpcoes(categoria, tipo_equipamento)
   resposta.status(200).json({ sucesso: true, dados })
 }
 
 export const criar = (requisicao: Request, resposta: Response) => {
-  const { categoria, valor, dependencia_id } = requisicao.body
+  const { categoria, valor, dependencia_id, tipo_equipamento } = requisicao.body
 
-  const id = adicionarOpcao(categoria, valor, dependencia_id)
+  const id = adicionarOpcao(categoria, valor, dependencia_id, tipo_equipamento)
   resposta.status(201).json({ sucesso: true, id })
 }
 

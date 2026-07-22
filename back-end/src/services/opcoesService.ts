@@ -5,20 +5,39 @@ export interface OpcaoPredefinida {
   categoria: string
   valor: string
   dependencia_id: number | null
+  tipo_equipamento: string | null
 }
 
-export const listarOpcoes = (categoria?: string): OpcaoPredefinida[] | Record<string, OpcaoPredefinida[]> => {
+export const listarOpcoes = (
+  categoria?: string,
+  tipoEquipamento?: string,
+): OpcaoPredefinida[] | Record<string, OpcaoPredefinida[]> => {
+  const condicoes: string[] = []
+  const parametros: unknown[] = []
+
+  if (categoria) {
+    condicoes.push('categoria = ?')
+    parametros.push(categoria)
+  }
+
+  if (tipoEquipamento) {
+    condicoes.push('tipo_equipamento = ?')
+    parametros.push(tipoEquipamento)
+  }
+
+  const onde = condicoes.length > 0 ? `WHERE ${condicoes.join(' AND ')}` : ''
+
   if (categoria) {
     const opcoes = banco
-      .prepare('SELECT id, categoria, valor, dependencia_id FROM opcoes_predefinidas WHERE categoria = ? ORDER BY valor')
-      .all(categoria) as OpcaoPredefinida[]
+      .prepare(`SELECT id, categoria, valor, dependencia_id, tipo_equipamento FROM opcoes_predefinidas ${onde} ORDER BY valor`)
+      .all(...parametros) as OpcaoPredefinida[]
 
     return opcoes
   }
 
   const todas = banco
-    .prepare('SELECT id, categoria, valor, dependencia_id FROM opcoes_predefinidas ORDER BY categoria, valor')
-    .all() as OpcaoPredefinida[]
+    .prepare(`SELECT id, categoria, valor, dependencia_id, tipo_equipamento FROM opcoes_predefinidas ${onde} ORDER BY categoria, valor`)
+    .all(...parametros) as OpcaoPredefinida[]
 
   const agrupado: Record<string, OpcaoPredefinida[]> = {}
   for (const opcao of todas) {
@@ -29,11 +48,16 @@ export const listarOpcoes = (categoria?: string): OpcaoPredefinida[] | Record<st
   return agrupado
 }
 
-export const adicionarOpcao = (categoria: string, valor: string, dependencia_id?: number | null) => {
+export const adicionarOpcao = (
+  categoria: string,
+  valor: string,
+  dependencia_id?: number | null,
+  tipoEquipamento?: string | null,
+) => {
   const comando = banco.prepare(
-    'INSERT INTO opcoes_predefinidas (categoria, valor, dependencia_id) VALUES (?, ?, ?)',
+    'INSERT INTO opcoes_predefinidas (categoria, valor, dependencia_id, tipo_equipamento) VALUES (?, ?, ?, ?)',
   )
-  const resultado = comando.run(categoria, valor, dependencia_id ?? null)
+  const resultado = comando.run(categoria, valor, dependencia_id ?? null, tipoEquipamento ?? null)
   return resultado.lastInsertRowid
 }
 
