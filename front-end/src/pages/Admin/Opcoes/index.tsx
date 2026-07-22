@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { SubmitEvent } from 'react';
 import { criarOpcao, editarOpcao, excluirOpcao, listarOpcoes } from '../../../services/opcoes';
-import type { OpcoesAgrupadas } from '../../../services/opcoes';
+import type { OpcoesAgrupadas, OpcaoItem } from '../../../services/opcoes';
 import styles from './Opcoes.module.css';
 
 type CategoriaOpcao = 'MARCA' | 'MODELO' | 'PROCESSADOR' | 'MEMORIA' | 'ARMAZENAMENTO';
@@ -99,6 +99,39 @@ export default function Opcoes() {
 
   const marcas = opcoes['MARCA'] ?? [];
 
+  function renderItemLista(opcao: OpcaoItem) {
+    return (
+      <li className={styles.itemLista} key={opcao.id}>
+        <span className={styles.itemTexto}>{opcao.valor}</span>
+
+        <div className={styles.grupoAcoes}>
+          <button
+            type="button"
+            className={styles.botaoIcone}
+            title="Editar"
+            onClick={() => handleEditar(opcao.id, opcao.valor)}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            className={styles.botaoIcone}
+            title="Excluir"
+            onClick={() => handleExcluir(opcao.id, opcao.valor)}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            </svg>
+          </button>
+        </div>
+      </li>
+    );
+  }
+
   return (
     <>
       <form className={styles.formulario} onSubmit={handleSubmit}>
@@ -158,42 +191,50 @@ export default function Opcoes() {
         {CATEGORIAS.map((item) => {
           const valores = opcoes[item.valor] ?? [];
 
+          if (item.valor === 'MODELO') {
+            const gruposMap: Record<string, OpcaoItem[]> = {};
+            valores.forEach((m) => {
+              const marca = marcas.find((b) => b.id === m.dependencia_id);
+              const chave = marca ? marca.valor : 'Sem marca vinculada';
+              if (!gruposMap[chave]) {
+                gruposMap[chave] = [];
+              }
+              gruposMap[chave].push(m);
+            });
+
+            const chavesOrdenadas = Object.keys(gruposMap).sort((a, b) => {
+              if (a === 'Sem marca vinculada') return 1;
+              if (b === 'Sem marca vinculada') return -1;
+              return a.localeCompare(b);
+            });
+
+            return (
+              <div className={styles.categoriaCard} key={item.valor}>
+                <h2 className={styles.categoriaTitulo}>{item.rotulo}</h2>
+
+                {valores.length > 0 ? (
+                  chavesOrdenadas.map((chave) => (
+                    <div key={chave} className={styles.subgrupo}>
+                      <h3 className={styles.subgrupoTitulo}>{chave}</h3>
+                      <ul className={styles.lista}>
+                        {gruposMap[chave].map(renderItemLista)}
+                      </ul>
+                    </div>
+                  ))
+                ) : (
+                  <p className={styles.listaVazia}>Nenhum valor cadastrado.</p>
+                )}
+              </div>
+            );
+          }
+
           return (
             <div className={styles.categoriaCard} key={item.valor}>
               <h2 className={styles.categoriaTitulo}>{item.rotulo}</h2>
 
               {valores.length > 0 ? (
                 <ul className={styles.lista}>
-                  {valores.map((opcao) => (
-                    <li className={styles.itemLista} key={opcao.id}>
-                      <span className={styles.itemTexto}>{opcao.valor}</span>
-
-                      <div className={styles.grupoAcoes}>
-                        <button
-                          type="button"
-                          className={styles.botaoIcone}
-                          title="Editar"
-                          onClick={() => handleEditar(opcao.id, opcao.valor)}
-                        >
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-                          </svg>
-                        </button>
-
-                        <button
-                          type="button"
-                          className={styles.botaoIcone}
-                          title="Excluir"
-                          onClick={() => handleExcluir(opcao.id, opcao.valor)}
-                        >
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="3 6 5 6 21 6" />
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                          </svg>
-                        </button>
-                      </div>
-                    </li>
-                  ))}
+                  {valores.map(renderItemLista)}
                 </ul>
               ) : (
                 <p className={styles.listaVazia}>Nenhum valor cadastrado.</p>

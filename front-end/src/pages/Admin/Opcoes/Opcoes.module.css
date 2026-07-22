@@ -92,6 +92,22 @@
   margin-bottom: 0.75rem;
 }
 
+.subgrupo {
+  margin-top: 0.85rem;
+}
+
+.subgrupo:first-of-type {
+  margin-top: 0;
+}
+
+.subgrupoTitulo {
+  font-family: var(--fonte-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cor-texto-suave);
+  margin-bottom: 0.5rem;
+}
+
 .lista {
   list-style: none;
   display: flex;
