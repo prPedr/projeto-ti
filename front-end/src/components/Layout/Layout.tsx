@@ -12,6 +12,7 @@ interface ItemMenu {
   to: string;
   rotulo: string;
   inicial: string;
+  subItens?: ItemMenu[];
 }
 
 const CHAVE_SIDEBAR_RECOLHIDA = 'appti:sidebar-recolhida';
@@ -23,7 +24,17 @@ const ITENS_MENU: ItemMenu[] = [
 ];
 
 const ITENS_MENU_ADMIN: ItemMenu[] = [
-  { to: '/admin/opcoes', rotulo: 'Opções', inicial: 'O' },
+  {
+    to: '/admin/opcoes',
+    rotulo: 'Opções',
+    inicial: 'O',
+    subItens: [
+      { to: '/admin/opcoes/computadores', rotulo: 'Computadores', inicial: 'C' },
+      { to: '/admin/opcoes/switches', rotulo: 'Switches', inicial: 'S' },
+      { to: '/admin/opcoes/celulares', rotulo: 'Celulares', inicial: 'M' },
+      { to: '/admin/opcoes/nvr-camera', rotulo: 'NVR/Câmeras', inicial: 'N' },
+    ],
+  },
   { to: '/admin/localizacoes', rotulo: 'Localizações', inicial: 'L' },
 ];
 
@@ -35,11 +46,23 @@ export function Layout({ children }: LayoutProps) {
     () => localStorage.getItem(CHAVE_SIDEBAR_RECOLHIDA) === 'true',
   );
 
+  const [itemExpandido, setItemExpandido] = useState<string | null>(null);
+
   useEffect(() => {
     localStorage.setItem(CHAVE_SIDEBAR_RECOLHIDA, String(recolhida));
   }, [recolhida]);
 
   const itens = usuario?.perfil === 'ADMIN' ? [...ITENS_MENU, ...ITENS_MENU_ADMIN] : ITENS_MENU;
+
+  // Auto-expande se a rota atual for um dos subitens
+  useEffect(() => {
+    for (const item of itens) {
+      if (item.subItens?.some((sub) => sub.to === location.pathname)) {
+        setItemExpandido(item.to);
+        break;
+      }
+    }
+  }, [location.pathname, itens]);
 
   return (
     <div className={`${styles.container} ${recolhida ? styles.recolhida : ''}`}>
@@ -65,21 +88,60 @@ export function Layout({ children }: LayoutProps) {
 
         <ul className={styles.menu}>
           {itens.map((item) => {
-            const ativo =
-              item.to === '/admin/opcoes'
-                ? location.pathname.startsWith('/admin/opcoes')
-                : location.pathname === item.to;
+            const temSubItens = Boolean(item.subItens && item.subItens.length > 0);
+            const ehFilhoAtivo = temSubItens && item.subItens!.some((sub) => sub.to === location.pathname);
+            const paiAtivo = location.pathname === item.to || ehFilhoAtivo;
+            const expandido = !recolhida && itemExpandido === item.to;
 
             return (
               <li className={styles.menuItem} key={item.to}>
-                <Link
-                  to={item.to}
-                  className={ativo ? styles.ativo : undefined}
-                  title={recolhida ? item.rotulo : undefined}
-                >
-                  <span className={styles.iconeInicial}>{item.inicial}</span>
-                  {!recolhida && <span className={styles.rotulo}>{item.rotulo}</span>}
-                </Link>
+                <div className={styles.menuItemLinha}>
+                  <Link
+                    to={item.to}
+                    className={paiAtivo ? styles.ativo : undefined}
+                    title={recolhida ? item.rotulo : undefined}
+                  >
+                    <span className={styles.iconeInicial}>{item.inicial}</span>
+                    {!recolhida && <span className={styles.rotulo}>{item.rotulo}</span>}
+                  </Link>
+
+                  {!recolhida && temSubItens && (
+                    <button
+                      type="button"
+                      className={`${styles.botaoExpandir} ${expandido ? styles.expandido : ''}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setItemExpandido((prev) => (prev === item.to ? null : item.to));
+                      }}
+                      aria-label={expandido ? 'Recolher submenu' : 'Expandir submenu'}
+                      title={expandido ? 'Recolher submenu' : 'Expandir submenu'}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+
+                {expandido && temSubItens && (
+                  <ul className={styles.subMenu}>
+                    {item.subItens!.map((subItem) => {
+                      const subAtivo = location.pathname === subItem.to;
+                      return (
+                        <li className={styles.subMenuItem} key={subItem.to}>
+                          <Link
+                            to={subItem.to}
+                            className={subAtivo ? styles.ativo : undefined}
+                          >
+                            <span className={styles.iconeInicialSub}>{subItem.inicial}</span>
+                            <span className={styles.rotulo}>{subItem.rotulo}</span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </li>
             );
           })}

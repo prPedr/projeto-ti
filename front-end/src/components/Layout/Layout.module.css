@@ -153,6 +153,108 @@
   background-color: var(--cor-acento);
 }
 
+.menuItemLinha {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.menuItemLinha a {
+  flex: 1;
+}
+
+.botaoExpandir {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: var(--raio-sm);
+  background: transparent;
+  color: var(--cor-sidebar-texto);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  z-index: 2;
+}
+
+.botaoExpandir:hover {
+  background-color: var(--cor-sidebar-fundo-hover);
+  color: var(--cor-sidebar-texto-ativo);
+}
+
+.botaoExpandir svg {
+  transition: transform 0.2s ease;
+}
+
+.botaoExpandir.expandido svg {
+  transform: rotate(90deg);
+}
+
+/* ─── Submenu ───────────────────────────────────────────────────────────── */
+.subMenu {
+  list-style: none;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.subMenuItem a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px 8px 40px;
+  border-radius: var(--raio-sm);
+  color: var(--cor-sidebar-texto);
+  text-decoration: none;
+  font-size: 13px;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.subMenuItem a:hover {
+  background-color: var(--cor-sidebar-fundo-hover);
+  color: var(--cor-sidebar-texto-ativo);
+}
+
+.subMenuItem a.ativo {
+  background-color: var(--cor-sidebar-fundo-hover);
+  color: var(--cor-sidebar-texto-ativo);
+  font-weight: 600;
+}
+
+.subMenuItem a.ativo::before {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 55%;
+  border-radius: 0 2px 2px 0;
+  background-color: var(--cor-acento);
+}
+
+.iconeInicialSub {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--raio-sm);
+  background-color: rgba(255, 255, 255, 0.06);
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .iconeInicial {
   display: flex;
   align-items: center;
@@ -162,7 +264,7 @@
   height: 36px;
   border-radius: var(--raio-sm);
   background-color: rgba(255, 255, 255, 0.08);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   transition: width 0.2s ease, height 0.2s ease;
 }
