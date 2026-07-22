@@ -8,7 +8,7 @@ import { atualizarEquipamentoSchema, listarEquipamentosSchema } from '../schemas
 
 const rotasEquipamentos = Router()
 
-rotasEquipamentos.get('/', validarSchema(listarEquipamentosSchema), listar)
+rotasEquipamentos.get('/', autenticar, validarSchema(listarEquipamentosSchema), listar)
 rotasEquipamentos.get('/:id', autenticar, buscarPorId)
 rotasEquipamentos.put('/:id', autenticar, validarSchema(atualizarEquipamentoSchema), atualizar)
 rotasEquipamentos.post('/:id/anexos', autenticar, upload.single('arquivo'), uploadAnexo)
