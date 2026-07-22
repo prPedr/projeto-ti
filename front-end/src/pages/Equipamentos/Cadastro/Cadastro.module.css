@@ -87,6 +87,14 @@
   cursor: pointer;
 }
 
+/* ─── Variante mono para identificadores técnicos ───────────────────────── */
+/* Use em: IP, MAC, S/N, IMEI, firmware, VLANs. NÃO use em nomes/marcas.    */
+/* Detalhes/index.tsx também importa este módulo — a classe serve ambos.     */
+.inputMono {
+  font-family: var(--fonte-mono);
+  font-size: 13px;
+}
+
 .botoesAcao {
   display: flex;
   justify-content: flex-end;

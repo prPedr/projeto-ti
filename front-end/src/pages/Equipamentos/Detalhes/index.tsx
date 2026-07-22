@@ -361,7 +361,7 @@ export default function Detalhes() {
                   <input
                     id="numero_serie"
                     name="numero_serie"
-                    className={styles.input}
+                    className={`${styles.input} ${styles.inputMono}`}
                     value={dadosDetalhe.numero_serie ?? ''}
                     onChange={handleDetalheChange}
                   />
@@ -475,7 +475,7 @@ export default function Detalhes() {
                   <input
                     id="firmware"
                     name="firmware"
-                    className={styles.input}
+                    className={`${styles.input} ${styles.inputMono}`}
                     value={dadosDetalhe.firmware ?? ''}
                     onChange={handleDetalheChange}
                   />
@@ -485,7 +485,7 @@ export default function Detalhes() {
                   <input
                     id="vlans_configuradas"
                     name="vlans_configuradas"
-                    className={styles.input}
+                    className={`${styles.input} ${styles.inputMono}`}
                     value={dadosDetalhe.vlans_configuradas ?? ''}
                     onChange={handleDetalheChange}
                   />
@@ -513,7 +513,7 @@ export default function Detalhes() {
                   <input
                     id="imei"
                     name="imei"
-                    className={styles.input}
+                    className={`${styles.input} ${styles.inputMono}`}
                     placeholder="15 dígitos"
                     value={dadosDetalhe.imei ?? ''}
                     onChange={handleDetalheChange}
@@ -524,7 +524,7 @@ export default function Detalhes() {
                   <input
                     id="numero_serie"
                     name="numero_serie"
-                    className={styles.input}
+                    className={`${styles.input} ${styles.inputMono}`}
                     value={dadosDetalhe.numero_serie ?? ''}
                     onChange={handleDetalheChange}
                   />
@@ -628,7 +628,7 @@ export default function Detalhes() {
                   <input
                     id="firmware"
                     name="firmware"
-                    className={styles.input}
+                    className={`${styles.input} ${styles.inputMono}`}
                     value={dadosDetalhe.firmware ?? ''}
                     onChange={handleDetalheChange}
                   />
@@ -654,7 +654,7 @@ export default function Detalhes() {
                 <label htmlFor={`ip_${indice}`}>IP</label>
                 <input
                   id={`ip_${indice}`}
-                  className={styles.input}
+                  className={`${styles.input} ${styles.inputMono}`}
                   placeholder="Ex: 192.168.0.10"
                   value={interfaceRede.ip}
                   onChange={(event) => handleInterfaceChange(indice, 'ip', event.target.value)}
@@ -664,7 +664,7 @@ export default function Detalhes() {
                 <label htmlFor={`mac_${indice}`}>MAC</label>
                 <input
                   id={`mac_${indice}`}
-                  className={styles.input}
+                  className={`${styles.input} ${styles.inputMono}`}
                   placeholder="AA:BB:CC:DD:EE:FF"
                   value={interfaceRede.mac}
                   onChange={(event) => handleInterfaceChange(indice, 'mac', event.target.value)}

@@ -41,6 +41,13 @@
   color: var(--cor-texto);
 }
 
+/* Variante mono para células de identificadores técnicos: IP, MAC, S/N.    */
+/* Aplique em <td className={styles.tdMono}> quando essas colunas existirem. */
+.tdMono {
+  font-family: var(--fonte-mono);
+  font-size: 13px;
+}
+
 .tabela tbody tr:hover {
   background-color: var(--cor-input-fundo);
 }
