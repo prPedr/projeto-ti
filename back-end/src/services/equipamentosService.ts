@@ -191,24 +191,69 @@ export const buscarEquipamentoPorId = (id: number) => {
   return { mestre, detalhe, interfaces };
 }
 
+const COLUNAS_PERMITIDAS_MESTRE = [
+  'nome',
+  'marca',
+  'modelo',
+  'status',
+  'localizacao_id',
+  'fornecedor',
+  'data_garantia',
+  'observacao',
+]
+
+const COLUNAS_PERMITIDAS_DETALHE: Record<string, string[]> = {
+  eq_computadores: [
+    'usuario_alocado',
+    'tag_patrimonio',
+    'numero_serie',
+    'processador',
+    'memoria',
+    'armazenamento',
+    'sistema_operacional',
+    'antivirus_instalado',
+  ],
+  eq_switches: ['numero_portas', 'portas_em_uso', 'firmware', 'vlans_configuradas'],
+  eq_celulares: [
+    'usuario_alocado',
+    'imei',
+    'numero_serie',
+    'memoria',
+    'armazenamento',
+    'operadora_numero',
+    'modalidade',
+    'sistema_operacional',
+  ],
+  eq_cftv: [
+    'identificacao_extra',
+    'capacidade_armazenamento',
+    'quantidade_canais_resolucao',
+    'firmware',
+  ],
+}
+
 export const atualizarEquipamento = (id: number, payload: any) => {
   const higienizarValores = (valores: any[]) => valores.map(v => typeof v === 'boolean' ? (v ? 1 : 0) : v);
 
   const transacao = banco.transaction(() => {
     // 1. Atualizar Mestre
-    if (payload.mestre && Object.keys(payload.mestre).length > 0) {
-      const keysMestre = Object.keys(payload.mestre);
-      const setMestre = keysMestre.map(k => `${k} = ?`).join(', ');
-      const valoresMestre = higienizarValores([...Object.values(payload.mestre), id]);
-      banco.prepare(`UPDATE equipamentos SET ${setMestre} WHERE id = ?`).run(...valoresMestre);
+    if (payload.mestre && typeof payload.mestre === 'object') {
+      const keysMestre = Object.keys(payload.mestre).filter(k => COLUNAS_PERMITIDAS_MESTRE.includes(k));
+
+      if (keysMestre.length > 0) {
+        const setMestre = keysMestre.map(k => `${k} = ?`).join(', ');
+        const rawValues = keysMestre.map(k => payload.mestre[k]);
+        const valoresMestre = higienizarValores([...rawValues, id]);
+        banco.prepare(`UPDATE equipamentos SET ${setMestre} WHERE id = ?`).run(...valoresMestre);
+      }
     }
 
     // 2. Atualizar Detalhes
-    if (payload.detalhe && Object.keys(payload.detalhe).length > 0) {
+    if (payload.detalhe && typeof payload.detalhe === 'object') {
       // Se a categoria não vier no payload, buscamos do banco para saber qual tabela atualizar
       let categoria = payload.mestre?.categoria;
       if (!categoria) {
-        const equipamento = banco.prepare('SELECT categoria FROM equipamentos WHERE id = ?').get(id) as any;
+        const equipamento = banco.prepare('SELECT categoria FROM equipamentos WHERE id = ?').get(id) as { categoria: string } | undefined;
         categoria = equipamento?.categoria;
       }
 
@@ -221,16 +266,21 @@ export const atualizarEquipamento = (id: number, payload: any) => {
         case 'CAMERA': tabelaDetalhe = 'eq_cftv'; break;
       }
 
-      if (tabelaDetalhe) {
-        const keysDetalhe = Object.keys(payload.detalhe);
-        const setDetalhe = keysDetalhe.map(k => `${k} = ?`).join(', ');
-        const valoresDetalhe = higienizarValores([...Object.values(payload.detalhe), id]);
-        banco.prepare(`UPDATE ${tabelaDetalhe} SET ${setDetalhe} WHERE equipamento_id = ?`).run(...valoresDetalhe);
+      const colunasPermitidas = COLUNAS_PERMITIDAS_DETALHE[tabelaDetalhe];
+      if (tabelaDetalhe && colunasPermitidas) {
+        const keysDetalhe = Object.keys(payload.detalhe).filter(k => colunasPermitidas.includes(k));
+
+        if (keysDetalhe.length > 0) {
+          const setDetalhe = keysDetalhe.map(k => `${k} = ?`).join(', ');
+          const rawValues = keysDetalhe.map(k => payload.detalhe[k]);
+          const valoresDetalhe = higienizarValores([...rawValues, id]);
+          banco.prepare(`UPDATE ${tabelaDetalhe} SET ${setDetalhe} WHERE equipamento_id = ?`).run(...valoresDetalhe);
+        }
       }
     }
 
     // 3. Atualizar Interfaces de Rede
-    if (payload.interfaces) {
+    if (Array.isArray(payload.interfaces)) {
       banco.prepare('DELETE FROM interfaces_rede WHERE equipamento_id = ?').run(id);
       
       const insertInterface = banco.prepare(`

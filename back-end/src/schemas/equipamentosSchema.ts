@@ -134,3 +134,55 @@ export const listarEquipamentosQuerySchema = z.object({
 export const listarEquipamentosSchema = z.object({
   query: listarEquipamentosQuerySchema,
 })
+
+// ==========================================
+// ATUALIZAÇÃO DE EQUIPAMENTO
+// ==========================================
+
+const mestreAtualizarSchema = z
+  .object({
+    marca: z.string().min(1, 'Marca é obrigatória.'),
+    modelo: z.string().min(1, 'Modelo é obrigatório.'),
+    status: statusSchema,
+    localizacao_id: z.number().int().positive('localizacao_id deve ser um número positivo.'),
+    nome: z.string().optional(),
+    fornecedor: z.string().optional(),
+    data_garantia: z.string().optional(),
+    observacao: z.string().optional(),
+    categoria: z.enum(['COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR', 'CAMERA']).optional(),
+  })
+  .partial()
+
+const detalheAtualizarSchema = z
+  .object({
+    usuario_alocado: z.string().optional(),
+    tag_patrimonio: z.string().optional(),
+    numero_serie: z.string().optional(),
+    processador: z.string().optional(),
+    memoria: z.string().optional(),
+    armazenamento: z.string().optional(),
+    sistema_operacional: z.string().optional(),
+    antivirus_instalado: z.boolean().optional(),
+    numero_portas: z.number().int().nonnegative('numero_portas não pode ser negativo.').optional(),
+    portas_em_uso: z.number().int().nonnegative('portas_em_uso não pode ser negativo.').optional(),
+    firmware: z.string().optional(),
+    vlans_configuradas: z.string().optional(),
+    imei: z.string().regex(imeiRegex, 'IMEI inválido. Deve conter exatamente 15 dígitos.').optional(),
+    operadora_numero: z.string().optional(),
+    modalidade: z.enum(['CORPORATIVO', 'BYOD']).optional(),
+    identificacao_extra: z.string().optional(),
+    capacidade_armazenamento: z.string().optional(),
+    quantidade_canais_resolucao: z.string().optional(),
+  })
+  .partial()
+
+export const atualizarEquipamentoSchema = z.object({
+  params: z.object({
+    id: z.coerce.number().int().positive('ID do equipamento inválido.'),
+  }),
+  body: z.object({
+    mestre: mestreAtualizarSchema.optional(),
+    detalhe: detalheAtualizarSchema.optional(),
+    interfaces: interfacesSchema,
+  }),
+})

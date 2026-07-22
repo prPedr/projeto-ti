@@ -1,11 +1,13 @@
 import { Request, Response } from 'express'
 import { z } from 'zod'
-import { listarEquipamentosQuerySchema } from '../schemas/equipamentosSchema.js'
+import { atualizarEquipamentoSchema, listarEquipamentosQuerySchema } from '../schemas/equipamentosSchema.js'
 import { descartarEquipamento, FiltrosListagem, listarEquipamentos, buscarEquipamentoPorId, atualizarEquipamento } from '../services/equipamentosService.js'
 
 type DadosValidadosListagem = {
   query: z.infer<typeof listarEquipamentosQuerySchema>
 }
+
+type DadosValidadosAtualizacao = z.infer<typeof atualizarEquipamentoSchema>
 
 interface ErroComStatus extends Error {
   statusCode?: number
@@ -63,12 +65,8 @@ export const buscarPorId = (requisicao: Request, resposta: Response) => {
 }
 
 export const atualizar = (requisicao: Request, resposta: Response) => {
-  const id = Number(requisicao.params.id)
-  
-  if (!requisicao.params.id || Number.isNaN(id)) {
-    throw criarErro('ID do equipamento inválido.', 400)
-  }
+  const { params, body } = requisicao.dadosValidados as DadosValidadosAtualizacao
 
-  atualizarEquipamento(id, requisicao.body)
+  atualizarEquipamento(params.id, body)
   resposta.status(200).json({ sucesso: true, mensagem: 'Equipamento atualizado com sucesso' })
 }
