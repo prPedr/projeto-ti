@@ -32,24 +32,43 @@
 
 .input,
 .select {
-  background-color: var(--cor-input-fundo);
-  border: 1px solid var(--cor-input-borda);
-  border-radius: var(--raio-sm);
-  padding: 0.75rem;
-  font-size: 14px;
-  color: var(--cor-texto);
+  width: 100%;
+  font-size: 1rem;
+  color: var(--cor-texto, #333);
+  background-color: var(--cor-fundo-input, #fff);
+  border: 1px solid var(--cor-borda, #d1d5db);
+  border-radius: 6px;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input {
+  padding: 0.75rem;
+}
+
+.select {
+  padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%236b7280%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  cursor: pointer;
 }
 
 .input:focus,
 .select:focus {
-  border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+  outline: none;
+  border-color: var(--cor-primaria, #0056b3);
+  box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
 }
 
-.select {
-  cursor: pointer;
+.input:disabled,
+.select:disabled {
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .botaoAdicionar {
