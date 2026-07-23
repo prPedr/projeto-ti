@@ -76,6 +76,10 @@ export default function Localizacoes() {
 
   return (
     <>
+      <div className={styles.cabecalhoAcoes}>
+        <h2>Localizações</h2>
+      </div>
+
       <form className={styles.formulario} onSubmit={handleSubmit}>
         <div className={styles.campo}>
           <label htmlFor="filial">Filial</label>
