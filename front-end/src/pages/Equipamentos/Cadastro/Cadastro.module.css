@@ -16,8 +16,18 @@
 }
 
 .areaRolagem {
-  padding-right: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
   margin-bottom: 1rem;
+}
+
+.cartaoSecao {
+  background: var(--cor-fundo-cartao, #ffffff);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--cor-borda, #eaeaea);
 }
 
 .grid2 {
@@ -27,16 +37,10 @@
 }
 
 .secaoTitulo {
-  font-size: 16px;
+  font-size: 1.1rem;
   font-weight: 600;
-  color: var(--cor-texto);
-  border-bottom: 1px solid var(--cor-borda);
-  padding-bottom: 0.5rem;
-  margin: 2rem 0 1.5rem;
-}
-
-.secaoTitulo:first-child {
-  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: var(--cor-texto-destaque, var(--cor-texto));
 }
 
 .campo {
@@ -66,8 +70,9 @@
 
 .input:focus,
 .select:focus {
+  outline: none;
   border-color: var(--cor-primaria);
-  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+  box-shadow: 0 0 0 3px rgba(var(--cor-primaria-rgb, 15, 23, 42), 0.1);
 }
 
 .select {
