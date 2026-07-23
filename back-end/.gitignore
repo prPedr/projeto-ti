@@ -1,2 +1,5 @@
 /node_modules/
 .env
+src/database/app.db
+src/database/app.db-shm
+src/database/app.db-wal
