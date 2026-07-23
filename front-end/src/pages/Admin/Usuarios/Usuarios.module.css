@@ -107,7 +107,7 @@
 }
 
 /* Cores injetadas via style inline por corDoStatus() em index.tsx, usando os
-   mesmos tokens --status-ativo-*/--status-descartado-* de Listagem/index.tsx. */
+   mesmos tokens --status-ativo-... e --status-descartado-... de Listagem/index.tsx. */
 .statusBadge {
   display: inline-flex;
   align-items: center;
