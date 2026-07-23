@@ -8,6 +8,7 @@ import rotasEquipamentos from './equipamentosRoutes.js'
 import rotasLocalizacoes from './localizacoesRoutes.js'
 import rotasOpcoes from './opcoesRoutes.js'
 import rotasSwitches from './switchesRoutes.js'
+import rotasUsuarios from './usuariosRoutes.js'
 
 const rotas = Router()
 
@@ -20,5 +21,6 @@ rotas.use('/equipamentos', rotasEquipamentos)
 rotas.use('/localizacoes', rotasLocalizacoes)
 rotas.use('/opcoes', rotasOpcoes)
 rotas.use('/switches', rotasSwitches)
+rotas.use('/usuarios', rotasUsuarios)
 
 export default rotas
