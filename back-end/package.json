@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "migrar": "tsx src/scripts/migrarBanco.ts"
   },
   "keywords": [],
   "author": "",
