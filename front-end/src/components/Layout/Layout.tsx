@@ -21,6 +21,7 @@ const ITENS_MENU: ItemMenu[] = [
   { to: '/', rotulo: 'Dashboard', inicial: 'D' },
   { to: '/equipamentos', rotulo: 'Equipamentos', inicial: 'E' },
   { to: '/equipamentos/cadastro', rotulo: 'Novo', inicial: 'N' },
+  { to: '/mapeamento-rede', rotulo: 'Rede', inicial: 'R' },
 ];
 
 const ITENS_MENU_ADMIN: ItemMenu[] = [

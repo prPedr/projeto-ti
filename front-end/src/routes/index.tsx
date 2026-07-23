@@ -13,6 +13,7 @@ import Usuarios from '../pages/Admin/Usuarios';
 import Listagem from '../pages/Equipamentos/Listagem';
 import Detalhes from '../pages/Equipamentos/Detalhes';
 import Dashboard from '../pages/Dashboard';
+import MapeamentoRede from '../pages/MapeamentoRede';
 
 export function AppRoutes() {
   return (
@@ -33,6 +34,7 @@ export function AppRoutes() {
           <Route path="/equipamentos" element={<Listagem />} />
           <Route path="/equipamentos/cadastro" element={<Cadastro />} />
           <Route path="/equipamentos/:id" element={<Detalhes />} />
+          <Route path="/mapeamento-rede" element={<MapeamentoRede />} />
 
           <Route
             element={

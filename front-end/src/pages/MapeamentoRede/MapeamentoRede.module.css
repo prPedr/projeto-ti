@@ -1,0 +1,112 @@
+/* Variáveis de design system (--cor-primaria, --cor-cartao, etc.) vêm de
+   src/index.css, que é global — não precisam ser importadas aqui. */
+
+.cabecalhoAcoes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.barraBusca {
+  margin-bottom: 1.5rem;
+}
+
+.barraBusca .input {
+  width: 100%;
+  max-width: 320px;
+}
+
+.input {
+  background-color: var(--cor-input-fundo);
+  border: 1px solid var(--cor-input-borda);
+  border-radius: var(--raio-sm);
+  padding: 0.75rem;
+  font-size: 14px;
+  color: var(--cor-texto);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input:focus {
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+}
+
+.listaVazia {
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+.blocoSubRede {
+  margin-bottom: 2.5rem;
+}
+
+.blocoSubRede:last-child {
+  margin-bottom: 0;
+}
+
+.tituloSubRede {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  font-family: var(--fonte-mono);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cor-texto);
+  margin-bottom: 0.75rem;
+}
+
+.contagem {
+  font-family: var(--fonte-corpo);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cor-texto-suave);
+}
+
+/* Mesmos valores de .tabela em Equipamentos/Listagem/Listagem.module.css. */
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabela th {
+  text-align: left;
+  padding: 1rem;
+  border-bottom: 2px solid var(--cor-borda);
+  color: var(--cor-texto-suave);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.tabela td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--cor-borda);
+  font-size: 14px;
+  color: var(--cor-texto);
+}
+
+.tabela tbody tr:hover {
+  background-color: var(--cor-input-fundo);
+}
+
+.linhaClicavel {
+  cursor: pointer;
+}
+
+/* Variante mono para células de identificadores técnicos: IP, MAC. Mesmos
+   valores de .tdMono em Equipamentos/Listagem/Listagem.module.css. */
+.tdMono {
+  font-family: var(--fonte-mono);
+  font-size: 13px;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--raio-sm);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
