@@ -74,6 +74,9 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.5rem;
+  /* Sem isso, o grid estica todo card da linha pra altura do maior vizinho —
+     uma categoria com 2 itens ficava do mesmo tamanho que uma com 10. */
+  align-items: start;
 }
 
 .categoriaCard {
@@ -92,8 +95,34 @@
   margin-bottom: 0.75rem;
 }
 
+.contagem {
+  font-weight: 500;
+  color: var(--cor-texto-suave);
+}
+
+/* Envolve a lista inteira do card (ou, no caso de Modelo, todos os
+   sub-grupos de marca juntos) — o limite de altura e o scroll são do card
+   como um todo, não de cada sub-grupo individualmente. Altura calibrada
+   pra ~6 itens de .itemLista visíveis antes de precisar rolar. */
+.corpoCard {
+  max-height: calc(6 * 40px);
+  overflow-y: auto;
+
+  /* Scrollbar discreta — Firefox. Mesmo padrão de Layout.module.css (.conteudo) */
+  scrollbar-width: thin;
+  scrollbar-color: var(--cor-borda) transparent;
+}
+
+/* Scrollbar discreta — Chrome / Edge / Safari. Mesmo padrão de Layout.module.css */
+.corpoCard::-webkit-scrollbar        { width: 6px; }
+.corpoCard::-webkit-scrollbar-track  { background: transparent; }
+.corpoCard::-webkit-scrollbar-thumb  {
+  background-color: var(--cor-borda);
+  border-radius: 3px;
+}
+
 .subgrupo {
-  margin-top: 0.85rem;
+  margin-top: 1.25rem;
 }
 
 .subgrupo:first-of-type {

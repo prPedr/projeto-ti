@@ -215,17 +215,21 @@ export function OpcoesPorTipo({
 
             return (
               <div className={styles.categoriaCard} key={item.valor}>
-                <h2 className={styles.categoriaTitulo}>{item.rotulo}</h2>
+                <h2 className={styles.categoriaTitulo}>
+                  {item.rotulo} <span className={styles.contagem}>({valores.length})</span>
+                </h2>
 
                 {valores.length > 0 ? (
-                  chavesOrdenadas.map((chave) => (
-                    <div key={chave} className={styles.subgrupo}>
-                      <h3 className={styles.subgrupoTitulo}>{chave}</h3>
-                      <ul className={styles.lista}>
-                        {gruposMap[chave].map(renderItemLista)}
-                      </ul>
-                    </div>
-                  ))
+                  <div className={styles.corpoCard}>
+                    {chavesOrdenadas.map((chave) => (
+                      <div key={chave} className={styles.subgrupo}>
+                        <h3 className={styles.subgrupoTitulo}>{chave}</h3>
+                        <ul className={styles.lista}>
+                          {gruposMap[chave].map(renderItemLista)}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
                   <p className={styles.listaVazia}>Nenhum valor cadastrado.</p>
                 )}
@@ -235,12 +239,16 @@ export function OpcoesPorTipo({
 
           return (
             <div className={styles.categoriaCard} key={item.valor}>
-              <h2 className={styles.categoriaTitulo}>{item.rotulo}</h2>
+              <h2 className={styles.categoriaTitulo}>
+                {item.rotulo} <span className={styles.contagem}>({valores.length})</span>
+              </h2>
 
               {valores.length > 0 ? (
-                <ul className={styles.lista}>
-                  {valores.map(renderItemLista)}
-                </ul>
+                <div className={styles.corpoCard}>
+                  <ul className={styles.lista}>
+                    {valores.map(renderItemLista)}
+                  </ul>
+                </div>
               ) : (
                 <p className={styles.listaVazia}>Nenhum valor cadastrado.</p>
               )}
