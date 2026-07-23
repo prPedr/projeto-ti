@@ -9,6 +9,7 @@ import SwitchesOpcoes from '../pages/Admin/Opcoes/Switches';
 import CelularesOpcoes from '../pages/Admin/Opcoes/Celulares';
 import NvrCameraOpcoes from '../pages/Admin/Opcoes/NvrCamera';
 import Localizacoes from '../pages/Admin/Localizacoes';
+import Usuarios from '../pages/Admin/Usuarios';
 import Listagem from '../pages/Equipamentos/Listagem';
 import Detalhes from '../pages/Equipamentos/Detalhes';
 import Dashboard from '../pages/Dashboard';
@@ -46,6 +47,7 @@ export function AppRoutes() {
             <Route path="/admin/opcoes/celulares" element={<CelularesOpcoes />} />
             <Route path="/admin/opcoes/nvr-camera" element={<NvrCameraOpcoes />} />
             <Route path="/admin/localizacoes" element={<Localizacoes />} />
+            <Route path="/admin/usuarios" element={<Usuarios />} />
           </Route>
         </Route>
       </Routes>

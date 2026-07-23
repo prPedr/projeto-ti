@@ -36,6 +36,7 @@ const ITENS_MENU_ADMIN: ItemMenu[] = [
     ],
   },
   { to: '/admin/localizacoes', rotulo: 'Localizações', inicial: 'L' },
+  { to: '/admin/usuarios', rotulo: 'Usuários', inicial: 'U' },
 ];
 
 export function Layout({ children }: LayoutProps) {

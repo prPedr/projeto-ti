@@ -1,0 +1,161 @@
+/* Variáveis de design system (--cor-primaria, --cor-cartao, etc.) vêm de
+   src/index.css, que é global — não precisam ser importadas aqui. */
+
+.cabecalhoAcoes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.formulario {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 160px;
+}
+
+.campo label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cor-texto);
+}
+
+.input,
+.select {
+  background-color: var(--cor-input-fundo);
+  border: 1px solid var(--cor-input-borda);
+  border-radius: var(--raio-sm);
+  padding: 0.75rem;
+  font-size: 14px;
+  color: var(--cor-texto);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input:focus,
+.select:focus {
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+}
+
+.select {
+  cursor: pointer;
+}
+
+.botaoAdicionar {
+  border: none;
+  border-radius: var(--raio-md);
+  padding: 0.75rem 1.5rem;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: var(--cor-primaria);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.botaoAdicionar:hover {
+  background-color: var(--cor-primaria-hover);
+}
+
+.tabelaWrapper {
+  overflow-x: auto;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-sm);
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tabela th,
+.tabela td {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--cor-borda);
+  white-space: nowrap;
+}
+
+.tabela th {
+  background-color: var(--cor-input-fundo);
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+
+.tabela tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.listaVazia {
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+  padding: 1.5rem;
+  text-align: center;
+}
+
+/* Cores injetadas via style inline por corDoStatus() em index.tsx, usando os
+   mesmos tokens --status-ativo-*/--status-descartado-* de Listagem/index.tsx. */
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--raio-sm);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.selectInline {
+  background-color: var(--cor-input-fundo);
+  border: 1px solid var(--cor-input-borda);
+  border-radius: var(--raio-sm);
+  padding: 0.4rem 0.6rem;
+  font-size: 13px;
+  color: var(--cor-texto);
+  cursor: pointer;
+  outline: none;
+}
+
+.selectInline:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.grupoAcoes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.botaoAcaoTabela {
+  border: 1px solid var(--cor-input-borda);
+  background-color: var(--cor-cartao);
+  border-radius: var(--raio-md);
+  padding: 0.4rem 0.9rem;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--cor-texto);
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+
+.botaoAcaoTabela:hover:not(:disabled) {
+  background-color: var(--cor-input-fundo);
+}
+
+.botaoAcaoTabela:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
