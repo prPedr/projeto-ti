@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "migrar": "tsx src/scripts/migrarBanco.ts"
+    "setup": "tsx src/database/setup.ts"
   },
   "keywords": [],
   "author": "",
