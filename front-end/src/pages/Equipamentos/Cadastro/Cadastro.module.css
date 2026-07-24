@@ -10,27 +10,35 @@
 
 
 
+.cartao {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--cor-fundo-cartao, #ffffff);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
 .form {
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .areaRolagem {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.cartaoSecao,
+.secaoMonobloco {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  margin-bottom: 1rem;
-  background-color: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 8px;
-}
-
-.cartaoSecao {
-  background: var(--cor-fundo-cartao, #ffffff);
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  border: 1px solid #d1d5db;
 }
 
 .grid2 {
@@ -42,8 +50,10 @@
 .secaoTitulo {
   font-size: 1.1rem;
   font-weight: 600;
-  margin-bottom: 1.5rem;
   color: var(--cor-texto-destaque, var(--cor-texto));
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--cor-borda, #eaeaea);
+  margin-bottom: 1rem;
 }
 
 .campo {
@@ -112,9 +122,10 @@
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  margin-top: auto;
-  padding-top: 1rem;
-  border-top: 1px solid var(--cor-input-borda);
+  padding: 1.5rem 2rem;
+  border-top: 1px solid var(--cor-borda, #eaeaea);
+  background: var(--cor-fundo-cartao, #ffffff);
+  border-radius: 0 0 12px 12px;
 }
 
 .botaoSalvar {
