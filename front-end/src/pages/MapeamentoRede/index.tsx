@@ -167,55 +167,58 @@ export default function MapeamentoRede() {
               </div>
             )}
 
+            {/* Seção de Interfaces por Sub-rede */}
             {interfaces.length === 0 ? (
               <p className={styles.listaVazia}>Nenhuma interface de rede cadastrada.</p>
             ) : (
               grupos.map((grupo) => (
-            <div key={grupo.subRede} className={styles.blocoSubRede}>
-              <h3 className={styles.tituloSubRede}>
-                {grupo.subRede}.0/24
-                <span className={styles.contagem}>{grupo.interfaces.length} IP(s) em uso</span>
-              </h3>
+                <div key={grupo.subRede} className={styles.blocoSubRede}>
+                  <h3 className={styles.tituloSubRede}>
+                    {grupo.subRede}.0/24
+                    <span className={styles.contagem}>{grupo.interfaces.length} IP(s) em uso</span>
+                  </h3>
 
-              <table className={styles.tabela}>
-                <thead>
-                  <tr>
-                    <th>IP</th>
-                    <th>MAC</th>
-                    <th>Interface</th>
-                    <th>Equipamento</th>
-                    <th>Status</th>
-                    <th>Localização</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {grupo.interfaces.map((item) => (
-                    <tr
-                      key={item.id}
-                      className={styles.linhaClicavel}
-                      onClick={() =>
-                        navigate(`/equipamentos/${item.equipamento_id}`, { state: { modo: 'visualizar' } })
-                      }
-                    >
-                      <td className={styles.tdMono}>{item.ip}</td>
-                      <td className={styles.tdMono}>{item.mac ?? '—'}</td>
-                      <td>{item.nome_interface}</td>
-                      <td>
-                        {item.categoria} — {item.marca} {item.modelo}
-                        {item.nome ? ` (${item.nome})` : ''}
-                      </td>
-                      <td>
-                        <span className={styles.statusBadge} style={corDoStatus(item.status)}>
-                          {rotuloStatus(item.status)}
-                        </span>
-                      </td>
-                      <td>{[item.filial, item.sala].filter(Boolean).join(' - ') || 'Não definida'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ))
+                  <table className={styles.tabela}>
+                    <thead>
+                      <tr>
+                        <th>IP</th>
+                        <th>MAC</th>
+                        <th>Interface</th>
+                        <th>Equipamento</th>
+                        <th>Status</th>
+                        <th>Localização</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {grupo.interfaces.map((item) => (
+                        <tr
+                          key={item.id}
+                          className={styles.linhaClicavel}
+                          onClick={() =>
+                            navigate(`/equipamentos/${item.equipamento_id}`, { state: { modo: 'visualizar' } })
+                          }
+                        >
+                          <td className={styles.tdMono}>{item.ip}</td>
+                          <td className={styles.tdMono}>{item.mac ?? '—'}</td>
+                          <td>{item.nome_interface}</td>
+                          <td>
+                            {item.categoria} — {item.marca} {item.modelo}
+                            {item.nome ? ` (${item.nome})` : ''}
+                          </td>
+                          <td>
+                            <span className={styles.statusBadge} style={corDoStatus(item.status)}>
+                              {rotuloStatus(item.status)}
+                            </span>
+                          </td>
+                          <td>{[item.filial, item.sala].filter(Boolean).join(' - ') || 'Não definida'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ))
+            )}
+          </>
         )}
       </div>
     </div>
