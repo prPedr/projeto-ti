@@ -17,12 +17,15 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding: 1.5rem 2rem;
 }
 
 .cabecalhoAcoes {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 1.5rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--cor-borda);
   margin-bottom: 1rem;
@@ -31,6 +34,18 @@
 .areaRolagem {
   flex: 1;
   overflow-y: auto;
+  /* Compensa o padding do .cartao para a tabela encostar nas bordas laterais */
+  margin-left: -2rem;
+  margin-right: -2rem;
+  padding: 0 2rem 1.5rem;
+}
+
+/* ─── Filtros (select + input + botões de ação agrupados) ─────────────────── */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
 }
 
 .formulario {
