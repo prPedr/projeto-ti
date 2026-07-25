@@ -8,11 +8,18 @@
 
 
 
+.cartao {
+  background-color: #ffffff;
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+}
+
 .cabecalhoAcoes {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--cor-borda);
 }
 
 .tabela {
@@ -23,8 +30,8 @@
 .tabela th {
   text-align: left;
   padding: 1rem;
-  border-bottom: 2px solid var(--cor-borda);
-  color: var(--cor-texto-suave);
+  border-bottom: 1px solid var(--cor-borda);
+  color: var(--cor-texto-destaque, var(--cor-texto));
   font-weight: 600;
   font-size: 14px;
 }
@@ -43,8 +50,12 @@
   font-size: 13px;
 }
 
+.tabela tbody tr {
+  transition: background-color 0.2s ease;
+}
+
 .tabela tbody tr:hover {
-  background-color: var(--cor-input-fundo);
+  background-color: #f9fafb;
 }
 
 .grupoAcoes {
