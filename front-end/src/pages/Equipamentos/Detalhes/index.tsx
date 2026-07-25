@@ -690,6 +690,16 @@ export default function Detalhes() {
         </fieldset>
 
         <div className={styles.botoesAcao}>
+          {categoria === 'SWITCH' && (
+            <button
+              type="button"
+              className={styles.botaoAdicionar}
+              onClick={() => navigate(`/mapeamento-rede/switches/${id}`)}
+            >
+              🔌 Ver mapa de portas
+            </button>
+          )}
+
           {modo === 'visualizar' ? (
             <button type="button" className={styles.botaoCancelar} onClick={() => navigate('/equipamentos')}>
               Voltar

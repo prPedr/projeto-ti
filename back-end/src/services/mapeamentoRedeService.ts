@@ -15,6 +15,18 @@ export interface InterfaceRedeListada {
   sala: string | null
 }
 
+export interface SwitchMapeamentoListado {
+  id: number
+  nome: string | null
+  marca: string
+  modelo: string
+  status: string
+  filial: string | null
+  sala: string | null
+  numero_portas: number | null
+  portas_em_uso: number | null
+}
+
 export const listarInterfacesRede = (filtroSubRede?: string): InterfaceRedeListada[] => {
   // ip/mac só ficam NULL quando o equipamento é descartado (equipamentosService.ts
   // zera as interfaces no descarte pra liberar o UNIQUE) — filtrar ip IS NOT NULL
@@ -55,4 +67,26 @@ export const listarInterfacesRede = (filtroSubRede?: string): InterfaceRedeLista
   // e confiável em JS do que tentar contornar em SQLite puro.
 
   return consulta.all(parametros) as InterfaceRedeListada[]
+}
+
+export const listarSwitches = (): SwitchMapeamentoListado[] => {
+  const consulta = banco.prepare(`
+    SELECT
+      e.id,
+      e.nome,
+      e.marca,
+      e.modelo,
+      e.status,
+      l.filial AS filial,
+      l.sala AS sala,
+      eqs.numero_portas,
+      eqs.portas_em_uso
+    FROM equipamentos e
+    LEFT JOIN localizacoes l ON l.id = e.localizacao_id
+    LEFT JOIN eq_switches eqs ON eqs.equipamento_id = e.id
+    WHERE e.categoria = 'SWITCH' AND e.status != 'DESCARTADO'
+    ORDER BY e.marca, e.modelo
+  `)
+
+  return consulta.all() as SwitchMapeamentoListado[]
 }

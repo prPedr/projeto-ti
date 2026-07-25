@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import type { SubmitEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { listarInterfacesRede } from '../../services/mapeamentoRede';
-import type { InterfaceRede } from '../../services/mapeamentoRede';
+import { useNavigate, Link } from 'react-router-dom';
+import { listarInterfacesRede, listarSwitchesMapeamento } from '../../services/mapeamentoRede';
+import type { InterfaceRede, SwitchMapeamento } from '../../services/mapeamentoRede';
 import styles from './MapeamentoRede.module.css';
 
 function octetos(ip: string): number[] {
@@ -75,13 +75,20 @@ export default function MapeamentoRede() {
   const navigate = useNavigate();
 
   const [interfaces, setInterfaces] = useState<InterfaceRede[]>([]);
+  const [switches, setSwitches] = useState<SwitchMapeamento[]>([]);
   const [subredeBusca, setSubredeBusca] = useState('');
   const [carregando, setCarregando] = useState(true);
 
   function carregarDados(subrede?: string) {
     setCarregando(true);
-    listarInterfacesRede(subrede || undefined)
-      .then(setInterfaces)
+    Promise.all([
+      listarInterfacesRede(subrede || undefined),
+      listarSwitchesMapeamento(),
+    ])
+      .then(([dadosInterfaces, dadosSwitches]) => {
+        setInterfaces(dadosInterfaces);
+        setSwitches(dadosSwitches);
+      })
       .catch((erro) => {
         console.error('Erro ao carregar mapeamento de rede:', erro);
         alert('Não foi possível carregar o mapeamento de rede.');
@@ -117,10 +124,53 @@ export default function MapeamentoRede() {
       <div className={styles.areaRolagem}>
         {carregando ? (
           <p>Carregando mapeamento de rede...</p>
-        ) : interfaces.length === 0 ? (
-          <p className={styles.listaVazia}>Nenhuma interface de rede cadastrada.</p>
         ) : (
-          grupos.map((grupo) => (
+          <>
+            {/* Seção de Switches */}
+            {switches.length > 0 && (
+              <div className={styles.secaoSwitches}>
+                <h3 className={styles.tituloSubRede}>
+                  Switches de Rede
+                  <span className={styles.contagem}>{switches.length} switch(es) ativo(s)</span>
+                </h3>
+
+                <div className={styles.gridSwitches}>
+                  {switches.map((item) => (
+                    <Link
+                      key={item.id}
+                      to={`/mapeamento-rede/switches/${item.id}`}
+                      className={styles.cardSwitch}
+                    >
+                      <div className={styles.cardSwitchHeader}>
+                        <div>
+                          <div className={styles.nomeSwitch}>
+                            {item.nome || `${item.marca} ${item.modelo}`}
+                          </div>
+                          <div className={styles.modeloSwitch}>
+                            {item.marca} {item.modelo}
+                          </div>
+                        </div>
+
+                        {item.numero_portas != null && (
+                          <span className={styles.tagPortas}>
+                            {item.portas_em_uso ?? 0}/{item.numero_portas} portas
+                          </span>
+                        )}
+                      </div>
+
+                      <div className={styles.localizacaoSwitch}>
+                        📍 {[item.filial, item.sala].filter(Boolean).join(' - ') || 'Localização não definida'}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {interfaces.length === 0 ? (
+              <p className={styles.listaVazia}>Nenhuma interface de rede cadastrada.</p>
+            ) : (
+              grupos.map((grupo) => (
             <div key={grupo.subRede} className={styles.blocoSubRede}>
               <h3 className={styles.tituloSubRede}>
                 {grupo.subRede}.0/24
