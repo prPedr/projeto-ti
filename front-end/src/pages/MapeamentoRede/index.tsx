@@ -101,72 +101,73 @@ export default function MapeamentoRede() {
   const grupos = agruparPorSubRede(interfaces);
 
   return (
-    <>
+    <div className={styles.cartao} style={{ padding: '1.5rem' }}>
       <div className={styles.cabecalhoAcoes}>
         <h2>Mapeamento de Rede</h2>
+        <form className={styles.barraBusca} onSubmit={handleBuscar}>
+          <input
+            className={styles.input}
+            value={subredeBusca}
+            onChange={(event) => setSubredeBusca(event.target.value)}
+            placeholder="Filtrar por sub-rede (ex: 192.168.1)"
+          />
+        </form>
       </div>
 
-      <form className={styles.barraBusca} onSubmit={handleBuscar}>
-        <input
-          className={styles.input}
-          value={subredeBusca}
-          onChange={(event) => setSubredeBusca(event.target.value)}
-          placeholder="Filtrar por sub-rede (ex: 192.168.1)"
-        />
-      </form>
+      <div className={styles.areaRolagem}>
+        {carregando ? (
+          <p>Carregando mapeamento de rede...</p>
+        ) : interfaces.length === 0 ? (
+          <p className={styles.listaVazia}>Nenhuma interface de rede cadastrada.</p>
+        ) : (
+          grupos.map((grupo) => (
+            <div key={grupo.subRede} className={styles.blocoSubRede}>
+              <h3 className={styles.tituloSubRede}>
+                {grupo.subRede}.0/24
+                <span className={styles.contagem}>{grupo.interfaces.length} IP(s) em uso</span>
+              </h3>
 
-      {carregando ? (
-        <p>Carregando mapeamento de rede...</p>
-      ) : interfaces.length === 0 ? (
-        <p className={styles.listaVazia}>Nenhuma interface de rede cadastrada.</p>
-      ) : (
-        grupos.map((grupo) => (
-          <div key={grupo.subRede} className={styles.blocoSubRede}>
-            <h3 className={styles.tituloSubRede}>
-              {grupo.subRede}.0/24
-              <span className={styles.contagem}>{grupo.interfaces.length} IP(s) em uso</span>
-            </h3>
-
-            <table className={styles.tabela}>
-              <thead>
-                <tr>
-                  <th>IP</th>
-                  <th>MAC</th>
-                  <th>Interface</th>
-                  <th>Equipamento</th>
-                  <th>Status</th>
-                  <th>Localização</th>
-                </tr>
-              </thead>
-              <tbody>
-                {grupo.interfaces.map((item) => (
-                  <tr
-                    key={item.id}
-                    className={styles.linhaClicavel}
-                    onClick={() =>
-                      navigate(`/equipamentos/${item.equipamento_id}`, { state: { modo: 'visualizar' } })
-                    }
-                  >
-                    <td className={styles.tdMono}>{item.ip}</td>
-                    <td className={styles.tdMono}>{item.mac ?? '—'}</td>
-                    <td>{item.nome_interface}</td>
-                    <td>
-                      {item.categoria} — {item.marca} {item.modelo}
-                      {item.nome ? ` (${item.nome})` : ''}
-                    </td>
-                    <td>
-                      <span className={styles.statusBadge} style={corDoStatus(item.status)}>
-                        {rotuloStatus(item.status)}
-                      </span>
-                    </td>
-                    <td>{[item.filial, item.sala].filter(Boolean).join(' - ') || 'Não definida'}</td>
+              <table className={styles.tabela}>
+                <thead>
+                  <tr>
+                    <th>IP</th>
+                    <th>MAC</th>
+                    <th>Interface</th>
+                    <th>Equipamento</th>
+                    <th>Status</th>
+                    <th>Localização</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ))
-      )}
-    </>
+                </thead>
+                <tbody>
+                  {grupo.interfaces.map((item) => (
+                    <tr
+                      key={item.id}
+                      className={styles.linhaClicavel}
+                      onClick={() =>
+                        navigate(`/equipamentos/${item.equipamento_id}`, { state: { modo: 'visualizar' } })
+                      }
+                    >
+                      <td className={styles.tdMono}>{item.ip}</td>
+                      <td className={styles.tdMono}>{item.mac ?? '—'}</td>
+                      <td>{item.nome_interface}</td>
+                      <td>
+                        {item.categoria} — {item.marca} {item.modelo}
+                        {item.nome ? ` (${item.nome})` : ''}
+                      </td>
+                      <td>
+                        <span className={styles.statusBadge} style={corDoStatus(item.status)}>
+                          {rotuloStatus(item.status)}
+                        </span>
+                      </td>
+                      <td>{[item.filial, item.sala].filter(Boolean).join(' - ') || 'Não definida'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
   );
 }
