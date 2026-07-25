@@ -14,9 +14,9 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--cor-fundo-cartao, #ffffff);
+  background-color: #ffffff;
+  border: 1px solid var(--cor-borda);
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 .form {
@@ -39,6 +39,9 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  padding: 1.5rem;
 }
 
 .grid2 {
@@ -74,8 +77,8 @@
   width: 100%;
   font-size: 1rem;
   color: var(--cor-texto, #333);
-  background-color: var(--cor-fundo-input, #fff);
-  border: 1px solid var(--cor-borda, #d1d5db);
+  background-color: #ffffff;
+  border: 1px solid var(--cor-borda);
   border-radius: 6px;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -123,8 +126,8 @@
   justify-content: flex-end;
   gap: 1rem;
   padding: 1.5rem 2rem;
-  border-top: 1px solid var(--cor-borda, #eaeaea);
-  background: var(--cor-fundo-cartao, #ffffff);
+  border-top: 1px solid var(--cor-borda);
+  background-color: #ffffff;
   border-radius: 0 0 12px 12px;
 }
 
