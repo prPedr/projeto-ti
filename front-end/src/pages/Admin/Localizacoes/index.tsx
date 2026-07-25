@@ -75,9 +75,12 @@ export default function Localizacoes() {
   }
 
   return (
-    <>
+    <div className={styles.cartao}>
       <div className={styles.cabecalhoAcoes}>
         <h2>Localizações</h2>
+        <button type="button" className={styles.botaoAdicionar} onClick={() => document.getElementById('filial')?.focus()}>
+          Nova Localização
+        </button>
       </div>
 
       <form className={styles.formulario} onSubmit={handleSubmit}>
@@ -140,56 +143,58 @@ export default function Localizacoes() {
         />
       </form>
 
-      <div className={styles.tabelaWrapper}>
-        <table className={styles.tabela}>
-          <thead>
-            <tr>
-              <th>Filial</th>
-              <th>Prédio</th>
-              <th>Sala</th>
-              <th>Descrição</th>
-            </tr>
-          </thead>
-          <tbody>
-            {localizacoes.map((localizacao) => (
-              <tr key={localizacao.id}>
-                <td>{localizacao.filial}</td>
-                <td>{localizacao.predio ?? '—'}</td>
-                <td>{localizacao.sala ?? '—'}</td>
-                <td>{localizacao.descricao ?? '—'}</td>
+      <div className={styles.areaRolagem}>
+        <div className={styles.tabelaWrapper}>
+          <table className={styles.tabela}>
+            <thead>
+              <tr>
+                <th>Filial</th>
+                <th>Prédio</th>
+                <th>Sala</th>
+                <th>Descrição</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {localizacoes.map((localizacao) => (
+                <tr key={localizacao.id}>
+                  <td>{localizacao.filial}</td>
+                  <td>{localizacao.predio ?? '—'}</td>
+                  <td>{localizacao.sala ?? '—'}</td>
+                  <td>{localizacao.descricao ?? '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-        {!carregando && localizacoes.length === 0 && (
-          <p className={styles.listaVazia}>Nenhuma localização cadastrada.</p>
+          {!carregando && localizacoes.length === 0 && (
+            <p className={styles.listaVazia}>Nenhuma localização cadastrada.</p>
+          )}
+        </div>
+
+        {metadados && metadados.totalPaginas > 1 && (
+          <div className={styles.paginacao}>
+            <span>
+              Página {metadados.paginaAtual} de {metadados.totalPaginas} ({metadados.totalRegistros} registros)
+            </span>
+            <button
+              type="button"
+              className={styles.botaoPaginacao}
+              onClick={() => irParaPagina(pagina - 1)}
+              disabled={pagina <= 1}
+            >
+              Anterior
+            </button>
+            <button
+              type="button"
+              className={styles.botaoPaginacao}
+              onClick={() => irParaPagina(pagina + 1)}
+              disabled={pagina >= metadados.totalPaginas}
+            >
+              Próxima
+            </button>
+          </div>
         )}
       </div>
-
-      {metadados && metadados.totalPaginas > 1 && (
-        <div className={styles.paginacao}>
-          <span>
-            Página {metadados.paginaAtual} de {metadados.totalPaginas} ({metadados.totalRegistros} registros)
-          </span>
-          <button
-            type="button"
-            className={styles.botaoPaginacao}
-            onClick={() => irParaPagina(pagina - 1)}
-            disabled={pagina <= 1}
-          >
-            Anterior
-          </button>
-          <button
-            type="button"
-            className={styles.botaoPaginacao}
-            onClick={() => irParaPagina(pagina + 1)}
-            disabled={pagina >= metadados.totalPaginas}
-          >
-            Próxima
-          </button>
-        </div>
-      )}
-    </>
+    </div>
   );
 }
