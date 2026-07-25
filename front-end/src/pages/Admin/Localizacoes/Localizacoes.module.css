@@ -10,11 +10,27 @@
 
 
 
+.cartao {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid var(--cor-borda);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .cabecalhoAcoes {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--cor-borda);
+  margin-bottom: 1rem;
+}
+
+.areaRolagem {
+  flex: 1;
+  overflow-y: auto;
 }
 
 .formulario {
@@ -96,7 +112,7 @@
 .tabela th,
 .tabela td {
   text-align: left;
-  padding: 0.75rem 1rem;
+  padding: 1rem;
   border-bottom: 1px solid var(--cor-borda);
   white-space: nowrap;
 }
@@ -109,6 +125,14 @@
 
 .tabela tbody tr:last-child td {
   border-bottom: none;
+}
+
+.tabela tbody tr {
+  transition: background-color 0.2s ease-in-out;
+}
+
+.tabela tbody tr:hover {
+  background-color: #d6d9df83;
 }
 
 .listaVazia {
