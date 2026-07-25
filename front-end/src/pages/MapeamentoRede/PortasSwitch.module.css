@@ -1,0 +1,317 @@
+/* Variáveis de design system vêm de src/index.css */
+
+.cartao {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #ffffff;
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+}
+
+.cabecalhoAcoes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--cor-borda);
+  margin-bottom: 1rem;
+}
+
+.tituloArea {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.subtitulo {
+  font-size: 14px;
+  color: var(--cor-texto-suave);
+}
+
+.areaRolagem {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.linhaTopo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.legenda {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  font-size: 13px;
+  color: var(--cor-texto);
+}
+
+.itemLegenda {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quadradoLivre {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background-color: var(--cor-input-fundo);
+  border: 1px solid var(--cor-borda);
+}
+
+.quadradoOcupado {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background-color: var(--status-ativo-fundo);
+  border: 1px solid var(--status-ativo-texto);
+}
+
+.resumoUso {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cor-texto);
+  background-color: var(--cor-input-fundo);
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--raio-md);
+  border: 1px solid var(--cor-borda);
+}
+
+.gridPortas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 1rem;
+}
+
+.blocoPorta {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 90px;
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  user-select: none;
+}
+
+.blocoPorta.livre {
+  background-color: var(--cor-input-fundo);
+  border: 1px solid var(--cor-borda);
+  color: var(--cor-texto-suave);
+}
+
+.blocoPorta.livre:hover {
+  border-color: var(--cor-primaria);
+  transform: translateY(-2px);
+}
+
+.blocoPorta.ocupada {
+  background-color: var(--status-ativo-fundo);
+  border: 1px solid var(--status-ativo-texto);
+  color: var(--status-ativo-texto);
+}
+
+.blocoPorta.ocupada:hover {
+  filter: brightness(0.95);
+  transform: translateY(-2px);
+}
+
+.numeroPorta {
+  font-family: var(--fonte-mono);
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.iconeConexao {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.blocoPorta.livre .iconeConexao {
+  background-color: var(--cor-borda);
+}
+
+.blocoPorta.ocupada .iconeConexao {
+  background-color: var(--status-ativo-texto);
+}
+
+.detalhePorta {
+  font-size: 11px;
+  line-height: 1.3;
+  margin-top: 0.5rem;
+  word-break: break-word;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.textoVazio {
+  font-style: italic;
+  opacity: 0.7;
+}
+
+/* Modal Overlay & Modal */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modalConteudo {
+  background-color: #ffffff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 480px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--cor-borda);
+  padding-bottom: 0.75rem;
+}
+
+.modalHeader h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+
+.botaoFechar {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--cor-texto-suave);
+}
+
+.formGrupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formGrupo label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cor-texto);
+}
+
+.input,
+.select {
+  width: 100%;
+  background-color: var(--cor-input-fundo);
+  border: 1px solid var(--cor-input-borda);
+  border-radius: var(--raio-sm);
+  padding: 0.6rem 0.75rem;
+  font-size: 14px;
+  color: var(--cor-texto);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus,
+.select:focus {
+  border-color: var(--cor-primaria);
+}
+
+.modalAcoes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  gap: 0.75rem;
+}
+
+.grupoSalvar {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.botaoSalvar {
+  background-color: var(--cor-primaria);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--raio-md);
+  padding: 0.6rem 1.25rem;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.botaoSalvar:hover {
+  background-color: var(--cor-primaria-hover);
+}
+
+.botaoLimpar {
+  background-color: transparent;
+  color: var(--status-descartado-texto, #dc2626);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-md);
+  padding: 0.6rem 1rem;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.botaoLimpar:hover {
+  background-color: var(--status-descartado-fundo, #fee2e2);
+}
+
+.botaoCancelar {
+  background-color: transparent;
+  color: var(--cor-texto);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-md);
+  padding: 0.6rem 1rem;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.botaoVoltar {
+  background-color: transparent;
+  color: var(--cor-texto);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-md);
+  padding: 0.5rem 1rem;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.botaoVoltar:hover {
+  background-color: var(--cor-input-fundo);
+}
