@@ -14,7 +14,8 @@ import Listagem from '../pages/Equipamentos/Listagem';
 import Detalhes from '../pages/Equipamentos/Detalhes';
 import Dashboard from '../pages/Dashboard';
 import MapeamentoRede from '../pages/MapeamentoRede';
-import PortasSwitch from '../pages/MapeamentoRede/PortasSwitch';
+import SwitchesListagem from '../pages/Switches/Listagem';
+import SwitchesPortas from '../pages/Switches/Portas';
 
 export function AppRoutes() {
   return (
@@ -36,7 +37,8 @@ export function AppRoutes() {
           <Route path="/equipamentos/cadastro" element={<Cadastro />} />
           <Route path="/equipamentos/:id" element={<Detalhes />} />
           <Route path="/mapeamento-rede" element={<MapeamentoRede />} />
-          <Route path="/mapeamento-rede/switches/:id" element={<PortasSwitch />} />
+          <Route path="/switches" element={<SwitchesListagem />} />
+          <Route path="/switches/:id" element={<SwitchesPortas />} />
 
           <Route
             element={

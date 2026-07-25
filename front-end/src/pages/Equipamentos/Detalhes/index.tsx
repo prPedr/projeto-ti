@@ -694,7 +694,7 @@ export default function Detalhes() {
             <button
               type="button"
               className={styles.botaoAdicionar}
-              onClick={() => navigate(`/mapeamento-rede/switches/${id}`)}
+              onClick={() => navigate(`/switches/${id}`)}
             >
               🔌 Ver mapa de portas
             </button>

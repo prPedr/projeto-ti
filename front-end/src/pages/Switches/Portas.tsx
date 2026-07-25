@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { buscarEquipamentoPorId, listarEquipamentos } from '../../services/equipamentos';
 import { listarPortasSwitch, atualizarPorta } from '../../services/portasSwitch';
 import type { PortaSwitch } from '../../services/portasSwitch';
-import styles from './PortasSwitch.module.css';
+import styles from './Portas.module.css';
 
 interface EquipamentoOpcao {
   id: number;
@@ -23,7 +23,7 @@ interface SwitchMestre {
   sala?: string | null;
 }
 
-export default function PortasSwitch() {
+export default function SwitchesPortas() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const switchId = Number(id);
@@ -160,9 +160,9 @@ export default function PortasSwitch() {
         <button
           type="button"
           className={styles.botaoVoltar}
-          onClick={() => navigate('/mapeamento-rede')}
+          onClick={() => navigate('/switches')}
         >
-          ← Voltar para Mapeamento
+          ← Voltar para Switches
         </button>
       </div>
 
