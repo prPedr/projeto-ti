@@ -4,7 +4,11 @@ import {
   listarPortasSwitch,
   atualizarPorta as atualizarPortaService,
 } from '../services/portasSwitchService.js'
-import type { AtualizarPortaParams, AtualizarPortaBody } from '../schemas/portasSwitchSchema.js'
+import type {
+  AtualizarPortaParams,
+  AtualizarPortaBody,
+  ListarPortasParams,
+} from '../schemas/portasSwitchSchema.js'
 
 // ─── Switch ───────────────────────────────────────────────────────────────────
 
@@ -23,7 +27,7 @@ export const listar = (_requisicao: Request, resposta: Response) => {
 // ─── Portas do switch ─────────────────────────────────────────────────────────
 
 export const listarPortas = (requisicao: Request, resposta: Response) => {
-  const { id } = (requisicao.dadosValidados as { params: AtualizarPortaParams }).params
+  const { id } = (requisicao.dadosValidados as { params: ListarPortasParams }).params
 
   const dados = listarPortasSwitch(id)
   resposta.status(200).json({ sucesso: true, dados })

@@ -23,10 +23,17 @@ const atualizarPortaBodySchema = z.object({
   descricao: z.string().max(200, 'Descrição deve ter no máximo 200 caracteres.').nullable().optional(),
 })
 
+export const listarPortasSchema = z.object({
+  params: z.object({
+    id: z.coerce.number().int().positive('ID do switch inválido.'),
+  }),
+})
+
 export const atualizarPortaSchema = z.object({
   params: portaParamsSchema,
   body: atualizarPortaBodySchema,
 })
 
+export type ListarPortasParams = z.infer<typeof listarPortasSchema>['params']
 export type AtualizarPortaParams = z.infer<typeof portaParamsSchema>
 export type AtualizarPortaBody = z.infer<typeof atualizarPortaBodySchema>

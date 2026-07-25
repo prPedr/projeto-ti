@@ -154,26 +154,46 @@ export default function Detalhes() {
     event.preventDefault();
     if (modo === 'visualizar') return;
 
-    // O <select> só produz strings; o back-end espera booleano de verdade
-    // para antivirus_instalado, então convertemos só na hora de montar o payload.
-    const detalhe: Record<string, string | boolean> = { ...dadosDetalhe };
+    const detalhe: Record<string, string | boolean | number> = {};
+
+    Object.entries(dadosDetalhe).forEach(([chave, valor]) => {
+      if (typeof valor === 'string' && valor.trim() !== '') {
+        detalhe[chave] = valor.trim();
+      }
+    });
+
     if (categoria === 'COMPUTADOR' && 'antivirus_instalado' in detalhe) {
       detalhe.antivirus_instalado = detalhe.antivirus_instalado === 'true';
     }
 
+    if (categoria === 'SWITCH') {
+      if ('numero_portas' in detalhe && typeof detalhe.numero_portas === 'string') {
+        detalhe.numero_portas = Number(detalhe.numero_portas);
+      }
+      if ('portas_em_uso' in detalhe && typeof detalhe.portas_em_uso === 'string') {
+        detalhe.portas_em_uso = Number(detalhe.portas_em_uso);
+      }
+    }
+
     const payload = {
       mestre: {
-        marca: dadosMestre.marca,
-        modelo: dadosMestre.modelo,
+        marca: dadosMestre.marca.trim(),
+        modelo: dadosMestre.modelo.trim(),
         status: dadosMestre.status,
         localizacao_id: Number(dadosMestre.localizacao_id),
-        ...(dadosMestre.nome && { nome: dadosMestre.nome }),
-        ...(dadosMestre.fornecedor && { fornecedor: dadosMestre.fornecedor }),
-        ...(dadosMestre.data_garantia && { data_garantia: dadosMestre.data_garantia }),
-        ...(dadosMestre.observacao && { observacao: dadosMestre.observacao }),
+        ...(dadosMestre.nome.trim() && { nome: dadosMestre.nome.trim() }),
+        ...(dadosMestre.fornecedor.trim() && { fornecedor: dadosMestre.fornecedor.trim() }),
+        ...(dadosMestre.data_garantia.trim() && { data_garantia: dadosMestre.data_garantia.trim() }),
+        ...(dadosMestre.observacao.trim() && { observacao: dadosMestre.observacao.trim() }),
       },
       detalhe,
-      interfaces: interfacesRede.filter((item) => item.nome_interface || item.ip || item.mac),
+      interfaces: interfacesRede
+        .map((item) => ({
+          nome_interface: item.nome_interface.trim(),
+          ...(item.ip.trim() && { ip: item.ip.trim() }),
+          ...(item.mac.trim() && { mac: item.mac.trim() }),
+        }))
+        .filter((item) => item.nome_interface || item.ip || item.mac),
     };
 
     try {

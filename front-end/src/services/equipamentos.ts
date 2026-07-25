@@ -22,10 +22,19 @@ export async function criarEquipamento(categoria: CategoriaEquipamento, payload:
       throw new Error(`Categoria de equipamento desconhecida: ${categoria}`);
   }
 
-  return fetchComToken(endpoint, {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  });
+  try {
+    return await fetchComToken(endpoint, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  } catch (error: any) {
+    if (error.response && error.response.data) {
+      console.error('Erro de Validação do Back-end:', error.response.data);
+    } else {
+      console.error('Erro na requisição:', error);
+    }
+    throw error;
+  }
 }
 
 export async function listarLocalizacoes() {

@@ -44,8 +44,19 @@ export async function fetchComToken(url: string, opcoes: OpcoesFetch = {}) {
   const corpo = await resposta.json().catch(() => null);
 
   if (!resposta.ok) {
-    const erro = corpo as RespostaErro | null;
-    throw new Error(erro?.mensagem ?? 'Erro ao comunicar com o servidor.');
+    const dadosErro = corpo as (RespostaErro & { erros?: Array<{ campo: string; mensagem: string }> }) | null;
+    let mensagemFinal = dadosErro?.mensagem;
+
+    if (!mensagemFinal && dadosErro?.erros && dadosErro.erros.length > 0) {
+      mensagemFinal = dadosErro.erros.map((e) => `${e.campo}: ${e.mensagem}`).join(' | ');
+    }
+
+    const erro = new Error(mensagemFinal ?? 'Erro ao comunicar com o servidor.') as Error & {
+      response?: { data: unknown; status: number };
+    };
+
+    erro.response = { data: corpo, status: resposta.status };
+    throw erro;
   }
 
   return corpo;
