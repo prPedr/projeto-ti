@@ -96,3 +96,42 @@ export const criarSwitch = (dadosEntrada: DadosCriacaoSwitch) => {
     throw erro;
   }
 };
+
+export interface SwitchListado {
+  id: number;
+  nome: string | null;
+  marca: string;
+  modelo: string;
+  status: string;
+  numero_portas: number | null;
+  filial: string | null;
+  sala: string | null;
+  portas_ocupadas: number;
+}
+
+export const listarSwitches = (): SwitchListado[] => {
+  const consulta = banco.prepare(`
+    SELECT
+      e.id,
+      e.nome,
+      e.marca,
+      e.modelo,
+      e.status,
+      es.numero_portas,
+      l.filial,
+      l.sala,
+      (
+        SELECT COUNT(*)
+        FROM portas_switch ps
+        WHERE ps.switch_id = e.id
+          AND (ps.equipamento_conectado_id IS NOT NULL OR ps.descricao IS NOT NULL)
+      ) AS portas_ocupadas
+    FROM equipamentos e
+    JOIN eq_switches es ON es.equipamento_id = e.id
+    LEFT JOIN localizacoes l ON l.id = e.localizacao_id
+    WHERE e.status != 'DESCARTADO'
+    ORDER BY e.nome
+  `)
+
+  return consulta.all() as SwitchListado[]
+}

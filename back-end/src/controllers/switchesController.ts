@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { criarSwitch } from '../services/switchesService.js'
+import { criarSwitch, listarSwitches } from '../services/switchesService.js'
 import {
   listarPortasSwitch,
   atualizarPorta as atualizarPortaService,
@@ -13,6 +13,11 @@ export const criar = (requisicao: Request, resposta: Response) => {
 
   const id = criarSwitch(requisicao.body)
   resposta.status(201).json({ sucesso: true, id_equipamento: id })
+}
+
+export const listar = (_requisicao: Request, resposta: Response) => {
+  const dados = listarSwitches()
+  resposta.status(200).json({ sucesso: true, dados })
 }
 
 // ─── Portas do switch ─────────────────────────────────────────────────────────
