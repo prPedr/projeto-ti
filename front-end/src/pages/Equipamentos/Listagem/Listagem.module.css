@@ -57,11 +57,11 @@
 }
 
 .tabela tbody tr {
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease-in-out;
 }
 
 .tabela tbody tr:hover {
-  background-color: #f9fafb;
+  background-color: #d6d9df83;
 }
 
 .grupoAcoes {
