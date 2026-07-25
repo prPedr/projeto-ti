@@ -165,9 +165,10 @@ export default function Cadastro() {
   }
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
+    <div className={styles.cartao}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.areaRolagem}>
-          <div className={styles.cartaoSecao}>
+          <div className={styles.secaoMonobloco}>
             <h2 className={styles.secaoTitulo}>Dados Básicos</h2>
             <div className={styles.grid2}>
               <div className={styles.campo}>
@@ -312,7 +313,7 @@ export default function Cadastro() {
           </div>
 
           {categoria === 'COMPUTADOR' && (
-            <div className={styles.cartaoSecao}>
+            <div className={styles.secaoMonobloco}>
               <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
               <div className={styles.grid2}>
                 <div className={styles.campo}>
@@ -424,7 +425,7 @@ export default function Cadastro() {
           )}
 
           {categoria === 'SWITCH' && (
-            <div className={styles.cartaoSecao}>
+            <div className={styles.secaoMonobloco}>
               <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
               <div className={styles.grid2}>
                 <div className={styles.campo}>
@@ -474,7 +475,7 @@ export default function Cadastro() {
           )}
 
           {categoria === 'CELULAR' && (
-            <div className={styles.cartaoSecao}>
+            <div className={styles.secaoMonobloco}>
               <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
               <div className={styles.grid2}>
                 <div className={styles.campo}>
@@ -567,7 +568,7 @@ export default function Cadastro() {
           )}
 
           {(categoria === 'NVR' || categoria === 'CAMERA') && (
-            <div className={styles.cartaoSecao}>
+            <div className={styles.secaoMonobloco}>
               <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
               <div className={styles.grid2}>
                 <div className={styles.campo}>
@@ -616,7 +617,7 @@ export default function Cadastro() {
             </div>
           )}
 
-          <div className={styles.cartaoSecao}>
+          <div className={styles.secaoMonobloco}>
             <h2 className={styles.secaoTitulo}>Interface de Rede</h2>
             {interfacesRede.map((interfaceRede, indice) => (
               <div className={styles.grid2} key={indice}>
@@ -661,7 +662,7 @@ export default function Cadastro() {
               </div>
             ))}
 
-            <div className={styles.botoesAcao} style={{ borderTop: 'none', paddingTop: 0, marginTop: 0 }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
               <button type="button" className={styles.botaoCancelar} onClick={adicionarInterface}>
                 + Adicionar Interface
               </button>
@@ -678,5 +679,6 @@ export default function Cadastro() {
           </button>
         </div>
       </form>
+    </div>
   );
 }
