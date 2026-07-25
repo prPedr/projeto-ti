@@ -6,13 +6,16 @@ import styles from './Listagem.module.css';
 interface Equipamento {
   id: number;
   categoria: string;
+  nome: string | null;
   marca: string;
   modelo: string;
   status: string;
-  localizacao_id: number;
-  localizacao_filial?: string;
-  localizacao_predio?: string;
-  localizacao_sala?: string;
+  filial: string | null;
+  sala: string | null;
+  cadastrado_por_nome: string | null;
+  // Campos opcionais: não retornados pela listagem geral, apenas pelo detalhe
+  ip?: string | null;
+  usuario_alocado?: string | null;
 }
 
 export default function Listagem() {
@@ -48,11 +51,6 @@ export default function Listagem() {
       console.error('Erro ao excluir equipamento:', erro);
       alert('Não foi possível excluir o equipamento.');
     }
-  }
-
-  function formatarLocalizacao(eq: Equipamento) {
-    const partes = [eq.localizacao_filial, eq.localizacao_predio, eq.localizacao_sala].filter(Boolean);
-    return partes.length > 0 ? partes.join(' - ') : 'Não definida';
   }
 
   /**
@@ -101,10 +99,11 @@ export default function Listagem() {
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Categoria</th>
+                <th>IP</th>
+                <th>Nome</th>
+                <th>Usuário</th>
                 <th>Marca</th>
                 <th>Modelo</th>
-                <th>Localização</th>
                 <th>Status</th>
                 <th>Ações</th>
               </tr>
@@ -112,11 +111,14 @@ export default function Listagem() {
             <tbody>
               {equipamentos.map((eq) => (
                 <tr key={eq.id}>
-                  <td>{eq.id}</td>
-                  <td style={{ textTransform: 'capitalize' }}>{eq.categoria}</td>
+                  <td style={{ color: 'var(--cor-texto-suave)', fontSize: '12px' }}>#{eq.id}</td>
+                  <td style={{ fontFamily: 'monospace', fontSize: '13px' }}>
+                    {eq.ip ?? '—'}
+                  </td>
+                  <td>{eq.nome ?? '—'}</td>
+                  <td>{eq.usuario_alocado ?? '—'}</td>
                   <td>{eq.marca}</td>
                   <td>{eq.modelo}</td>
-                  <td>{formatarLocalizacao(eq)}</td>
                   <td>
                     <span className={styles.statusBadge} style={corDoStatus(eq.status)}>
                       {rotuloDoStatus(eq.status)}

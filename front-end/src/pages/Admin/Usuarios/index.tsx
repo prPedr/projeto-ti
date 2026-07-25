@@ -98,9 +98,16 @@ export default function Usuarios() {
   }
 
   return (
-    <>
+    <div className={styles.cartao}>
       <div className={styles.cabecalhoAcoes}>
         <h2>Usuários</h2>
+        <button
+          type="button"
+          className={styles.botaoAdicionar}
+          onClick={() => document.getElementById('nome')?.focus()}
+        >
+          Novo Usuário
+        </button>
       </div>
 
       <form className={styles.formulario} onSubmit={handleSubmit}>
@@ -164,79 +171,81 @@ export default function Usuarios() {
         </button>
       </form>
 
-      <div className={styles.tabelaWrapper}>
-        <table className={styles.tabela}>
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>E-mail</th>
-              <th>Perfil</th>
-              <th>Status</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {usuarios.map((linha) => {
-              const ehOProprioUsuario = usuarioLogado?.id === linha.id;
-              const titleProprioUsuario = ehOProprioUsuario
-                ? 'Você não pode alterar sua própria conta'
-                : undefined;
+      <div className={styles.areaRolagem}>
+        <div className={styles.tabelaWrapper}>
+          <table className={styles.tabela}>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Perfil</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {usuarios.map((linha) => {
+                const ehOProprioUsuario = usuarioLogado?.id === linha.id;
+                const titleProprioUsuario = ehOProprioUsuario
+                  ? 'Você não pode alterar sua própria conta'
+                  : undefined;
 
-              return (
-                <tr key={linha.id}>
-                  <td>{linha.nome}</td>
-                  <td>{linha.email}</td>
-                  <td>
-                    <select
-                      className={styles.selectInline}
-                      value={linha.perfil}
-                      disabled={ehOProprioUsuario}
-                      title={titleProprioUsuario}
-                      onChange={(event) => handleTrocarPerfil(linha, event.target.value)}
-                    >
-                      {PERFIS.map((valor) => (
-                        <option key={valor} value={valor}>
-                          {valor}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td>
-                    <span className={styles.statusBadge} style={corDoStatus(linha.ativo)}>
-                      {linha.ativo ? 'Ativo' : 'Inativo'}
-                    </span>
-                  </td>
-                  <td>
-                    <div className={styles.grupoAcoes}>
-                      <button
-                        type="button"
-                        className={styles.botaoAcaoTabela}
+                return (
+                  <tr key={linha.id}>
+                    <td>{linha.nome}</td>
+                    <td>{linha.email}</td>
+                    <td>
+                      <select
+                        className={styles.selectInline}
+                        value={linha.perfil}
                         disabled={ehOProprioUsuario}
                         title={titleProprioUsuario}
-                        onClick={() => handleToggleAtivo(linha)}
+                        onChange={(event) => handleTrocarPerfil(linha, event.target.value)}
                       >
-                        {linha.ativo ? 'Desativar' : 'Ativar'}
-                      </button>
+                        {PERFIS.map((valor) => (
+                          <option key={valor} value={valor}>
+                            {valor}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td>
+                      <span className={styles.statusBadge} style={corDoStatus(linha.ativo)}>
+                        {linha.ativo ? 'Ativo' : 'Inativo'}
+                      </span>
+                    </td>
+                    <td>
+                      <div className={styles.grupoAcoes}>
+                        <button
+                          type="button"
+                          className={styles.botaoAcaoTabela}
+                          disabled={ehOProprioUsuario}
+                          title={titleProprioUsuario}
+                          onClick={() => handleToggleAtivo(linha)}
+                        >
+                          {linha.ativo ? 'Desativar' : 'Ativar'}
+                        </button>
 
-                      <button
-                        type="button"
-                        className={styles.botaoAcaoTabela}
-                        onClick={() => handleRedefinirSenha(linha)}
-                      >
-                        Redefinir senha
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                        <button
+                          type="button"
+                          className={styles.botaoAcaoTabela}
+                          onClick={() => handleRedefinirSenha(linha)}
+                        >
+                          Redefinir senha
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
 
-        {!carregando && usuarios.length === 0 && (
-          <p className={styles.listaVazia}>Nenhum usuário cadastrado.</p>
-        )}
+          {!carregando && usuarios.length === 0 && (
+            <p className={styles.listaVazia}>Nenhum usuário cadastrado.</p>
+          )}
+        </div>
       </div>
-    </>
+    </div>
   );
 }
