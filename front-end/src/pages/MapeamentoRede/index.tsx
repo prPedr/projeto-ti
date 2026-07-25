@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import type { SubmitEvent } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { listarInterfacesRede, listarSwitchesMapeamento } from '../../services/mapeamentoRede';
-import type { InterfaceRede, SwitchMapeamento } from '../../services/mapeamentoRede';
+import { useNavigate } from 'react-router-dom';
+import { listarInterfacesRede } from '../../services/mapeamentoRede';
+import type { InterfaceRede } from '../../services/mapeamentoRede';
 import styles from './MapeamentoRede.module.css';
 
 function octetos(ip: string): number[] {
@@ -75,20 +75,13 @@ export default function MapeamentoRede() {
   const navigate = useNavigate();
 
   const [interfaces, setInterfaces] = useState<InterfaceRede[]>([]);
-  const [switches, setSwitches] = useState<SwitchMapeamento[]>([]);
   const [subredeBusca, setSubredeBusca] = useState('');
   const [carregando, setCarregando] = useState(true);
 
   function carregarDados(subrede?: string) {
     setCarregando(true);
-    Promise.all([
-      listarInterfacesRede(subrede || undefined),
-      listarSwitchesMapeamento(),
-    ])
-      .then(([dadosInterfaces, dadosSwitches]) => {
-        setInterfaces(dadosInterfaces);
-        setSwitches(dadosSwitches);
-      })
+    listarInterfacesRede(subrede || undefined)
+      .then(setInterfaces)
       .catch((erro) => {
         console.error('Erro ao carregar mapeamento de rede:', erro);
         alert('Não foi possível carregar o mapeamento de rede.');
@@ -124,101 +117,55 @@ export default function MapeamentoRede() {
       <div className={styles.areaRolagem}>
         {carregando ? (
           <p>Carregando mapeamento de rede...</p>
+        ) : interfaces.length === 0 ? (
+          <p className={styles.listaVazia}>Nenhuma interface de rede cadastrada.</p>
         ) : (
-          <>
-            {/* Seção de Switches */}
-            {switches.length > 0 && (
-              <div className={styles.secaoSwitches}>
-                <h3 className={styles.tituloSubRede}>
-                  Switches de Rede
-                  <span className={styles.contagem}>{switches.length} switch(es) ativo(s)</span>
-                </h3>
+          grupos.map((grupo) => (
+            <div key={grupo.subRede} className={styles.blocoSubRede}>
+              <h3 className={styles.tituloSubRede}>
+                {grupo.subRede}.0/24
+                <span className={styles.contagem}>{grupo.interfaces.length} IP(s) em uso</span>
+              </h3>
 
-                <div className={styles.gridSwitches}>
-                  {switches.map((item) => (
-                    <Link
+              <table className={styles.tabela}>
+                <thead>
+                  <tr>
+                    <th>IP</th>
+                    <th>MAC</th>
+                    <th>Interface</th>
+                    <th>Equipamento</th>
+                    <th>Status</th>
+                    <th>Localização</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {grupo.interfaces.map((item) => (
+                    <tr
                       key={item.id}
-                      to={`/mapeamento-rede/switches/${item.id}`}
-                      className={styles.cardSwitch}
+                      className={styles.linhaClicavel}
+                      onClick={() =>
+                        navigate(`/equipamentos/${item.equipamento_id}`, { state: { modo: 'visualizar' } })
+                      }
                     >
-                      <div className={styles.cardSwitchHeader}>
-                        <div>
-                          <div className={styles.nomeSwitch}>
-                            {item.nome || `${item.marca} ${item.modelo}`}
-                          </div>
-                          <div className={styles.modeloSwitch}>
-                            {item.marca} {item.modelo}
-                          </div>
-                        </div>
-
-                        {item.numero_portas != null && (
-                          <span className={styles.tagPortas}>
-                            {item.portas_em_uso ?? 0}/{item.numero_portas} portas
-                          </span>
-                        )}
-                      </div>
-
-                      <div className={styles.localizacaoSwitch}>
-                        📍 {[item.filial, item.sala].filter(Boolean).join(' - ') || 'Localização não definida'}
-                      </div>
-                    </Link>
+                      <td className={styles.tdMono}>{item.ip}</td>
+                      <td className={styles.tdMono}>{item.mac ?? '—'}</td>
+                      <td>{item.nome_interface}</td>
+                      <td>
+                        {item.categoria} — {item.marca} {item.modelo}
+                        {item.nome ? ` (${item.nome})` : ''}
+                      </td>
+                      <td>
+                        <span className={styles.statusBadge} style={corDoStatus(item.status)}>
+                          {rotuloStatus(item.status)}
+                        </span>
+                      </td>
+                      <td>{[item.filial, item.sala].filter(Boolean).join(' - ') || 'Não definida'}</td>
+                    </tr>
                   ))}
-                </div>
-              </div>
-            )}
-
-            {/* Seção de Interfaces por Sub-rede */}
-            {interfaces.length === 0 ? (
-              <p className={styles.listaVazia}>Nenhuma interface de rede cadastrada.</p>
-            ) : (
-              grupos.map((grupo) => (
-                <div key={grupo.subRede} className={styles.blocoSubRede}>
-                  <h3 className={styles.tituloSubRede}>
-                    {grupo.subRede}.0/24
-                    <span className={styles.contagem}>{grupo.interfaces.length} IP(s) em uso</span>
-                  </h3>
-
-                  <table className={styles.tabela}>
-                    <thead>
-                      <tr>
-                        <th>IP</th>
-                        <th>MAC</th>
-                        <th>Interface</th>
-                        <th>Equipamento</th>
-                        <th>Status</th>
-                        <th>Localização</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {grupo.interfaces.map((item) => (
-                        <tr
-                          key={item.id}
-                          className={styles.linhaClicavel}
-                          onClick={() =>
-                            navigate(`/equipamentos/${item.equipamento_id}`, { state: { modo: 'visualizar' } })
-                          }
-                        >
-                          <td className={styles.tdMono}>{item.ip}</td>
-                          <td className={styles.tdMono}>{item.mac ?? '—'}</td>
-                          <td>{item.nome_interface}</td>
-                          <td>
-                            {item.categoria} — {item.marca} {item.modelo}
-                            {item.nome ? ` (${item.nome})` : ''}
-                          </td>
-                          <td>
-                            <span className={styles.statusBadge} style={corDoStatus(item.status)}>
-                              {rotuloStatus(item.status)}
-                            </span>
-                          </td>
-                          <td>{[item.filial, item.sala].filter(Boolean).join(' - ') || 'Não definida'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ))
-            )}
-          </>
+                </tbody>
+              </table>
+            </div>
+          ))
         )}
       </div>
     </div>
