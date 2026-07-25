@@ -83,7 +83,7 @@ export default function Listagem() {
   }
 
   return (
-    <>
+    <div className={styles.cartao} style={{ padding: '1.5rem' }}>
       <div className={styles.cabecalhoAcoes}>
         <h2>Equipamentos</h2>
         <Link to="/equipamentos/cadastro" className={styles.botaoNovo}>
@@ -91,104 +91,106 @@ export default function Listagem() {
         </Link>
       </div>
 
-      {carregando ? (
-        <p>Carregando equipamentos...</p>
-      ) : equipamentos.length === 0 ? (
-        <p>Nenhum equipamento cadastrado.</p>
-      ) : (
-        <table className={styles.tabela}>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Categoria</th>
-              <th>Marca</th>
-              <th>Modelo</th>
-              <th>Localização</th>
-              <th>Status</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {equipamentos.map((eq) => (
-              <tr key={eq.id}>
-                <td>{eq.id}</td>
-                <td style={{ textTransform: 'capitalize' }}>{eq.categoria}</td>
-                <td>{eq.marca}</td>
-                <td>{eq.modelo}</td>
-                <td>{formatarLocalizacao(eq)}</td>
-                <td>
-                  <span className={styles.statusBadge} style={corDoStatus(eq.status)}>
-                    {rotuloDoStatus(eq.status)}
-                  </span>
-                </td>
-                <td>
-                  <div className={styles.grupoAcoes}>
-                    <button
-                      type="button"
-                      className={styles.botaoIcone}
-                      onClick={() => navigate(`/equipamentos/${eq.id}`, { state: { modo: 'visualizar' } })}
-                      title="Visualizar"
-                    >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                    </button>
-                    <button
-                      type="button"
-                      className={styles.botaoIcone}
-                      onClick={() => navigate(`/equipamentos/${eq.id}`, { state: { modo: 'editar' } })}
-                      title="Editar"
-                    >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-                      </svg>
-                    </button>
-                    <button
-                      type="button"
-                      className={styles.botaoIcone}
-                      onClick={() => handleExcluir(eq.id)}
-                      title="Excluir"
-                    >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                      </svg>
-                    </button>
-                  </div>
-                </td>
+      <div className={styles.areaRolagem}>
+        {carregando ? (
+          <p>Carregando equipamentos...</p>
+        ) : equipamentos.length === 0 ? (
+          <p>Nenhum equipamento cadastrado.</p>
+        ) : (
+          <table className={styles.tabela}>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Categoria</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Localização</th>
+                <th>Status</th>
+                <th>Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </>
+            </thead>
+            <tbody>
+              {equipamentos.map((eq) => (
+                <tr key={eq.id}>
+                  <td>{eq.id}</td>
+                  <td style={{ textTransform: 'capitalize' }}>{eq.categoria}</td>
+                  <td>{eq.marca}</td>
+                  <td>{eq.modelo}</td>
+                  <td>{formatarLocalizacao(eq)}</td>
+                  <td>
+                    <span className={styles.statusBadge} style={corDoStatus(eq.status)}>
+                      {rotuloDoStatus(eq.status)}
+                    </span>
+                  </td>
+                  <td>
+                    <div className={styles.grupoAcoes}>
+                      <button
+                        type="button"
+                        className={styles.botaoIcone}
+                        onClick={() => navigate(`/equipamentos/${eq.id}`, { state: { modo: 'visualizar' } })}
+                        title="Visualizar"
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.botaoIcone}
+                        onClick={() => navigate(`/equipamentos/${eq.id}`, { state: { modo: 'editar' } })}
+                        title="Editar"
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.botaoIcone}
+                        onClick={() => handleExcluir(eq.id)}
+                        title="Excluir"
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <polyline points="3 6 5 6 21 6" />
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
   );
 }

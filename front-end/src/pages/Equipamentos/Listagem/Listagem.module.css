@@ -22,6 +22,12 @@
   border-bottom: 1px solid var(--cor-borda);
 }
 
+.areaRolagem {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem 0 0;
+}
+
 .tabela {
   width: 100%;
   border-collapse: collapse;
