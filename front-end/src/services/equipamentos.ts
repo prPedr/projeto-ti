@@ -64,3 +64,18 @@ export async function atualizarEquipamento(id: number, categoria: string, payloa
     body: JSON.stringify(payload),
   });
 }
+
+export async function enviarAnexoEquipamento(
+  equipamentoId: number,
+  arquivo: File,
+  tipoDocumento: 'NOTA_FISCAL' | 'TERMO_RESPONSABILIDADE' | 'CONTRATO' | 'OUTRO',
+) {
+  const formData = new FormData();
+  formData.append('arquivo', arquivo);
+  formData.append('tipo_documento', tipoDocumento);
+
+  return fetchComToken(`/api/equipamentos/${equipamentoId}/anexos`, {
+    method: 'POST',
+    body: formData,
+  });
+}

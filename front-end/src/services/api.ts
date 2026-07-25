@@ -19,8 +19,10 @@ export async function fetchComToken(url: string, opcoes: OpcoesFetch = {}) {
   const { pularTratamento401, ...opcoesFetch } = opcoes;
   const token = localStorage.getItem(TOKEN_KEY);
 
+  const isFormData = opcoesFetch.body instanceof FormData;
+
   const headers = {
-    'Content-Type': 'application/json',
+    ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...opcoesFetch.headers,
   };
