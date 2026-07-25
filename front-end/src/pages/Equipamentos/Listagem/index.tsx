@@ -13,9 +13,9 @@ interface Equipamento {
   filial: string | null;
   sala: string | null;
   cadastrado_por_nome: string | null;
-  // Campos opcionais: não retornados pela listagem geral, apenas pelo detalhe
-  ip?: string | null;
-  usuario_alocado?: string | null;
+  // Campos enriquecidos via JOIN no backend
+  ip: string | null;
+  usuario_alocado: string | null;
 }
 
 export default function Listagem() {
@@ -111,7 +111,7 @@ export default function Listagem() {
             <tbody>
               {equipamentos.map((eq) => (
                 <tr key={eq.id}>
-                  <td style={{ color: 'var(--cor-texto-suave)', fontSize: '12px' }}>#{eq.id}</td>
+                  <td style={{ color: 'var(--cor-texto-suave)', fontSize: '12px' }}>{eq.id}</td>
                   <td style={{ fontFamily: 'monospace', fontSize: '13px' }}>
                     {eq.ip ?? '—'}
                   </td>

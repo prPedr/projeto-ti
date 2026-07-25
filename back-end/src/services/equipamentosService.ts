@@ -16,6 +16,8 @@ export interface EquipamentoListado {
   sala: string | null
   cadastrado_por: number
   cadastrado_por_nome: string | null
+  ip: string | null
+  usuario_alocado: string | null
 }
 
 export interface FiltrosListagem {
@@ -85,11 +87,15 @@ export const listarEquipamentos = (filtros: FiltrosListagem): ResultadoListagemE
       l.filial AS filial,
       l.sala AS sala,
       e.cadastrado_por,
-      u.nome AS cadastrado_por_nome
+      u.nome AS cadastrado_por_nome,
+      (SELECT ir.ip FROM interfaces_rede ir WHERE ir.equipamento_id = e.id AND ir.ip IS NOT NULL LIMIT 1) AS ip,
+      COALESCE(eqcomp.usuario_alocado, eqcel.usuario_alocado) AS usuario_alocado
     FROM equipamentos e
     LEFT JOIN localizacoes l ON l.id = e.localizacao_id
     LEFT JOIN usuarios_sistema u ON u.id = e.cadastrado_por
     LEFT JOIN eq_computadores eqc ON eqc.equipamento_id = e.id
+    LEFT JOIN eq_computadores eqcomp ON eqcomp.equipamento_id = e.id
+    LEFT JOIN eq_celulares eqcel ON eqcel.equipamento_id = e.id
     ${clausulaWhere}
     ORDER BY e.data_cadastro DESC
     LIMIT @limite OFFSET @offset
