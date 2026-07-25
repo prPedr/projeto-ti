@@ -1,11 +1,27 @@
 /* Variáveis de design system (--cor-primaria, --cor-cartao, etc.) vêm de
    src/index.css, que é global — não precisam ser importadas aqui. */
 
+.cartao {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #ffffff;
+  border: 1px solid var(--cor-borda);
+  border-radius: 12px;
+}
+
+.areaRolagem {
+  flex: 1;
+  overflow-y: auto;
+}
+
 .cabecalhoAcoes {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--cor-borda);
+  margin-bottom: 1rem;
 }
 
 .barraBusca {
@@ -73,8 +89,8 @@
 .tabela th {
   text-align: left;
   padding: 1rem;
-  border-bottom: 2px solid var(--cor-borda);
-  color: var(--cor-texto-suave);
+  border-bottom: 1px solid var(--cor-borda);
+  color: var(--cor-texto-destaque, var(--cor-texto));
   font-weight: 600;
   font-size: 14px;
 }
@@ -86,8 +102,12 @@
   color: var(--cor-texto);
 }
 
+.tabela tbody tr {
+  transition: background-color 0.2s ease-in-out;
+}
+
 .tabela tbody tr:hover {
-  background-color: var(--cor-input-fundo);
+  background-color: #f3f4f6;
 }
 
 .linhaClicavel {
