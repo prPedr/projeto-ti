@@ -12,6 +12,7 @@ export interface PortaSwitch {
   conectado_marca: string | null;
   conectado_modelo: string | null;
   conectado_status: string | null;
+  conectado_ips: string[];
 }
 
 export async function listarPortasSwitch(switchId: number): Promise<PortaSwitch[]> {

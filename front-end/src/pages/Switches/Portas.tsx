@@ -28,6 +28,9 @@ export default function SwitchesPortas() {
   const [equipamentosDisponiveis, setEquipamentosDisponiveis] = useState<EquipamentoConectavel[]>([]);
   const [carregando, setCarregando] = useState(true);
 
+  // Estado do modo de visualização ('grade' | 'lista')
+  const [modoVisualizacao, setModoVisualizacao] = useState<'grade' | 'lista'>('grade');
+
   // Estado do modal / edição de porta
   const [portaEdicao, setPortaEdicao] = useState<PortaSwitch | null>(null);
   const [equipamentoSelecionadoId, setEquipamentoSelecionadoId] = useState<string>('');
@@ -165,14 +168,72 @@ export default function SwitchesPortas() {
                 </div>
               </div>
 
-              <div className={styles.resumoUso}>
-                {portasEmUso} de {totalPortas} portas em uso
+              <div className={styles.grupoAlternancia}>
+                <div className={styles.resumoUso}>
+                  {portasEmUso} de {totalPortas} portas em uso
+                </div>
+
+                <div className={styles.botoesAlternancia}>
+                  <button
+                    type="button"
+                    className={`${styles.botaoAlternancia} ${
+                      modoVisualizacao === 'grade' ? styles.ativo : ''
+                    }`}
+                    onClick={() => setModoVisualizacao('grade')}
+                    title="Visualizar em Grade"
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect x="3" y="3" width="7" height="7" />
+                      <rect x="14" y="3" width="7" height="7" />
+                      <rect x="14" y="14" width="7" height="7" />
+                      <rect x="3" y="14" width="7" height="7" />
+                    </svg>
+                    <span>Grade</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`${styles.botaoAlternancia} ${
+                      modoVisualizacao === 'lista' ? styles.ativo : ''
+                    }`}
+                    onClick={() => setModoVisualizacao('lista')}
+                    title="Visualizar em Lista"
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="8" y1="6" x2="21" y2="6" />
+                      <line x1="8" y1="12" x2="21" y2="12" />
+                      <line x1="8" y1="18" x2="21" y2="18" />
+                      <line x1="3" y1="6" x2="3.01" y2="6" />
+                      <line x1="3" y1="12" x2="3.01" y2="12" />
+                      <line x1="3" y1="18" x2="3.01" y2="18" />
+                    </svg>
+                    <span>Lista</span>
+                  </button>
+                </div>
               </div>
             </div>
 
             {portas.length === 0 ? (
               <p>Nenhuma porta cadastrada para este switch.</p>
-            ) : (
+            ) : modoVisualizacao === 'grade' ? (
               <div className={styles.gridPortas}>
                 {portas.map((porta) => {
                   const estaOcupada =
@@ -212,6 +273,109 @@ export default function SwitchesPortas() {
                     </div>
                   );
                 })}
+              </div>
+            ) : (
+              <div className={styles.tabelaWrapper}>
+                <table className={styles.tabela}>
+                  <thead>
+                    <tr>
+                      <th>Porta</th>
+                      <th>Status</th>
+                      <th>Equipamento Conectado</th>
+                      <th>IP</th>
+                      <th>Descrição</th>
+                      <th>Ação</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {portas.map((porta) => {
+                      const estaOcupada =
+                        porta.equipamento_conectado_id !== null ||
+                        (porta.descricao && porta.descricao.trim() !== '');
+
+                      const ipsTexto =
+                        porta.conectado_ips && porta.conectado_ips.length > 0
+                          ? porta.conectado_ips.join(', ')
+                          : '—';
+
+                      return (
+                        <tr key={porta.id}>
+                          <td className={styles.tdMono}>
+                            <strong>#{porta.numero_porta}</strong>
+                          </td>
+                          <td>
+                            <span
+                              className={styles.statusBadge}
+                              style={
+                                estaOcupada
+                                  ? {
+                                      backgroundColor: 'var(--status-ativo-fundo)',
+                                      color: 'var(--status-ativo-texto)',
+                                      border: '1px solid var(--status-ativo-texto)',
+                                    }
+                                  : {
+                                      backgroundColor: 'var(--cor-input-fundo)',
+                                      color: 'var(--cor-texto-suave)',
+                                      border: '1px solid var(--cor-borda)',
+                                    }
+                              }
+                            >
+                              {estaOcupada ? 'Ocupada' : 'Livre'}
+                            </span>
+                          </td>
+                          <td>
+                            {porta.conectado_nome ? (
+                              <div>
+                                <div>{porta.conectado_nome}</div>
+                                {porta.conectado_categoria && (
+                                  <span className={styles.subtextoEquipamento}>
+                                    {porta.conectado_categoria}
+                                  </span>
+                                )}
+                              </div>
+                            ) : porta.conectado_marca || porta.conectado_modelo ? (
+                              <div>
+                                <div>
+                                  {`${porta.conectado_marca || ''} ${porta.conectado_modelo || ''}`.trim()}
+                                </div>
+                                {porta.conectado_categoria && (
+                                  <span className={styles.subtextoEquipamento}>
+                                    {porta.conectado_categoria}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <span className={styles.textoVazio}>—</span>
+                            )}
+                          </td>
+                          <td className={styles.tdMono}>{ipsTexto}</td>
+                          <td>{porta.descricao || '—'}</td>
+                          <td>
+                            <button
+                              type="button"
+                              className={styles.botaoIcone}
+                              onClick={() => handleAbrirModal(porta)}
+                              title={`Editar Porta #${porta.numero_porta}`}
+                            >
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                              </svg>
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             )}
           </>

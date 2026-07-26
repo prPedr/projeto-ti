@@ -315,3 +315,125 @@
 .botaoVoltar:hover {
   background-color: var(--cor-input-fundo);
 }
+
+/* Alternância de Modo (Grade / Lista) */
+.grupoAlternancia {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.botoesAlternancia {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.botaoAlternancia {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cor-texto-suave);
+  background-color: transparent;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.botaoAlternancia:hover {
+  color: var(--cor-texto);
+  border-color: var(--cor-input-borda);
+}
+
+.botaoAlternancia.ativo {
+  background-color: var(--cor-primaria);
+  color: #ffffff;
+  border-color: var(--cor-primaria);
+}
+
+/* Modo Lista - Tabela */
+.tabelaWrapper {
+  overflow-x: auto;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-sm);
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tabela th {
+  text-align: left;
+  padding: 0.85rem 1rem;
+  background-color: var(--cor-input-fundo);
+  border-bottom: 1px solid var(--cor-borda);
+  color: var(--cor-texto);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.tabela td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--cor-borda);
+  font-size: 14px;
+  color: var(--cor-texto);
+  vertical-align: middle;
+}
+
+.tabela tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela tbody tr {
+  transition: background-color 0.2s ease-in-out;
+}
+
+.tabela tbody tr:hover {
+  background-color: #d6d9df83;
+}
+
+.tdMono {
+  font-family: var(--fonte-mono);
+  font-size: 13px;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--raio-sm);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.subtextoEquipamento {
+  display: block;
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+  margin-top: 2px;
+}
+
+.botaoIcone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0.25rem;
+  color: var(--cor-texto);
+  cursor: pointer;
+  transition: color 0.2s ease, opacity 0.2s ease;
+  opacity: 0.75;
+}
+
+.botaoIcone:hover {
+  color: var(--cor-primaria);
+  opacity: 1;
+}
