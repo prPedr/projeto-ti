@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import ComboBoxSelect from '../../components/ComboBoxSelect';
 import { buscarEquipamentoPorId } from '../../services/equipamentos';
 import { listarPortasSwitch, atualizarPorta } from '../../services/portasSwitch';
 import type { PortaSwitch } from '../../services/portasSwitch';
@@ -32,7 +33,6 @@ export default function SwitchesPortas() {
   const [equipamentoSelecionadoId, setEquipamentoSelecionadoId] = useState<string>('');
   const [descricao, setDescricao] = useState<string>('');
   const [salvando, setSalvando] = useState(false);
-  const [filtroEquipamento, setFiltroEquipamento] = useState('');
 
   const carregarDados = async () => {
     if (!switchId || isNaN(switchId)) return;
@@ -68,14 +68,12 @@ export default function SwitchesPortas() {
       porta.equipamento_conectado_id ? String(porta.equipamento_conectado_id) : ''
     );
     setDescricao(porta.descricao || '');
-    setFiltroEquipamento('');
   };
 
   const handleFecharModal = () => {
     setPortaEdicao(null);
     setEquipamentoSelecionadoId('');
     setDescricao('');
-    setFiltroEquipamento('');
   };
 
   const handleSalvar = async () => {
@@ -126,13 +124,6 @@ export default function SwitchesPortas() {
   const portasEmUso = portas.filter(
     (p) => p.equipamento_conectado_id !== null || (p.descricao && p.descricao.trim() !== '')
   ).length;
-
-  const equipamentosFiltrados = equipamentosDisponiveis.filter((e) => {
-    if (!filtroEquipamento.trim()) return true;
-    const termo = filtroEquipamento.toLowerCase();
-    const texto = `${e.nome || ''} ${e.marca} ${e.modelo} ${e.categoria} ${e.ips.join(' ')} #${e.id}`.toLowerCase();
-    return texto.includes(termo);
-  });
 
   return (
     <div className={styles.cartao} style={{ padding: '1.5rem' }}>
@@ -243,35 +234,20 @@ export default function SwitchesPortas() {
             </div>
 
             <div className={styles.formGrupo}>
-              <label htmlFor="filtroEq">Filtrar equipamento por nome/marca/modelo/IP:</label>
-              <input
-                id="filtroEq"
-                className={styles.input}
-                type="text"
-                placeholder="Buscar por nome ou IP..."
-                value={filtroEquipamento}
-                onChange={(e) => setFiltroEquipamento(e.target.value)}
+              <label htmlFor="equipamento-conectado">Vincular Equipamento:</label>
+              <ComboBoxSelect
+                id="equipamento-conectado"
+                opcoes={[
+                  { valor: '', rotulo: '— Nenhum equipamento (só descrição) —' },
+                  ...equipamentosDisponiveis.map((e) => ({
+                    valor: String(e.id),
+                    rotulo: `${e.nome || `${e.marca} ${e.modelo}`} — ${e.categoria}${e.ips.length ? ` — ${e.ips.join(', ')}` : ''}`,
+                  })),
+                ]}
+                valor={equipamentoSelecionadoId}
+                aoMudar={setEquipamentoSelecionadoId}
+                placeholder="Buscar por nome, categoria ou IP..."
               />
-            </div>
-
-            <div className={styles.formGrupo}>
-              <label htmlFor="selectEq">Vincular Equipamento:</label>
-              <select
-                id="selectEq"
-                className={styles.select}
-                value={equipamentoSelecionadoId}
-                onChange={(e) => setEquipamentoSelecionadoId(e.target.value)}
-              >
-                <option value="">-- NENHUM EQUIPAMENTO VINCULADO --</option>
-                {equipamentosFiltrados.map((eq) => {
-                  const textoIp = eq.ips && eq.ips.length > 0 ? eq.ips.join(', ') : 'sem IP';
-                  return (
-                    <option key={eq.id} value={eq.id}>
-                      [{eq.categoria.toUpperCase()}] {eq.nome ? `${eq.nome} — ` : ''}{eq.marca} {eq.modelo} — {textoIp}
-                    </option>
-                  );
-                })}
-              </select>
             </div>
 
             <div className={styles.formGrupo}>
