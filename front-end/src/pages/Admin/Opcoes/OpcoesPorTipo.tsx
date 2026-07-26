@@ -131,8 +131,8 @@ export function OpcoesPorTipo({
   }
 
   return (
-    <>
-      <div className={styles.cabecalhoPagina}>
+    <div className={styles.cartao}>
+      <div className={styles.cabecalhoAcoes}>
         <div>
           <h1 className={styles.tituloPagina}>{titulo}</h1>
           {subtitulo && <p className={styles.subtituloPagina}>{subtitulo}</p>}
@@ -192,26 +192,51 @@ export function OpcoesPorTipo({
         </button>
       </form>
 
-      <div className={styles.categorias}>
-        {categorias.map((item) => {
-          const valores = opcoes[item.valor] ?? [];
+      <div className={styles.areaRolagem}>
+        <div className={styles.categorias}>
+          {categorias.map((item) => {
+            const valores = opcoes[item.valor] ?? [];
 
-          if (item.valor === 'MODELO') {
-            const gruposMap: Record<string, OpcaoItem[]> = {};
-            valores.forEach((m) => {
-              const marca = marcas.find((b) => b.id === m.dependencia_id);
-              const chave = marca ? marca.valor : 'Sem marca vinculada';
-              if (!gruposMap[chave]) {
-                gruposMap[chave] = [];
-              }
-              gruposMap[chave].push(m);
-            });
+            if (item.valor === 'MODELO') {
+              const gruposMap: Record<string, OpcaoItem[]> = {};
+              valores.forEach((m) => {
+                const marca = marcas.find((b) => b.id === m.dependencia_id);
+                const chave = marca ? marca.valor : 'Sem marca vinculada';
+                if (!gruposMap[chave]) {
+                  gruposMap[chave] = [];
+                }
+                gruposMap[chave].push(m);
+              });
 
-            const chavesOrdenadas = Object.keys(gruposMap).sort((a, b) => {
-              if (a === 'Sem marca vinculada') return 1;
-              if (b === 'Sem marca vinculada') return -1;
-              return a.localeCompare(b);
-            });
+              const chavesOrdenadas = Object.keys(gruposMap).sort((a, b) => {
+                if (a === 'Sem marca vinculada') return 1;
+                if (b === 'Sem marca vinculada') return -1;
+                return a.localeCompare(b);
+              });
+
+              return (
+                <div className={styles.categoriaCard} key={item.valor}>
+                  <h2 className={styles.categoriaTitulo}>
+                    {item.rotulo} <span className={styles.contagem}>({valores.length})</span>
+                  </h2>
+
+                  {valores.length > 0 ? (
+                    <div className={styles.corpoCard}>
+                      {chavesOrdenadas.map((chave) => (
+                        <div key={chave} className={styles.subgrupo}>
+                          <h3 className={styles.subgrupoTitulo}>{chave}</h3>
+                          <ul className={styles.lista}>
+                            {gruposMap[chave].map(renderItemLista)}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className={styles.listaVazia}>Nenhum valor cadastrado.</p>
+                  )}
+                </div>
+              );
+            }
 
             return (
               <div className={styles.categoriaCard} key={item.valor}>
@@ -221,41 +246,18 @@ export function OpcoesPorTipo({
 
                 {valores.length > 0 ? (
                   <div className={styles.corpoCard}>
-                    {chavesOrdenadas.map((chave) => (
-                      <div key={chave} className={styles.subgrupo}>
-                        <h3 className={styles.subgrupoTitulo}>{chave}</h3>
-                        <ul className={styles.lista}>
-                          {gruposMap[chave].map(renderItemLista)}
-                        </ul>
-                      </div>
-                    ))}
+                    <ul className={styles.lista}>
+                      {valores.map(renderItemLista)}
+                    </ul>
                   </div>
                 ) : (
                   <p className={styles.listaVazia}>Nenhum valor cadastrado.</p>
                 )}
               </div>
             );
-          }
-
-          return (
-            <div className={styles.categoriaCard} key={item.valor}>
-              <h2 className={styles.categoriaTitulo}>
-                {item.rotulo} <span className={styles.contagem}>({valores.length})</span>
-              </h2>
-
-              {valores.length > 0 ? (
-                <div className={styles.corpoCard}>
-                  <ul className={styles.lista}>
-                    {valores.map(renderItemLista)}
-                  </ul>
-                </div>
-              ) : (
-                <p className={styles.listaVazia}>Nenhum valor cadastrado.</p>
-              )}
-            </div>
-          );
-        })}
+          })}
+        </div>
       </div>
-    </>
+    </div>
   );
 }
