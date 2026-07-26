@@ -135,3 +135,57 @@ export const listarSwitches = (): SwitchListado[] => {
 
   return consulta.all() as SwitchListado[]
 }
+
+export interface EquipamentoConectavel {
+  id: number
+  nome: string | null
+  marca: string
+  modelo: string
+  categoria: string
+  ips: string[]
+}
+
+export const listarEquipamentosConectaveis = (excluirId?: number): EquipamentoConectavel[] => {
+  const parametros: Record<string, any> = {}
+  let condicaoExcluir = ''
+
+  if (excluirId) {
+    condicaoExcluir = 'AND e.id != @excluirId'
+    parametros.excluirId = excluirId
+  }
+
+  const consulta = banco.prepare(`
+    SELECT
+      e.id,
+      e.nome,
+      e.marca,
+      e.modelo,
+      e.categoria,
+      GROUP_CONCAT(DISTINCT ir.ip) AS ips
+    FROM equipamentos e
+    LEFT JOIN interfaces_rede ir ON ir.equipamento_id = e.id
+    WHERE e.categoria IN ('COMPUTADOR', 'SWITCH', 'NVR', 'CAMERA')
+      AND e.status = 'ATIVO'
+      ${condicaoExcluir}
+    GROUP BY e.id
+    ORDER BY e.nome
+  `)
+
+  const linhas = consulta.all(parametros) as Array<{
+    id: number
+    nome: string | null
+    marca: string
+    modelo: string
+    categoria: string
+    ips: string | null
+  }>
+
+  return linhas.map((linha) => ({
+    id: linha.id,
+    nome: linha.nome,
+    marca: linha.marca,
+    modelo: linha.modelo,
+    categoria: linha.categoria,
+    ips: linha.ips ? linha.ips.split(',') : [],
+  }))
+}
