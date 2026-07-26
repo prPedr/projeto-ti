@@ -33,7 +33,7 @@ export const tratadorDeErros = (
 
   console.error(erro)
 
-  if (erro.code === 'LIMIT_FILE_SIZE' || (erro instanceof multer.MulterError && erro.code === 'LIMIT_FILE_SIZE')) {
+  if ((erro as any).code === 'LIMIT_FILE_SIZE' || erro instanceof multer.MulterError) {
     resposta.status(400).json({
       sucesso: false,
       mensagem: 'Arquivo muito grande. Tamanho máximo permitido: 10MB.',

@@ -1,4 +1,6 @@
+import path from 'path'
 import banco from '../database/conexao.js'
+import { listarAnexosPorEquipamento } from './anexosService.js'
 
 export interface EquipamentoListado {
   id: number
@@ -18,6 +20,8 @@ export interface EquipamentoListado {
   cadastrado_por_nome: string | null
   ip: string | null
   usuario_alocado: string | null
+  termo_anexo_id: number | null
+  termo_url_download: string | null
 }
 
 export interface FiltrosListagem {
@@ -89,7 +93,9 @@ export const listarEquipamentos = (filtros: FiltrosListagem): ResultadoListagemE
       e.cadastrado_por,
       u.nome AS cadastrado_por_nome,
       (SELECT ir.ip FROM interfaces_rede ir WHERE ir.equipamento_id = e.id AND ir.ip IS NOT NULL LIMIT 1) AS ip,
-      COALESCE(eqcomp.usuario_alocado, eqcel.usuario_alocado) AS usuario_alocado
+      COALESCE(eqcomp.usuario_alocado, eqcel.usuario_alocado) AS usuario_alocado,
+      (SELECT a.id FROM anexos a WHERE a.equipamento_id = e.id AND a.tipo_documento = 'TERMO_RESPONSABILIDADE' ORDER BY a.data_upload DESC LIMIT 1) AS termo_anexo_id,
+      (SELECT a.caminho_arquivo FROM anexos a WHERE a.equipamento_id = e.id AND a.tipo_documento = 'TERMO_RESPONSABILIDADE' ORDER BY a.data_upload DESC LIMIT 1) AS termo_caminho_arquivo
     FROM equipamentos e
     LEFT JOIN localizacoes l ON l.id = e.localizacao_id
     LEFT JOIN usuarios_sistema u ON u.id = e.cadastrado_por
@@ -101,7 +107,16 @@ export const listarEquipamentos = (filtros: FiltrosListagem): ResultadoListagemE
     LIMIT @limite OFFSET @offset
   `)
 
-  const dados = consulta.all(parametros) as EquipamentoListado[]
+  const linhas = consulta.all(parametros) as any[]
+
+  const dados: EquipamentoListado[] = linhas.map((linha) => {
+    const { termo_caminho_arquivo, ...resto } = linha
+    return {
+      ...resto,
+      termo_anexo_id: linha.termo_anexo_id ?? null,
+      termo_url_download: termo_caminho_arquivo ? `/uploads/${path.basename(termo_caminho_arquivo)}` : null,
+    }
+  })
 
   return {
     dados,
@@ -193,8 +208,9 @@ export const buscarEquipamentoPorId = (id: number) => {
   }
 
   const interfaces = banco.prepare('SELECT * FROM interfaces_rede WHERE equipamento_id = ?').all(id);
+  const anexos = listarAnexosPorEquipamento(id);
 
-  return { mestre, detalhe, interfaces };
+  return { mestre, detalhe, interfaces, anexos };
 }
 
 const COLUNAS_PERMITIDAS_MESTRE = [
