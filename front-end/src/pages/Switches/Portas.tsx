@@ -1,17 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { buscarEquipamentoPorId, listarEquipamentos } from '../../services/equipamentos';
+import { buscarEquipamentoPorId } from '../../services/equipamentos';
 import { listarPortasSwitch, atualizarPorta } from '../../services/portasSwitch';
 import type { PortaSwitch } from '../../services/portasSwitch';
+import { listarEquipamentosConectaveis } from '../../services/switches';
+import type { EquipamentoConectavel } from '../../services/switches';
 import styles from './Portas.module.css';
-
-interface EquipamentoOpcao {
-  id: number;
-  categoria: string;
-  nome: string | null;
-  marca: string;
-  modelo: string;
-}
 
 interface SwitchMestre {
   id: number;
@@ -30,7 +24,7 @@ export default function SwitchesPortas() {
 
   const [switchInfo, setSwitchInfo] = useState<SwitchMestre | null>(null);
   const [portas, setPortas] = useState<PortaSwitch[]>([]);
-  const [equipamentosDisponiveis, setEquipamentosDisponiveis] = useState<EquipamentoOpcao[]>([]);
+  const [equipamentosDisponiveis, setEquipamentosDisponiveis] = useState<EquipamentoConectavel[]>([]);
   const [carregando, setCarregando] = useState(true);
 
   // Estado do modal / edição de porta
@@ -47,17 +41,14 @@ export default function SwitchesPortas() {
       const [dadosSwitch, listaPortas, listaEquipamentos] = await Promise.all([
         buscarEquipamentoPorId(switchId),
         listarPortasSwitch(switchId),
-        listarEquipamentos(),
+        listarEquipamentosConectaveis(switchId),
       ]);
 
       if (dadosSwitch && dadosSwitch.mestre) {
         setSwitchInfo(dadosSwitch.mestre);
       }
       setPortas(listaPortas);
-      // Filtra para não permitir conectar o próprio switch nele mesmo
-      setEquipamentosDisponiveis(
-        (listaEquipamentos || []).filter((e: EquipamentoOpcao) => e.id !== switchId)
-      );
+      setEquipamentosDisponiveis(listaEquipamentos || []);
     } catch (erro) {
       console.error('Erro ao carregar portas do switch:', erro);
       alert('Não foi possível carregar as informações do switch.');
@@ -139,7 +130,7 @@ export default function SwitchesPortas() {
   const equipamentosFiltrados = equipamentosDisponiveis.filter((e) => {
     if (!filtroEquipamento.trim()) return true;
     const termo = filtroEquipamento.toLowerCase();
-    const texto = `${e.nome || ''} ${e.marca} ${e.modelo} ${e.categoria} #${e.id}`.toLowerCase();
+    const texto = `${e.nome || ''} ${e.marca} ${e.modelo} ${e.categoria} ${e.ips.join(' ')} #${e.id}`.toLowerCase();
     return texto.includes(termo);
   });
 
@@ -252,12 +243,12 @@ export default function SwitchesPortas() {
             </div>
 
             <div className={styles.formGrupo}>
-              <label htmlFor="filtroEq">Filtrar equipamento por nome/marca/modelo:</label>
+              <label htmlFor="filtroEq">Filtrar equipamento por nome/marca/modelo/IP:</label>
               <input
                 id="filtroEq"
                 className={styles.input}
                 type="text"
-                placeholder="Digite para buscar..."
+                placeholder="Buscar por nome ou IP..."
                 value={filtroEquipamento}
                 onChange={(e) => setFiltroEquipamento(e.target.value)}
               />
@@ -272,12 +263,14 @@ export default function SwitchesPortas() {
                 onChange={(e) => setEquipamentoSelecionadoId(e.target.value)}
               >
                 <option value="">-- NENHUM EQUIPAMENTO VINCULADO --</option>
-                {equipamentosFiltrados.map((eq) => (
-                  <option key={eq.id} value={eq.id}>
-                    [{eq.categoria.toUpperCase()}] {eq.marca} {eq.modelo}{' '}
-                    {eq.nome ? `(${eq.nome})` : ''} - #{eq.id}
-                  </option>
-                ))}
+                {equipamentosFiltrados.map((eq) => {
+                  const textoIp = eq.ips && eq.ips.length > 0 ? eq.ips.join(', ') : 'sem IP';
+                  return (
+                    <option key={eq.id} value={eq.id}>
+                      [{eq.categoria.toUpperCase()}] {eq.nome ? `${eq.nome} — ` : ''}{eq.marca} {eq.modelo} — {textoIp}
+                    </option>
+                  );
+                })}
               </select>
             </div>
 
