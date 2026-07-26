@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo, useRef } from 'react';
 import type { ChangeEvent, SubmitEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ComboBoxSelect from '../../../components/ComboBoxSelect';
+import ModalConfirmacao from '../../../components/ModalConfirmacao';
 import { criarEquipamento, enviarAnexoEquipamento, listarLocalizacoes } from '../../../services/equipamentos';
 import type { CategoriaEquipamento } from '../../../services/equipamentos';
 import { listarOpcoes } from '../../../services/opcoes';
@@ -93,6 +94,7 @@ export default function Cadastro() {
     texto: string;
   } | null>(null);
   const [erroInterfaces, setErroInterfaces] = useState<{ mensagem: string; campo?: 'ip' | 'mac' } | null>(null);
+  const [modalCancelarAberto, setModalCancelarAberto] = useState(false);
 
   // Deriva o id da marca escolhida pelo texto digitado — usado para filtrar os modelos
   const marcaId =
@@ -899,12 +901,10 @@ export default function Cadastro() {
             className={styles.botaoCancelar}
             onClick={() => {
               if (formularioTemDadosRelevantes()) {
-                const confirmar = window.confirm(
-                  'Você tem alterações não salvas. Deseja realmente sair sem salvar?',
-                );
-                if (!confirmar) return;
+                setModalCancelarAberto(true);
+              } else {
+                navigate('/equipamentos');
               }
-              navigate('/equipamentos');
             }}
           >
             Cancelar
@@ -925,6 +925,17 @@ export default function Cadastro() {
           </button>
         </div>
       </form>
+
+      <ModalConfirmacao
+        aberto={modalCancelarAberto}
+        titulo="Sair sem salvar?"
+        mensagem="Você tem alterações não salvas neste cadastro. Se sair agora, tudo o que foi preenchido será perdido."
+        textoConfirmar="Sair sem salvar"
+        textoCancelar="Continuar editando"
+        variante="perigo"
+        aoConfirmar={() => navigate('/equipamentos')}
+        aoCancelar={() => setModalCancelarAberto(false)}
+      />
     </div>
   );
 }
