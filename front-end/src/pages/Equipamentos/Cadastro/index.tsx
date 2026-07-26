@@ -134,6 +134,11 @@ export default function Cadastro() {
     [opcoesSugeridas.SISTEMA_OPERACIONAL],
   );
 
+  const opcoesTipoInterface = useMemo(
+    () => (opcoesSugeridas.TIPO_INTERFACE ?? []).map((o) => ({ valor: o.valor, rotulo: o.valor })),
+    [opcoesSugeridas.TIPO_INTERFACE],
+  );
+
   function handleMestreChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const { name, value } = event.target;
     setDadosMestre((anterior) => ({ ...anterior, [name]: value }));
@@ -681,12 +686,12 @@ export default function Cadastro() {
               <div className={styles.grid2} key={indice}>
                 <div className={styles.campo}>
                   <label htmlFor={`nome_interface_${indice}`}>Nome da Interface</label>
-                  <input
+                  <ComboBoxSelect
                     id={`nome_interface_${indice}`}
-                    className={styles.input}
-                    placeholder="Ex: LAN 1, Wi-Fi"
-                    value={interfaceRede.nome_interface}
-                    onChange={(event) => handleInterfaceChange(indice, 'nome_interface', event.target.value)}
+                    opcoes={opcoesTipoInterface}
+                    valor={interfaceRede.nome_interface}
+                    aoMudar={(novoValor) => handleInterfaceChange(indice, 'nome_interface', novoValor)}
+                    placeholder="Selecione o tipo de interface"
                   />
                 </div>
                 <div className={styles.campo}>
