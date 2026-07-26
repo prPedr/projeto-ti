@@ -190,6 +190,15 @@ export const ComboBoxSelect: React.FC<ComboBoxSelectProps> = ({
     }
   };
 
+  const handleLimpar = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    aoMudar('');
+    setTextoInput('');
+    setEstaAberto(false);
+    setIndiceDestacado(null);
+  };
+
   return (
     <div ref={conteinerRef} className={styles.conteiner}>
       <div className={styles.inputConteiner}>
@@ -216,6 +225,19 @@ export const ComboBoxSelect: React.FC<ComboBoxSelectProps> = ({
           onBlur={handleInputBlur}
           onKeyDown={handleKeyDown}
         />
+        {textoInput && !campoDesabilitado && (
+          <button
+            type="button"
+            className={styles.botaoLimpar}
+            onMouseDown={handleLimpar}
+            aria-label="Limpar campo"
+            tabIndex={-1}
+          >
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L9 9M9 1L1 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </button>
+        )}
         <div className={`${styles.iconeSeta} ${estaAberto ? styles.iconeSetaAberto : ''}`}>
           <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
