@@ -97,7 +97,6 @@ CREATE TABLE eq_computadores (
 CREATE TABLE eq_switches (
     equipamento_id INTEGER PRIMARY KEY,
     numero_portas INTEGER,
-    portas_em_uso INTEGER,
     firmware TEXT,
     vlans_configuradas TEXT,
     
