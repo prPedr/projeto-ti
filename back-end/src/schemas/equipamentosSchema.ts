@@ -57,7 +57,6 @@ export const computadorSchema = z.object({
 
 const detalheSwitchSchema = z.object({
   numero_portas: z.number().int().nonnegative('numero_portas não pode ser negativo.').optional(),
-  portas_em_uso: z.number().int().nonnegative('portas_em_uso não pode ser negativo.').optional(),
   firmware: z.string().optional(),
   vlans_configuradas: z.string().optional(),
 })
@@ -164,7 +163,6 @@ const detalheAtualizarSchema = z
     sistema_operacional: z.string().optional(),
     antivirus_instalado: z.boolean().optional(),
     numero_portas: z.number().int().nonnegative('numero_portas não pode ser negativo.').optional(),
-    portas_em_uso: z.number().int().nonnegative('portas_em_uso não pode ser negativo.').optional(),
     firmware: z.string().optional(),
     vlans_configuradas: z.string().optional(),
     imei: z.string().regex(imeiRegex, 'IMEI inválido. Deve conter exatamente 15 dígitos.').optional(),

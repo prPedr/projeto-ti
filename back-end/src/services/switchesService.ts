@@ -16,7 +16,6 @@ export interface DadosCriacaoSwitch {
   };
   detalhe: {
     numero_portas?: number;
-    portas_em_uso?: number;
     firmware?: string;
     vlans_configuradas?: string;
   };
@@ -49,12 +48,11 @@ export const criarSwitch = (dadosEntrada: DadosCriacaoSwitch) => {
 
     // Inserir na tabela de detalhe (Switch)
     const comandoDetalhe = banco.prepare(`
-      INSERT INTO eq_switches (equipamento_id, numero_portas, portas_em_uso, firmware, vlans_configuradas)
-      VALUES (@equipamento_id, @numero_portas, @portas_em_uso, @firmware, @vlans_configuradas)
+      INSERT INTO eq_switches (equipamento_id, numero_portas, firmware, vlans_configuradas)
+      VALUES (@equipamento_id, @numero_portas, @firmware, @vlans_configuradas)
     `);
     comandoDetalhe.run({
       numero_portas: dados.detalhe.numero_portas ?? null,
-      portas_em_uso: dados.detalhe.portas_em_uso ?? null,
       firmware: dados.detalhe.firmware ?? null,
       vlans_configuradas: dados.detalhe.vlans_configuradas ?? null,
       equipamento_id: idEquipamento,

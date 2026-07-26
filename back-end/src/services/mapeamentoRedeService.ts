@@ -24,7 +24,6 @@ export interface SwitchMapeamentoListado {
   filial: string | null
   sala: string | null
   numero_portas: number | null
-  portas_em_uso: number | null
 }
 
 export const listarInterfacesRede = (filtroSubRede?: string): InterfaceRedeListada[] => {
@@ -79,8 +78,7 @@ export const listarSwitches = (): SwitchMapeamentoListado[] => {
       e.status,
       l.filial AS filial,
       l.sala AS sala,
-      eqs.numero_portas,
-      eqs.portas_em_uso
+      eqs.numero_portas
     FROM equipamentos e
     LEFT JOIN localizacoes l ON l.id = e.localizacao_id
     LEFT JOIN eq_switches eqs ON eqs.equipamento_id = e.id

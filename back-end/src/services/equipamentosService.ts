@@ -235,7 +235,7 @@ const COLUNAS_PERMITIDAS_DETALHE: Record<string, string[]> = {
     'sistema_operacional',
     'antivirus_instalado',
   ],
-  eq_switches: ['numero_portas', 'portas_em_uso', 'firmware', 'vlans_configuradas'],
+  eq_switches: ['numero_portas', 'firmware', 'vlans_configuradas'],
   eq_celulares: [
     'usuario_alocado',
     'imei',
