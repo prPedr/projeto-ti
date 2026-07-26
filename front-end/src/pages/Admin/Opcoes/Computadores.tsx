@@ -7,6 +7,7 @@ const CATEGORIAS_COMPUTADORES = [
   { valor: 'MEMORIA', rotulo: 'Memória' },
   { valor: 'ARMAZENAMENTO', rotulo: 'Armazenamento' },
   { valor: 'SISTEMA_OPERACIONAL', rotulo: 'Sistema Operacional' },
+  { valor: 'TIPO_INTERFACE', rotulo: 'Tipo de Interface de Rede' },
 ];
 
 export default function ComputadoresOpcoes() {
