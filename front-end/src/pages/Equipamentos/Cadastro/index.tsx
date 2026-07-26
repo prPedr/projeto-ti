@@ -89,12 +89,19 @@ export default function Cadastro() {
   const [arquivoTermo, setArquivoTermo] = useState<File | null>(null);
   const [erroArquivo, setErroArquivo] = useState<string | null>(null);
   const [mensagemSucesso, setMensagemSucesso] = useState<string | null>(null);
+  const [erroInterfaces, setErroInterfaces] = useState<{ mensagem: string; campo?: 'ip' | 'mac' } | null>(null);
 
   // Deriva o id da marca escolhida pelo texto digitado — usado para filtrar os modelos
   const marcaId =
     opcoesSugeridas.MARCA?.find(
       (m) => m.valor.toLowerCase() === dadosMestre.marca.trim().toLowerCase(),
     )?.id ?? null;
+
+  const linhasComCampoPreenchido = useMemo(() => {
+    if (!erroInterfaces?.campo) return 0;
+    const campo = erroInterfaces.campo;
+    return interfacesRede.filter((item) => item[campo]?.trim() !== '').length;
+  }, [erroInterfaces, interfacesRede]);
 
   useEffect(() => {
     listarLocalizacoes()
@@ -167,6 +174,7 @@ export default function Cadastro() {
     setInterfacesRede([{ ...INTERFACE_REDE_INICIAL }]);
     setArquivoTermo(null);
     setErroArquivo(null);
+    setErroInterfaces(null);
     if (inputArquivoRef.current) {
       inputArquivoRef.current.value = '';
     }
@@ -220,6 +228,7 @@ export default function Cadastro() {
 
   function handleInterfaceChange(indice: number, campo: keyof InterfaceRede, valor: string) {
     if (mensagemSucesso) setMensagemSucesso(null);
+    if (erroInterfaces) setErroInterfaces(null);
     let valorFormatado = valor;
     if (campo === 'mac') {
       valorFormatado = formatarMAC(valor);
@@ -305,6 +314,19 @@ export default function Cadastro() {
         navigate('/equipamentos');
       }
     } catch (erro) {
+      const dadosErro = (erro as any)?.response?.data as { mensagem?: string; campo?: string } | undefined;
+      const campo = (dadosErro?.campo ?? (erro as any)?.campo) as 'ip' | 'mac' | undefined;
+      const mensagem = dadosErro?.mensagem ?? (erro instanceof Error ? erro.message : undefined);
+
+      if (campo === 'ip' || campo === 'mac') {
+        setErroInterfaces({
+          mensagem: mensagem ?? 'Endereço já cadastrado em outro equipamento.',
+          campo,
+        });
+        document.getElementById('secao-interfaces-rede')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
       alert(erro instanceof Error ? erro.message : 'Erro ao cadastrar equipamento.');
     }
   }
@@ -716,50 +738,67 @@ export default function Cadastro() {
             </div>
           )}
 
-          <div className={styles.secaoMonobloco}>
+          <div className={styles.secaoMonobloco} id="secao-interfaces-rede">
             <h2 className={styles.secaoTitulo}>Interface de Rede</h2>
-            {interfacesRede.map((interfaceRede, indice) => (
-              <div className={styles.grid2} key={indice}>
-                <div className={styles.campo}>
-                  <label htmlFor={`nome_interface_${indice}`}>Nome da Interface</label>
-                  <ComboBoxSelect
-                    id={`nome_interface_${indice}`}
-                    opcoes={opcoesTipoInterface}
-                    valor={interfaceRede.nome_interface}
-                    aoMudar={(novoValor) => handleInterfaceChange(indice, 'nome_interface', novoValor)}
-                    placeholder="Selecione o tipo de interface"
-                  />
-                </div>
-                <div className={styles.campo}>
-                  <label htmlFor={`ip_${indice}`}>IP</label>
-                  <input
-                    id={`ip_${indice}`}
-                    className={`${styles.input} ${styles.inputMono}`}
-                    placeholder="Ex: 192.168.0.10"
-                    value={interfaceRede.ip}
-                    onChange={(event) => handleInterfaceChange(indice, 'ip', event.target.value)}
-                  />
-                </div>
-                <div className={styles.campo}>
-                  <label htmlFor={`mac_${indice}`}>MAC</label>
-                  <input
-                    id={`mac_${indice}`}
-                    className={`${styles.input} ${styles.inputMono}`}
-                    placeholder="AA:BB:CC:DD:EE:FF"
-                    value={interfaceRede.mac}
-                    onChange={(event) => handleInterfaceChange(indice, 'mac', event.target.value)}
-                  />
-                </div>
-                {interfacesRede.length > 1 && (
+            {erroInterfaces && (
+              <span className={styles.textoErroSecao}>
+                {erroInterfaces.mensagem}
+              </span>
+            )}
+            {interfacesRede.map((interfaceRede, indice) => {
+              const deveDestacarIp =
+                erroInterfaces?.campo === 'ip' &&
+                linhasComCampoPreenchido === 1 &&
+                interfaceRede.ip.trim() !== '';
+
+              const deveDestacarMac =
+                erroInterfaces?.campo === 'mac' &&
+                linhasComCampoPreenchido === 1 &&
+                interfaceRede.mac.trim() !== '';
+
+              return (
+                <div className={styles.grid2} key={indice}>
                   <div className={styles.campo}>
-                    <label>&nbsp;</label>
-                    <button type="button" className={styles.botaoCancelar} onClick={() => removerInterface(indice)}>
-                      Remover Interface
-                    </button>
+                    <label htmlFor={`nome_interface_${indice}`}>Nome da Interface</label>
+                    <ComboBoxSelect
+                      id={`nome_interface_${indice}`}
+                      opcoes={opcoesTipoInterface}
+                      valor={interfaceRede.nome_interface}
+                      aoMudar={(novoValor) => handleInterfaceChange(indice, 'nome_interface', novoValor)}
+                      placeholder="Selecione o tipo de interface"
+                    />
                   </div>
-                )}
-              </div>
-            ))}
+                  <div className={styles.campo}>
+                    <label htmlFor={`ip_${indice}`}>IP</label>
+                    <input
+                      id={`ip_${indice}`}
+                      className={`${styles.input} ${styles.inputMono} ${deveDestacarIp ? styles.inputComErro : ''}`}
+                      placeholder="Ex: 192.168.0.10"
+                      value={interfaceRede.ip}
+                      onChange={(event) => handleInterfaceChange(indice, 'ip', event.target.value)}
+                    />
+                  </div>
+                  <div className={styles.campo}>
+                    <label htmlFor={`mac_${indice}`}>MAC</label>
+                    <input
+                      id={`mac_${indice}`}
+                      className={`${styles.input} ${styles.inputMono} ${deveDestacarMac ? styles.inputComErro : ''}`}
+                      placeholder="AA:BB:CC:DD:EE:FF"
+                      value={interfaceRede.mac}
+                      onChange={(event) => handleInterfaceChange(indice, 'mac', event.target.value)}
+                    />
+                  </div>
+                  {interfacesRede.length > 1 && (
+                    <div className={styles.campo}>
+                      <label>&nbsp;</label>
+                      <button type="button" className={styles.botaoCancelar} onClick={() => removerInterface(indice)}>
+                        Remover Interface
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
               <button type="button" className={styles.botaoCancelar} onClick={adicionarInterface}>
