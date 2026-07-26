@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import type { ChangeEvent, SubmitEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { criarEquipamento, listarLocalizacoes } from '../../../services/equipamentos';
+import ComboBoxSelect from '../../../components/ComboBoxSelect';
+import { criarEquipamento, enviarAnexoEquipamento, listarLocalizacoes } from '../../../services/equipamentos';
 import type { CategoriaEquipamento } from '../../../services/equipamentos';
 import { listarOpcoes } from '../../../services/opcoes';
 import type { OpcoesAgrupadas } from '../../../services/opcoes';
@@ -23,7 +24,6 @@ interface DadosMestre {
   status: string;
   localizacao_id: string;
   nome: string;
-  fornecedor: string;
   data_garantia: string;
   observacao: string;
 }
@@ -40,7 +40,6 @@ const DADOS_MESTRE_INICIAIS: DadosMestre = {
   status: 'ATIVO',
   localizacao_id: '',
   nome: '',
-  fornecedor: '',
   data_garantia: '',
   observacao: '',
 };
@@ -70,6 +69,8 @@ export default function Cadastro() {
   const [interfacesRede, setInterfacesRede] = useState<InterfaceRede[]>([{ ...INTERFACE_REDE_INICIAL }]);
   const [localizacoes, setLocalizacoes] = useState<Localizacao[]>([]);
   const [opcoesSugeridas, setOpcoesSugeridas] = useState<OpcoesAgrupadas>({});
+  const [arquivoTermo, setArquivoTermo] = useState<File | null>(null);
+  const [erroArquivo, setErroArquivo] = useState<string | null>(null);
 
   // Deriva o id da marca escolhida pelo texto digitado — usado para filtrar os modelos
   const marcaId =
@@ -91,6 +92,48 @@ export default function Cadastro() {
     setDadosDetalhe({});
   }, [categoria]);
 
+  const opcoesMarca = useMemo(
+    () => (opcoesSugeridas.MARCA ?? []).map((o) => ({ valor: o.valor, rotulo: o.valor })),
+    [opcoesSugeridas.MARCA],
+  );
+
+  const opcoesModelo = useMemo(
+    () =>
+      (opcoesSugeridas.MODELO ?? [])
+        .filter((m) => marcaId === null || m.dependencia_id === marcaId)
+        .map((o) => ({ valor: o.valor, rotulo: o.valor })),
+    [opcoesSugeridas.MODELO, marcaId],
+  );
+
+  const opcoesLocalizacao = useMemo(
+    () =>
+      localizacoes.map((loc) => ({
+        valor: String(loc.id),
+        rotulo: [loc.filial, loc.predio, loc.sala].filter(Boolean).join(' - '),
+      })),
+    [localizacoes],
+  );
+
+  const opcoesProcessador = useMemo(
+    () => (opcoesSugeridas.PROCESSADOR ?? []).map((o) => ({ valor: o.valor, rotulo: o.valor })),
+    [opcoesSugeridas.PROCESSADOR],
+  );
+
+  const opcoesMemoria = useMemo(
+    () => (opcoesSugeridas.MEMORIA ?? []).map((o) => ({ valor: o.valor, rotulo: o.valor })),
+    [opcoesSugeridas.MEMORIA],
+  );
+
+  const opcoesArmazenamento = useMemo(
+    () => (opcoesSugeridas.ARMAZENAMENTO ?? []).map((o) => ({ valor: o.valor, rotulo: o.valor })),
+    [opcoesSugeridas.ARMAZENAMENTO],
+  );
+
+  const opcoesSistemaOperacional = useMemo(
+    () => (opcoesSugeridas.SISTEMA_OPERACIONAL ?? []).map((o) => ({ valor: o.valor, rotulo: o.valor })),
+    [opcoesSugeridas.SISTEMA_OPERACIONAL],
+  );
+
   function handleMestreChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const { name, value } = event.target;
     setDadosMestre((anterior) => ({ ...anterior, [name]: value }));
@@ -107,6 +150,31 @@ export default function Cadastro() {
     }
 
     setDadosDetalhe((anterior) => ({ ...anterior, [name]: valorFormatado }));
+  }
+
+  function handleArquivoTermoChange(event: ChangeEvent<HTMLInputElement>) {
+    setErroArquivo(null);
+    const arquivo = event.target.files?.[0];
+    if (!arquivo) {
+      setArquivoTermo(null);
+      return;
+    }
+
+    if (arquivo.type !== 'application/pdf' && !arquivo.name.toLowerCase().endsWith('.pdf')) {
+      setErroArquivo('O Termo de Responsabilidade deve ser um arquivo PDF.');
+      setArquivoTermo(null);
+      event.target.value = '';
+      return;
+    }
+
+    if (arquivo.size > 10 * 1024 * 1024) {
+      setErroArquivo('O arquivo do termo de responsabilidade não pode exceder 10MB.');
+      setArquivoTermo(null);
+      event.target.value = '';
+      return;
+    }
+
+    setArquivoTermo(arquivo);
   }
 
   function handleInterfaceChange(indice: number, campo: keyof InterfaceRede, valor: string) {
@@ -133,8 +201,6 @@ export default function Cadastro() {
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    // O <input> HTML retorna strings; convertemos os tipos específicos
-    // (booleano, número) para passar na validação estrita do Zod no back-end.
     const detalhe: Record<string, string | boolean | number> = {};
 
     Object.entries(dadosDetalhe).forEach(([chave, valor]) => {
@@ -164,7 +230,6 @@ export default function Cadastro() {
         status: dadosMestre.status,
         localizacao_id: Number(dadosMestre.localizacao_id),
         ...(dadosMestre.nome.trim() && { nome: dadosMestre.nome.trim() }),
-        ...(dadosMestre.fornecedor.trim() && { fornecedor: dadosMestre.fornecedor.trim() }),
         ...(dadosMestre.data_garantia.trim() && { data_garantia: dadosMestre.data_garantia.trim() }),
         ...(dadosMestre.observacao.trim() && { observacao: dadosMestre.observacao.trim() }),
       },
@@ -179,7 +244,20 @@ export default function Cadastro() {
     };
 
     try {
-      await criarEquipamento(mapCategoriaParaEndpoint(categoria), payload);
+      const resposta = await criarEquipamento(mapCategoriaParaEndpoint(categoria), payload);
+      const idNovoEquipamento = resposta.id_equipamento ?? resposta.id;
+
+      if (arquivoTermo && idNovoEquipamento) {
+        try {
+          await enviarAnexoEquipamento(idNovoEquipamento, arquivoTermo, 'TERMO_RESPONSABILIDADE');
+        } catch (erroAnexo) {
+          console.error('Erro ao anexar termo de responsabilidade:', erroAnexo);
+          alert(
+            'Equipamento cadastrado, mas houve um erro ao anexar o termo de responsabilidade. Você pode anexar depois pela tela de detalhes.',
+          );
+        }
+      }
+
       navigate('/equipamentos');
     } catch (erro) {
       alert(erro instanceof Error ? erro.message : 'Erro ao cadastrar equipamento.');
@@ -230,61 +308,38 @@ export default function Cadastro() {
 
               <div className={styles.campo}>
                 <label htmlFor="marca">Marca</label>
-                <input
+                <ComboBoxSelect
                   id="marca"
-                  name="marca"
-                  className={styles.input}
-                  list="lista-marcas"
-                  value={dadosMestre.marca}
-                  onChange={handleMestreChange}
-                  required
+                  opcoes={opcoesMarca}
+                  valor={dadosMestre.marca}
+                  aoMudar={(val) => setDadosMestre((ant) => ({ ...ant, marca: val }))}
+                  placeholder="Selecione ou digite a marca"
+                  obrigatorio
                 />
-                <datalist id="lista-marcas">
-                  {(opcoesSugeridas.MARCA ?? []).map((opcao) => (
-                    <option key={opcao.id} value={opcao.valor} />
-                  ))}
-                </datalist>
               </div>
 
               <div className={styles.campo}>
                 <label htmlFor="modelo">Modelo</label>
-                <input
+                <ComboBoxSelect
                   id="modelo"
-                  name="modelo"
-                  className={styles.input}
-                  list="lista-modelos"
-                  value={dadosMestre.modelo}
-                  onChange={handleMestreChange}
-                  required
+                  opcoes={opcoesModelo}
+                  valor={dadosMestre.modelo}
+                  aoMudar={(val) => setDadosMestre((ant) => ({ ...ant, modelo: val }))}
+                  placeholder="Selecione ou digite o modelo"
+                  obrigatorio
                 />
-                <datalist id="lista-modelos">
-                  {(opcoesSugeridas.MODELO ?? [])
-                    .filter((m) => marcaId === null || m.dependencia_id === marcaId)
-                    .map((opcao) => (
-                      <option key={opcao.id} value={opcao.valor} />
-                    ))}
-                </datalist>
               </div>
 
               <div className={styles.campo}>
                 <label htmlFor="localizacao_id">Localização</label>
-                <select
+                <ComboBoxSelect
                   id="localizacao_id"
-                  name="localizacao_id"
-                  className={styles.select}
-                  value={dadosMestre.localizacao_id}
-                  onChange={handleMestreChange}
-                  required
-                >
-                  <option value="" disabled>
-                    Selecione...
-                  </option>
-                  {localizacoes.map((localizacao) => (
-                    <option key={localizacao.id} value={localizacao.id}>
-                      {[localizacao.filial, localizacao.predio, localizacao.sala].filter(Boolean).join(' - ')}
-                    </option>
-                  ))}
-                </select>
+                  opcoes={opcoesLocalizacao}
+                  valor={dadosMestre.localizacao_id}
+                  aoMudar={(val) => setDadosMestre((ant) => ({ ...ant, localizacao_id: val }))}
+                  placeholder="Selecione a localização"
+                  obrigatorio
+                />
               </div>
 
               <div className={styles.campo}>
@@ -299,14 +354,15 @@ export default function Cadastro() {
               </div>
 
               <div className={styles.campo}>
-                <label htmlFor="fornecedor">Fornecedor</label>
+                <label htmlFor="termo_responsabilidade">Termo de Responsabilidade (PDF)</label>
                 <input
-                  id="fornecedor"
-                  name="fornecedor"
+                  id="termo_responsabilidade"
+                  type="file"
+                  accept="application/pdf"
                   className={styles.input}
-                  value={dadosMestre.fornecedor}
-                  onChange={handleMestreChange}
+                  onChange={handleArquivoTermoChange}
                 />
+                {erroArquivo && <span style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '4px' }}>{erroArquivo}</span>}
               </div>
 
               <div className={styles.campo}>
@@ -370,62 +426,42 @@ export default function Cadastro() {
                 </div>
                 <div className={styles.campo}>
                   <label htmlFor="processador">Processador</label>
-                  <input
+                  <ComboBoxSelect
                     id="processador"
-                    name="processador"
-                    className={styles.input}
-                    list="lista-processadores"
-                    value={dadosDetalhe.processador ?? ''}
-                    onChange={handleDetalheChange}
+                    opcoes={opcoesProcessador}
+                    valor={dadosDetalhe.processador ?? ''}
+                    aoMudar={(val) => setDadosDetalhe((ant) => ({ ...ant, processador: val }))}
+                    placeholder="Selecione o processador"
                   />
-                  <datalist id="lista-processadores">
-                    {(opcoesSugeridas.PROCESSADOR ?? []).map((opcao) => (
-                      <option key={opcao.id} value={opcao.valor} />
-                    ))}
-                  </datalist>
                 </div>
                 <div className={styles.campo}>
                   <label htmlFor="memoria">Memória</label>
-                  <input
+                  <ComboBoxSelect
                     id="memoria"
-                    name="memoria"
-                    className={styles.input}
-                    list="lista-memorias"
+                    opcoes={opcoesMemoria}
+                    valor={dadosDetalhe.memoria ?? ''}
+                    aoMudar={(val) => setDadosDetalhe((ant) => ({ ...ant, memoria: val }))}
                     placeholder="Ex: 16GB DDR4"
-                    value={dadosDetalhe.memoria ?? ''}
-                    onChange={handleDetalheChange}
                   />
-                  <datalist id="lista-memorias">
-                    {(opcoesSugeridas.MEMORIA ?? []).map((opcao) => (
-                      <option key={opcao.id} value={opcao.valor} />
-                    ))}
-                  </datalist>
                 </div>
                 <div className={styles.campo}>
                   <label htmlFor="armazenamento">Armazenamento</label>
-                  <input
+                  <ComboBoxSelect
                     id="armazenamento"
-                    name="armazenamento"
-                    className={styles.input}
-                    list="lista-armazenamentos"
+                    opcoes={opcoesArmazenamento}
+                    valor={dadosDetalhe.armazenamento ?? ''}
+                    aoMudar={(val) => setDadosDetalhe((ant) => ({ ...ant, armazenamento: val }))}
                     placeholder="Ex: 512GB NVMe"
-                    value={dadosDetalhe.armazenamento ?? ''}
-                    onChange={handleDetalheChange}
                   />
-                  <datalist id="lista-armazenamentos">
-                    {(opcoesSugeridas.ARMAZENAMENTO ?? []).map((opcao) => (
-                      <option key={opcao.id} value={opcao.valor} />
-                    ))}
-                  </datalist>
                 </div>
                 <div className={styles.campo}>
                   <label htmlFor="sistema_operacional">Sistema Operacional</label>
-                  <input
+                  <ComboBoxSelect
                     id="sistema_operacional"
-                    name="sistema_operacional"
-                    className={styles.input}
-                    value={dadosDetalhe.sistema_operacional ?? ''}
-                    onChange={handleDetalheChange}
+                    opcoes={opcoesSistemaOperacional}
+                    valor={dadosDetalhe.sistema_operacional ?? ''}
+                    aoMudar={(val) => setDadosDetalhe((ant) => ({ ...ant, sistema_operacional: val }))}
+                    placeholder="Selecione o sistema operacional"
                   />
                 </div>
                 <div className={styles.campo}>
