@@ -60,6 +60,20 @@ function mapCategoriaParaEndpoint(categoria: Categoria): CategoriaEquipamento {
   }
 }
 
+function mapCategoriaParaTipoOpcao(categoria: Categoria): string {
+  switch (categoria) {
+    case 'COMPUTADOR':
+      return 'COMPUTADOR';
+    case 'SWITCH':
+      return 'SWITCH';
+    case 'CELULAR':
+      return 'CELULAR';
+    case 'NVR':
+    case 'CAMERA':
+      return 'NVR_CAMERA';
+  }
+}
+
 export default function Cadastro() {
   const navigate = useNavigate();
 
@@ -82,14 +96,15 @@ export default function Cadastro() {
     listarLocalizacoes()
       .then((dados) => setLocalizacoes(dados))
       .catch((erro) => console.error('Erro ao carregar localizações:', erro));
-
-    listarOpcoes()
-      .then((dados) => setOpcoesSugeridas(dados))
-      .catch((erro) => console.error('Erro ao carregar opções sugeridas:', erro));
   }, []);
 
   useEffect(() => {
     setDadosDetalhe({});
+    setDadosMestre((anterior) => ({ ...anterior, marca: '', modelo: '' }));
+
+    listarOpcoes(mapCategoriaParaTipoOpcao(categoria))
+      .then((dados) => setOpcoesSugeridas(dados))
+      .catch((erro) => console.error('Erro ao carregar opções sugeridas:', erro));
   }, [categoria]);
 
   const opcoesMarca = useMemo(
