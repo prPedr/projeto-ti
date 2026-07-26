@@ -171,6 +171,29 @@ export default function Cadastro() {
     [opcoesSugeridas.TIPO_INTERFACE],
   );
 
+  function formularioTemDadosRelevantes(): boolean {
+    const mestreAlterado =
+      dadosMestre.marca.trim() !== '' ||
+      dadosMestre.modelo.trim() !== '' ||
+      dadosMestre.nome.trim() !== '' ||
+      dadosMestre.data_garantia.trim() !== '' ||
+      dadosMestre.observacao.trim() !== '' ||
+      dadosMestre.status !== 'ATIVO';
+
+    const detalheAlterado = Object.values(dadosDetalhe).some(
+      (valor) => typeof valor === 'string' && valor.trim() !== '',
+    );
+
+    const interfacesAlteradas = interfacesRede.some((i) => {
+      if (categoria === 'CELULAR' && i.nome_interface === 'Wi-Fi') {
+        return i.ip.trim() !== '' || i.mac.trim() !== '';
+      }
+      return i.nome_interface.trim() !== '' || i.ip.trim() !== '' || i.mac.trim() !== '';
+    });
+
+    return mestreAlterado || detalheAlterado || interfacesAlteradas || arquivoTermo !== null;
+  }
+
   function resetarFormularioMantendoContexto() {
     setDadosMestre((anterior) => ({
       ...DADOS_MESTRE_INICIAIS,
@@ -822,7 +845,19 @@ export default function Cadastro() {
         </div>
 
         <div className={styles.botoesAcao}>
-          <button type="button" className={styles.botaoCancelar} onClick={() => navigate('/equipamentos')}>
+          <button
+            type="button"
+            className={styles.botaoCancelar}
+            onClick={() => {
+              if (formularioTemDadosRelevantes()) {
+                const confirmar = window.confirm(
+                  'Você tem alterações não salvas. Deseja realmente sair sem salvar?',
+                );
+                if (!confirmar) return;
+              }
+              navigate('/equipamentos');
+            }}
+          >
             Cancelar
           </button>
           <button
