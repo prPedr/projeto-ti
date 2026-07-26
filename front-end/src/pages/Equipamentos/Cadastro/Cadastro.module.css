@@ -224,3 +224,14 @@
   margin-top: -0.5rem;
   margin-bottom: 0.5rem;
 }
+
+.obrigatorio {
+  color: var(--status-descartado-texto, #ef4444);
+  margin-left: 2px;
+}
+
+.legendaObrigatorio {
+  font-size: 0.8125rem;
+  color: var(--cor-texto-suave, #6b7280);
+  margin-bottom: -1rem;
+}

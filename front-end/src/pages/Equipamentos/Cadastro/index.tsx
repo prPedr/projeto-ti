@@ -374,11 +374,17 @@ export default function Cadastro() {
             </div>
           )}
 
+          <p className={styles.legendaObrigatorio}>
+            <span className={styles.obrigatorio}>*</span> Campos obrigatórios
+          </p>
+
           <div className={styles.secaoMonobloco}>
             <h2 className={styles.secaoTitulo}>Dados Básicos</h2>
             <div className={styles.grid2}>
               <div className={styles.campo}>
-                <label htmlFor="categoria">Categoria</label>
+                <label htmlFor="categoria">
+                  Categoria <span className={styles.obrigatorio}>*</span>
+                </label>
                 <select
                   id="categoria"
                   name="categoria"
@@ -396,7 +402,9 @@ export default function Cadastro() {
               </div>
 
               <div className={styles.campo}>
-                <label htmlFor="status">Status</label>
+                <label htmlFor="status">
+                  Status <span className={styles.obrigatorio}>*</span>
+                </label>
                 <select
                   id="status"
                   name="status"
@@ -413,7 +421,9 @@ export default function Cadastro() {
               </div>
 
               <div className={styles.campo}>
-                <label htmlFor="marca">Marca</label>
+                <label htmlFor="marca">
+                  Marca <span className={styles.obrigatorio}>*</span>
+                </label>
                 <ComboBoxSelect
                   id="marca"
                   opcoes={opcoesMarca}
@@ -425,7 +435,9 @@ export default function Cadastro() {
               </div>
 
               <div className={styles.campo}>
-                <label htmlFor="modelo">Modelo</label>
+                <label htmlFor="modelo">
+                  Modelo <span className={styles.obrigatorio}>*</span>
+                </label>
                 <ComboBoxSelect
                   id="modelo"
                   opcoes={opcoesModelo}
@@ -437,7 +449,9 @@ export default function Cadastro() {
               </div>
 
               <div className={styles.campo}>
-                <label htmlFor="localizacao_id">Localização</label>
+                <label htmlFor="localizacao_id">
+                  Localização <span className={styles.obrigatorio}>*</span>
+                </label>
                 <ComboBoxSelect
                   id="localizacao_id"
                   opcoes={opcoesLocalizacao}
