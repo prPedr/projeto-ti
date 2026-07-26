@@ -8,8 +8,53 @@
  *                       — transparente com borda; destaque no hover via acento.
  */
 
+/* ─── Padrão Monobloco Flat ───────────────────────────────────────────────── */
+.cartao {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid var(--cor-borda);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.5rem 2rem;
+  box-shadow: none;
+}
 
+.cabecalhoAcoes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--cor-borda);
+  margin-bottom: 1rem;
+}
 
+.areaRolagem {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabela th,
+.tabela td {
+  border-bottom: 1px solid var(--cor-borda);
+  padding: 1rem;
+}
+
+.tabela tbody tr {
+  transition: background-color 0.2s ease-in-out;
+}
+
+.tabela tbody tr:hover {
+  background-color: #d6d9df83;
+}
+
+/* ─── Formulários & Campos ────────────────────────────────────────────────── */
 .formulario {
   display: flex;
   flex-wrap: wrap;
@@ -93,8 +138,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.5rem;
-  /* Sem isso, o grid estica todo card da linha pra altura do maior vizinho —
-     uma categoria com 2 itens ficava do mesmo tamanho que uma com 10. */
   align-items: start;
 }
 
@@ -119,20 +162,13 @@
   color: var(--cor-texto-suave);
 }
 
-/* Envolve a lista inteira do card (ou, no caso de Modelo, todos os
-   sub-grupos de marca juntos) — o limite de altura e o scroll são do card
-   como um todo, não de cada sub-grupo individualmente. Altura calibrada
-   pra ~6 itens de .itemLista visíveis antes de precisar rolar. */
 .corpoCard {
   max-height: calc(6 * 40px);
   overflow-y: auto;
-
-  /* Scrollbar discreta — Firefox. Mesmo padrão de Layout.module.css (.conteudo) */
   scrollbar-width: thin;
   scrollbar-color: var(--cor-borda) transparent;
 }
 
-/* Scrollbar discreta — Chrome / Edge / Safari. Mesmo padrão de Layout.module.css */
 .corpoCard::-webkit-scrollbar        { width: 6px; }
 .corpoCard::-webkit-scrollbar-track  { background: transparent; }
 .corpoCard::-webkit-scrollbar-thumb  {
@@ -211,8 +247,6 @@
   color: var(--cor-texto-suave);
 }
 
-/* ─── Botão Secundário ───────────────────────────────────────────────────── */
-/* Use para ações secundárias: "Cancelar", "Voltar", filtros opcionais, etc.  */
 .botaoSecundario {
   border: 1px solid var(--cor-borda);
   border-radius: var(--raio-md);
@@ -286,19 +320,18 @@
   background-color: var(--cor-cartao);
   border: 1px solid var(--cor-borda);
   border-radius: var(--raio-lg);
-  box-shadow: var(--sombra-cartao);
+  box-shadow: none;
   padding: 1.5rem;
   text-decoration: none;
   color: var(--cor-texto);
   display: flex;
   flex-direction: column;
   gap: 12px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .hubCard:hover {
   transform: translateY(-2px);
-  box-shadow: var(--sombra-elevada);
   border-color: var(--cor-acento);
 }
 
