@@ -88,6 +88,16 @@
   opacity: 1;
 }
 
+.botaoIconeTermo {
+  color: var(--cor-acento, #B08A4E);
+  opacity: 0.85;
+}
+
+.botaoIconeTermo:hover {
+  color: var(--cor-acento-hover, #9C7A42);
+  opacity: 1;
+}
+
 .statusBadge {
   display: inline-flex;
   align-items: center;

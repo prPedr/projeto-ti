@@ -37,12 +37,28 @@ export async function criarEquipamento(categoria: CategoriaEquipamento, payload:
   }
 }
 
+export interface Equipamento {
+  id: number;
+  categoria: string;
+  nome: string | null;
+  marca: string;
+  modelo: string;
+  status: string;
+  filial: string | null;
+  sala: string | null;
+  cadastrado_por_nome: string | null;
+  ip: string | null;
+  usuario_alocado: string | null;
+  termo_anexo_id: number | null;
+  termo_url_download: string | null;
+}
+
 export async function listarLocalizacoes() {
   const resposta = await fetchComToken('/api/localizacoes');
   return resposta.dados;
 }
 
-export async function listarEquipamentos() {
+export async function listarEquipamentos(): Promise<Equipamento[]> {
   const resposta = await fetchComToken('/api/equipamentos');
   return resposta.dados;
 }
