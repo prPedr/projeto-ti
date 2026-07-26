@@ -237,9 +237,6 @@ export default function Cadastro() {
       if ('numero_portas' in detalhe && typeof detalhe.numero_portas === 'string') {
         detalhe.numero_portas = Number(detalhe.numero_portas);
       }
-      if ('portas_em_uso' in detalhe && typeof detalhe.portas_em_uso === 'string') {
-        detalhe.portas_em_uso = Number(detalhe.portas_em_uso);
-      }
     }
 
     const payload = {
@@ -514,17 +511,6 @@ export default function Cadastro() {
                     type="number"
                     className={styles.input}
                     value={dadosDetalhe.numero_portas ?? ''}
-                    onChange={handleDetalheChange}
-                  />
-                </div>
-                <div className={styles.campo}>
-                  <label htmlFor="portas_em_uso">Portas em Uso</label>
-                  <input
-                    id="portas_em_uso"
-                    name="portas_em_uso"
-                    type="number"
-                    className={styles.input}
-                    value={dadosDetalhe.portas_em_uso ?? ''}
                     onChange={handleDetalheChange}
                   />
                 </div>

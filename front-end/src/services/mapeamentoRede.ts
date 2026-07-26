@@ -24,7 +24,6 @@ export interface SwitchMapeamento {
   filial: string | null;
   sala: string | null;
   numero_portas: number | null;
-  portas_em_uso: number | null;
 }
 
 export async function listarInterfacesRede(subrede?: string): Promise<InterfaceRede[]> {
