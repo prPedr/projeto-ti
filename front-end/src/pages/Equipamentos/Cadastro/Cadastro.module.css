@@ -184,3 +184,30 @@
   border-color: var(--cor-acento);
   color: var(--cor-acento);
 }
+
+.botaoSalvarNovo {
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-md);
+  padding: 0.75rem 1.5rem;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cor-texto);
+  background-color: transparent;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.botaoSalvarNovo:hover {
+  border-color: var(--cor-acento);
+  color: var(--cor-acento);
+}
+
+.mensagemSucesso {
+  background-color: var(--status-ativo-fundo);
+  color: var(--status-ativo-texto);
+  border: 1px solid var(--status-ativo-texto);
+  padding: 0.75rem 1rem;
+  border-radius: var(--raio-sm, 8px);
+  font-size: 14px;
+  font-weight: 500;
+}

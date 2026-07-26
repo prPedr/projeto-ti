@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import type { ChangeEvent, SubmitEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ComboBoxSelect from '../../../components/ComboBoxSelect';
@@ -77,6 +77,9 @@ function mapCategoriaParaTipoOpcao(categoria: Categoria): string {
 export default function Cadastro() {
   const navigate = useNavigate();
 
+  const acaoAposSalvarRef = useRef<'listagem' | 'continuar'>('listagem');
+  const inputArquivoRef = useRef<HTMLInputElement>(null);
+
   const [categoria, setCategoria] = useState<Categoria>('COMPUTADOR');
   const [dadosMestre, setDadosMestre] = useState<DadosMestre>(DADOS_MESTRE_INICIAIS);
   const [dadosDetalhe, setDadosDetalhe] = useState<Record<string, string>>({});
@@ -85,6 +88,7 @@ export default function Cadastro() {
   const [opcoesSugeridas, setOpcoesSugeridas] = useState<OpcoesAgrupadas>({});
   const [arquivoTermo, setArquivoTermo] = useState<File | null>(null);
   const [erroArquivo, setErroArquivo] = useState<string | null>(null);
+  const [mensagemSucesso, setMensagemSucesso] = useState<string | null>(null);
 
   // Deriva o id da marca escolhida pelo texto digitado — usado para filtrar os modelos
   const marcaId =
@@ -154,12 +158,28 @@ export default function Cadastro() {
     [opcoesSugeridas.TIPO_INTERFACE],
   );
 
+  function resetarFormularioMantendoContexto() {
+    setDadosMestre((anterior) => ({
+      ...DADOS_MESTRE_INICIAIS,
+      localizacao_id: anterior.localizacao_id,
+    }));
+    setDadosDetalhe({});
+    setInterfacesRede([{ ...INTERFACE_REDE_INICIAL }]);
+    setArquivoTermo(null);
+    setErroArquivo(null);
+    if (inputArquivoRef.current) {
+      inputArquivoRef.current.value = '';
+    }
+  }
+
   function handleMestreChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    if (mensagemSucesso) setMensagemSucesso(null);
     const { name, value } = event.target;
     setDadosMestre((anterior) => ({ ...anterior, [name]: value }));
   }
 
   function handleDetalheChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    if (mensagemSucesso) setMensagemSucesso(null);
     const { name, value } = event.target;
 
     let valorFormatado = value;
@@ -173,6 +193,7 @@ export default function Cadastro() {
   }
 
   function handleArquivoTermoChange(event: ChangeEvent<HTMLInputElement>) {
+    if (mensagemSucesso) setMensagemSucesso(null);
     setErroArquivo(null);
     const arquivo = event.target.files?.[0];
     if (!arquivo) {
@@ -198,6 +219,7 @@ export default function Cadastro() {
   }
 
   function handleInterfaceChange(indice: number, campo: keyof InterfaceRede, valor: string) {
+    if (mensagemSucesso) setMensagemSucesso(null);
     let valorFormatado = valor;
     if (campo === 'mac') {
       valorFormatado = formatarMAC(valor);
@@ -275,7 +297,13 @@ export default function Cadastro() {
         }
       }
 
-      navigate('/equipamentos');
+      if (acaoAposSalvarRef.current === 'continuar') {
+        resetarFormularioMantendoContexto();
+        setMensagemSucesso('Equipamento cadastrado! Cadastre o próximo.');
+        document.getElementById('marca')?.focus();
+      } else {
+        navigate('/equipamentos');
+      }
     } catch (erro) {
       alert(erro instanceof Error ? erro.message : 'Erro ao cadastrar equipamento.');
     }
@@ -285,6 +313,12 @@ export default function Cadastro() {
     <div className={styles.cartao}>
       <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.areaRolagem}>
+          {mensagemSucesso && (
+            <div className={styles.mensagemSucesso}>
+              {mensagemSucesso}
+            </div>
+          )}
+
           <div className={styles.secaoMonobloco}>
             <h2 className={styles.secaoTitulo}>Dados Básicos</h2>
             <div className={styles.grid2}>
@@ -374,6 +408,7 @@ export default function Cadastro() {
                 <label htmlFor="termo_responsabilidade">Termo de Responsabilidade (PDF)</label>
                 <input
                   id="termo_responsabilidade"
+                  ref={inputArquivoRef}
                   type="file"
                   accept="application/pdf"
                   className={styles.input}
@@ -738,7 +773,18 @@ export default function Cadastro() {
           <button type="button" className={styles.botaoCancelar} onClick={() => navigate('/equipamentos')}>
             Cancelar
           </button>
-          <button type="submit" className={styles.botaoSalvar}>
+          <button
+            type="submit"
+            className={styles.botaoSalvarNovo}
+            onClick={() => (acaoAposSalvarRef.current = 'continuar')}
+          >
+            Salvar e cadastrar outro
+          </button>
+          <button
+            type="submit"
+            className={styles.botaoSalvar}
+            onClick={() => (acaoAposSalvarRef.current = 'listagem')}
+          >
             Salvar
           </button>
         </div>
