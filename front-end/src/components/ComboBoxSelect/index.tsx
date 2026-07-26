@@ -59,11 +59,13 @@ export const ComboBoxSelect: React.FC<ComboBoxSelectProps> = ({
 
   // Sincroniza o texto do input com a prop `valor` quando ela muda ou as `opcoes` mudam
   useEffect(() => {
+    if (!valor) {
+      setTextoInput('');
+      return;
+    }
     const opcaoAtual = encontrarOpcaoPorValor(opcoes, valor);
     if (opcaoAtual) {
       setTextoInput(obterRotuloOpcao(opcaoAtual));
-    } else if (valor) {
-      setTextoInput(valor);
     } else {
       setTextoInput('');
     }
@@ -109,7 +111,7 @@ export const ComboBoxSelect: React.FC<ComboBoxSelectProps> = ({
         aoMudar('');
         setTextoInput('');
       } else {
-        const opcaoAtual = encontrarOpcaoPorValor(opcoes, valor);
+        const opcaoAtual = valor ? encontrarOpcaoPorValor(opcoes, valor) : undefined;
         setTextoInput(opcaoAtual ? obterRotuloOpcao(opcaoAtual) : '');
       }
       setEstaAberto(false);
@@ -121,8 +123,8 @@ export const ComboBoxSelect: React.FC<ComboBoxSelectProps> = ({
     if (opcaoExata) {
       confirmarSelecao(opcaoExata);
     } else {
-      // Reverte para o último valor confirmado
-      const opcaoAtual = encontrarOpcaoPorValor(opcoes, valor);
+      // Reverte para o último valor confirmado se existir opção correspondente
+      const opcaoAtual = valor ? encontrarOpcaoPorValor(opcoes, valor) : undefined;
       setTextoInput(opcaoAtual ? obterRotuloOpcao(opcaoAtual) : '');
       setEstaAberto(false);
       setIndiceDestacado(null);

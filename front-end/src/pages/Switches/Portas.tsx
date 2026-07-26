@@ -237,16 +237,13 @@ export default function SwitchesPortas() {
               <label htmlFor="equipamento-conectado">Vincular Equipamento:</label>
               <ComboBoxSelect
                 id="equipamento-conectado"
-                opcoes={[
-                  { valor: '', rotulo: '— Nenhum equipamento (só descrição) —' },
-                  ...equipamentosDisponiveis.map((e) => ({
-                    valor: String(e.id),
-                    rotulo: `${e.nome || `${e.marca} ${e.modelo}`} — ${e.categoria}${e.ips.length ? ` — ${e.ips.join(', ')}` : ''}`,
-                  })),
-                ]}
+                opcoes={equipamentosDisponiveis.map((e) => ({
+                  valor: String(e.id),
+                  rotulo: `${e.nome || `${e.marca} ${e.modelo}`} — ${e.categoria}${e.ips.length ? ` — ${e.ips.join(', ')}` : ''}`,
+                }))}
                 valor={equipamentoSelecionadoId}
                 aoMudar={setEquipamentoSelecionadoId}
-                placeholder="Buscar por nome, categoria ou IP..."
+                placeholder="Buscar por nome, categoria ou IP (deixe vazio para não vincular)"
               />
             </div>
 
