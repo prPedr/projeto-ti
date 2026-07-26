@@ -113,6 +113,12 @@ export default function Cadastro() {
     setDadosDetalhe({});
     setDadosMestre((anterior) => ({ ...anterior, marca: '', modelo: '' }));
 
+    if (categoria === 'CELULAR') {
+      setInterfacesRede([{ nome_interface: 'Wi-Fi', ip: '', mac: '' }]);
+    } else {
+      setInterfacesRede([{ ...INTERFACE_REDE_INICIAL }]);
+    }
+
     listarOpcoes(mapCategoriaParaTipoOpcao(categoria))
       .then((dados) => setOpcoesSugeridas(dados))
       .catch((erro) => console.error('Erro ao carregar opções sugeridas:', erro));
@@ -171,7 +177,11 @@ export default function Cadastro() {
       localizacao_id: anterior.localizacao_id,
     }));
     setDadosDetalhe({});
-    setInterfacesRede([{ ...INTERFACE_REDE_INICIAL }]);
+    if (categoria === 'CELULAR') {
+      setInterfacesRede([{ nome_interface: 'Wi-Fi', ip: '', mac: '' }]);
+    } else {
+      setInterfacesRede([{ ...INTERFACE_REDE_INICIAL }]);
+    }
     setArquivoTermo(null);
     setErroArquivo(null);
     setErroInterfaces(null);
@@ -766,6 +776,7 @@ export default function Cadastro() {
                       valor={interfaceRede.nome_interface}
                       aoMudar={(novoValor) => handleInterfaceChange(indice, 'nome_interface', novoValor)}
                       placeholder="Selecione o tipo de interface"
+                      desabilitado={categoria === 'CELULAR'}
                     />
                   </div>
                   <div className={styles.campo}>
@@ -800,11 +811,13 @@ export default function Cadastro() {
               );
             })}
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
-              <button type="button" className={styles.botaoCancelar} onClick={adicionarInterface}>
-                + Adicionar Interface
-              </button>
-            </div>
+            {categoria !== 'CELULAR' && (
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
+                <button type="button" className={styles.botaoCancelar} onClick={adicionarInterface}>
+                  + Adicionar Interface
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
