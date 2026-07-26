@@ -88,7 +88,10 @@ export default function Cadastro() {
   const [opcoesSugeridas, setOpcoesSugeridas] = useState<OpcoesAgrupadas>({});
   const [arquivoTermo, setArquivoTermo] = useState<File | null>(null);
   const [erroArquivo, setErroArquivo] = useState<string | null>(null);
-  const [mensagemSucesso, setMensagemSucesso] = useState<string | null>(null);
+  const [mensagemStatus, setMensagemStatus] = useState<{
+    tipo: 'sucesso' | 'aviso' | 'erro';
+    texto: string;
+  } | null>(null);
   const [erroInterfaces, setErroInterfaces] = useState<{ mensagem: string; campo?: 'ip' | 'mac' } | null>(null);
 
   // Deriva o id da marca escolhida pelo texto digitado — usado para filtrar os modelos
@@ -112,6 +115,7 @@ export default function Cadastro() {
   useEffect(() => {
     setDadosDetalhe({});
     setDadosMestre((anterior) => ({ ...anterior, marca: '', modelo: '' }));
+    setMensagemStatus(null);
 
     if (categoria === 'CELULAR') {
       setInterfacesRede([{ nome_interface: 'Wi-Fi', ip: '', mac: '' }]);
@@ -194,6 +198,10 @@ export default function Cadastro() {
     return mestreAlterado || detalheAlterado || interfacesAlteradas || arquivoTermo !== null;
   }
 
+  function rolarParaTopo() {
+    document.querySelector(`.${styles.areaRolagem}`)?.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   function resetarFormularioMantendoContexto() {
     setDadosMestre((anterior) => ({
       ...DADOS_MESTRE_INICIAIS,
@@ -208,19 +216,20 @@ export default function Cadastro() {
     setArquivoTermo(null);
     setErroArquivo(null);
     setErroInterfaces(null);
+    setMensagemStatus(null);
     if (inputArquivoRef.current) {
       inputArquivoRef.current.value = '';
     }
   }
 
   function handleMestreChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
-    if (mensagemSucesso) setMensagemSucesso(null);
+    if (mensagemStatus) setMensagemStatus(null);
     const { name, value } = event.target;
     setDadosMestre((anterior) => ({ ...anterior, [name]: value }));
   }
 
   function handleDetalheChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
-    if (mensagemSucesso) setMensagemSucesso(null);
+    if (mensagemStatus) setMensagemStatus(null);
     const { name, value } = event.target;
 
     let valorFormatado = value;
@@ -234,7 +243,7 @@ export default function Cadastro() {
   }
 
   function handleArquivoTermoChange(event: ChangeEvent<HTMLInputElement>) {
-    if (mensagemSucesso) setMensagemSucesso(null);
+    if (mensagemStatus) setMensagemStatus(null);
     setErroArquivo(null);
     const arquivo = event.target.files?.[0];
     if (!arquivo) {
@@ -260,7 +269,7 @@ export default function Cadastro() {
   }
 
   function handleInterfaceChange(indice: number, campo: keyof InterfaceRede, valor: string) {
-    if (mensagemSucesso) setMensagemSucesso(null);
+    if (mensagemStatus) setMensagemStatus(null);
     if (erroInterfaces) setErroInterfaces(null);
     let valorFormatado = valor;
     if (campo === 'mac') {
@@ -328,20 +337,34 @@ export default function Cadastro() {
       const resposta = await criarEquipamento(mapCategoriaParaEndpoint(categoria), payload);
       const idNovoEquipamento = resposta.id_equipamento ?? resposta.id;
 
+      let falhouAnexo = false;
+
       if (arquivoTermo && idNovoEquipamento) {
         try {
           await enviarAnexoEquipamento(idNovoEquipamento, arquivoTermo, 'TERMO_RESPONSABILIDADE');
         } catch (erroAnexo) {
           console.error('Erro ao anexar termo de responsabilidade:', erroAnexo);
-          alert(
-            'Equipamento cadastrado, mas houve um erro ao anexar o termo de responsabilidade. Você pode anexar depois pela tela de detalhes.',
-          );
+          falhouAnexo = true;
+          setMensagemStatus({
+            tipo: 'aviso',
+            texto:
+              'Equipamento cadastrado, mas houve um erro ao anexar o termo de responsabilidade. Você pode anexar depois pela tela de detalhes.',
+          });
+          rolarParaTopo();
         }
+      }
+
+      if (falhouAnexo) {
+        return;
       }
 
       if (acaoAposSalvarRef.current === 'continuar') {
         resetarFormularioMantendoContexto();
-        setMensagemSucesso('Equipamento cadastrado! Cadastre o próximo.');
+        setMensagemStatus({
+          tipo: 'sucesso',
+          texto: 'Equipamento cadastrado! Cadastre o próximo.',
+        });
+        rolarParaTopo();
         document.getElementById('marca')?.focus();
       } else {
         navigate('/equipamentos');
@@ -360,7 +383,11 @@ export default function Cadastro() {
         return;
       }
 
-      alert(erro instanceof Error ? erro.message : 'Erro ao cadastrar equipamento.');
+      setMensagemStatus({
+        tipo: 'erro',
+        texto: erro instanceof Error ? erro.message : 'Erro ao cadastrar equipamento.',
+      });
+      rolarParaTopo();
     }
   }
 
@@ -368,9 +395,17 @@ export default function Cadastro() {
     <div className={styles.cartao}>
       <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.areaRolagem}>
-          {mensagemSucesso && (
-            <div className={styles.mensagemSucesso}>
-              {mensagemSucesso}
+          {mensagemStatus && (
+            <div
+              className={`${styles.banner} ${
+                mensagemStatus.tipo === 'sucesso'
+                  ? styles.bannerSucesso
+                  : mensagemStatus.tipo === 'aviso'
+                  ? styles.bannerAviso
+                  : styles.bannerErro
+              }`}
+            >
+              {mensagemStatus.texto}
             </div>
           )}
 

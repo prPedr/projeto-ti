@@ -202,14 +202,30 @@
   color: var(--cor-acento);
 }
 
-.mensagemSucesso {
-  background-color: var(--status-ativo-fundo);
-  color: var(--status-ativo-texto);
-  border: 1px solid var(--status-ativo-texto);
+.banner {
   padding: 0.75rem 1rem;
   border-radius: var(--raio-sm, 8px);
   font-size: 14px;
   font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.bannerSucesso {
+  background-color: var(--status-ativo-fundo);
+  color: var(--status-ativo-texto);
+  border: 1px solid var(--status-ativo-texto);
+}
+
+.bannerAviso {
+  background-color: var(--status-manutencao-fundo);
+  color: var(--status-manutencao-texto);
+  border: 1px solid var(--status-manutencao-texto);
+}
+
+.bannerErro {
+  background-color: var(--status-descartado-fundo);
+  color: var(--status-descartado-texto);
+  border: 1px solid var(--status-descartado-texto);
 }
 
 .inputComErro {
