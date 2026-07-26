@@ -19,6 +19,21 @@ const traduzirErroSqlite = (codigo: string): string => {
   return mensagensPorCodigoSqlite[codigo] ?? 'Erro ao acessar o banco de dados.'
 }
 
+const extrairTabelaColuna = (mensagemBruta: string): { tabela: string; coluna: string } | null => {
+  const match = mensagemBruta.match(/UNIQUE constraint failed: (\w+)\.(\w+)/)
+  if (!match) return null
+  return { tabela: match[1], coluna: match[2] }
+}
+
+const mensagensPorColuna: Record<string, string> = {
+  'interfaces_rede.ip': 'Este endereço IP já está cadastrado em outro equipamento.',
+  'interfaces_rede.mac': 'Este endereço MAC já está cadastrado em outro equipamento.',
+  'usuarios_sistema.email': 'Já existe um usuário cadastrado com este e-mail.',
+  'opcoes_predefinidas.valor': 'Esse valor já está cadastrado nessa categoria.',
+  'eq_celulares.imei': 'Este IMEI já está cadastrado em outro equipamento.',
+  'portas_switch.numero_porta': 'Esta porta já está cadastrada para este switch.',
+}
+
 // Middleware global de tratamento de erros. Precisa dos 4 parâmetros para o
 // Express reconhecê-lo como error handler (mesmo sem usar 'proximo' no corpo).
 export const tratadorDeErros = (
@@ -42,6 +57,19 @@ export const tratadorDeErros = (
   }
 
   if (erro.code?.startsWith('SQLITE_')) {
+    if (erro.code === 'SQLITE_CONSTRAINT_UNIQUE' && erro.message) {
+      const info = extrairTabelaColuna(erro.message)
+      if (info) {
+        const { tabela, coluna } = info
+        resposta.status(400).json({
+          sucesso: false,
+          mensagem: mensagensPorColuna[`${tabela}.${coluna}`] ?? traduzirErroSqlite(erro.code),
+          campo: coluna,
+        })
+        return
+      }
+    }
+
     resposta.status(400).json({
       sucesso: false,
       mensagem: traduzirErroSqlite(erro.code),
