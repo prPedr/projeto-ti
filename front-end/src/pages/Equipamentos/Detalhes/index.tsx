@@ -23,7 +23,6 @@ interface DadosMestre {
   status: string;
   localizacao_id: string;
   nome: string;
-  fornecedor: string;
   data_garantia: string;
   observacao: string;
 }
@@ -40,7 +39,6 @@ const DADOS_MESTRE_INICIAIS: DadosMestre = {
   status: 'ATIVO',
   localizacao_id: '',
   nome: '',
-  fornecedor: '',
   data_garantia: '',
   observacao: '',
 };
@@ -90,7 +88,6 @@ export default function Detalhes() {
             status: dados.mestre.status,
             localizacao_id: String(dados.mestre.localizacao_id),
             nome: dados.mestre.nome || '',
-            fornecedor: dados.mestre.fornecedor || '',
             data_garantia: dados.mestre.data_garantia || '',
             observacao: dados.mestre.observacao || '',
           });
@@ -182,7 +179,6 @@ export default function Detalhes() {
         status: dadosMestre.status,
         localizacao_id: Number(dadosMestre.localizacao_id),
         ...(dadosMestre.nome.trim() && { nome: dadosMestre.nome.trim() }),
-        ...(dadosMestre.fornecedor.trim() && { fornecedor: dadosMestre.fornecedor.trim() }),
         ...(dadosMestre.data_garantia.trim() && { data_garantia: dadosMestre.data_garantia.trim() }),
         ...(dadosMestre.observacao.trim() && { observacao: dadosMestre.observacao.trim() }),
       },
@@ -312,17 +308,6 @@ export default function Detalhes() {
                 name="nome"
                 className={styles.input}
                 value={dadosMestre.nome}
-                onChange={handleMestreChange}
-              />
-            </div>
-
-            <div className={styles.campo}>
-              <label htmlFor="fornecedor">Fornecedor</label>
-              <input
-                id="fornecedor"
-                name="fornecedor"
-                className={styles.input}
-                value={dadosMestre.fornecedor}
                 onChange={handleMestreChange}
               />
             </div>
