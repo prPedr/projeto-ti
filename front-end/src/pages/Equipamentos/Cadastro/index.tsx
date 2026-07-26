@@ -332,7 +332,7 @@ export default function Cadastro() {
                   id="marca"
                   opcoes={opcoesMarca}
                   valor={dadosMestre.marca}
-                  aoMudar={(val) => setDadosMestre((ant) => ({ ...ant, marca: val }))}
+                  aoMudar={(val) => setDadosMestre((ant) => ({ ...ant, marca: val, modelo: '' }))}
                   placeholder="Selecione ou digite a marca"
                   obrigatorio
                 />
