@@ -328,8 +328,9 @@ export default function Detalhes() {
   if (carregando) return <p>Carregando dados...</p>;
 
   return (
-    <form onSubmit={handleSubmit}>
-        <fieldset disabled={desabilitado} style={{ border: 'none', padding: 0, margin: 0 }}>
+    <>
+      <form onSubmit={handleSubmit}>
+          <fieldset disabled={desabilitado} style={{ border: 'none', padding: 0, margin: 0 }}>
           <h2 className={styles.secaoTitulo}>Dados Básicos</h2>
           <div className={styles.grid2}>
             <div className={styles.campo}>
@@ -821,5 +822,6 @@ export default function Detalhes() {
         aoConfirmar={() => navigate('/equipamentos')}
         aoCancelar={() => setModalCancelarAberto(false)}
       />
+    </>
   );
 }
