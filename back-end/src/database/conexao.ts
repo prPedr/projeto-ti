@@ -4,7 +4,8 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const caminhoBanco = path.resolve(__dirname, 'app.db')
+const nomeArquivo = process.env.NODE_ENV === 'test' ? 'test.db' : 'app.db'
+const caminhoBanco = path.resolve(__dirname, nomeArquivo)
 
 const banco: TipoBanco = new Database(caminhoBanco)
 

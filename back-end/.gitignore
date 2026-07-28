@@ -3,3 +3,6 @@
 src/database/app.db
 src/database/app.db-shm
 src/database/app.db-wal
+src/database/test.db
+src/database/test.db-shm
+src/database/test.db-wal
