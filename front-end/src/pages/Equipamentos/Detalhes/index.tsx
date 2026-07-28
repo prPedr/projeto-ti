@@ -7,6 +7,7 @@ import { listarOpcoes } from '../../../services/opcoes';
 import type { OpcoesAgrupadas } from '../../../services/opcoes';
 import { formatarMAC, formatarIMEI, formatarIP, formatarTag } from '../../../utils/formatadores';
 import ComboBoxSelect from '../../../components/ComboBoxSelect';
+import ModalConfirmacao from '../../../components/ModalConfirmacao';
 import styles from '../Cadastro/Cadastro.module.css';
 
 type Categoria = 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR' | 'CAMERA';
@@ -74,6 +75,14 @@ export default function Detalhes() {
   const [localizacoes, setLocalizacoes] = useState<Localizacao[]>([]);
   const [opcoesSugeridas, setOpcoesSugeridas] = useState<OpcoesAgrupadas>({});
   const [carregando, setCarregando] = useState(true);
+  const [modalCancelarAberto, setModalCancelarAberto] = useState(false);
+
+  // Snapshot dos dados carregados do banco — usado para detectar alterações
+  const [dadosOriginais, setDadosOriginais] = useState<{
+    mestre: DadosMestre;
+    detalhe: Record<string, string>;
+    interfaces: InterfaceRede[];
+  } | null>(null);
 
   // Deriva o id da marca escolhida — usado para filtrar os modelos por dependência
   const marcaId =
@@ -167,7 +176,7 @@ export default function Detalhes() {
         .then((dados) => {
           const categoriaCarregada = dados.mestre.categoria.toUpperCase() as Categoria;
           setCategoria(categoriaCarregada);
-          setDadosMestre({
+          const mestreCarregado: DadosMestre = {
             marca: dados.mestre.marca,
             modelo: dados.mestre.modelo,
             status: dados.mestre.status,
@@ -175,8 +184,11 @@ export default function Detalhes() {
             nome: dados.mestre.nome || '',
             data_garantia: dados.mestre.data_garantia || '',
             observacao: dados.mestre.observacao || '',
-          });
-          setDadosDetalhe(dados.detalhe || {});
+          };
+          const detalheCarregado: Record<string, string> = dados.detalhe || {};
+
+          setDadosMestre(mestreCarregado);
+          setDadosDetalhe(detalheCarregado);
 
           // Carrega interfaces preservando ip/mac do banco.
           // Para CELULAR e SWITCH, força o nome_interface fixo sem apagar os valores já salvos.
@@ -185,17 +197,23 @@ export default function Detalhes() {
               ? dados.interfaces
               : [{ ...INTERFACE_REDE_INICIAL }];
 
+          let interfacesFinais: InterfaceRede[];
           if (categoriaCarregada === 'CELULAR') {
-            setInterfacesRede(
-              interfacesCarregadas.map((iface) => ({ ...iface, nome_interface: 'Wi-Fi' })),
-            );
+            interfacesFinais = interfacesCarregadas.map((iface) => ({ ...iface, nome_interface: 'Wi-Fi' }));
           } else if (categoriaCarregada === 'SWITCH') {
-            setInterfacesRede(
-              interfacesCarregadas.map((iface) => ({ ...iface, nome_interface: 'Ethernet' })),
-            );
+            interfacesFinais = interfacesCarregadas.map((iface) => ({ ...iface, nome_interface: 'Ethernet' }));
           } else {
-            setInterfacesRede(interfacesCarregadas);
+            interfacesFinais = interfacesCarregadas;
           }
+
+          setInterfacesRede(interfacesFinais);
+
+          // Salva cópia imutável dos dados originais para comparar depois
+          setDadosOriginais({
+            mestre: { ...mestreCarregado },
+            detalhe: { ...detalheCarregado },
+            interfaces: interfacesFinais.map((i) => ({ ...i })),
+          });
         })
         .catch((erro) => {
           console.error('Erro ao carregar equipamento:', erro);
@@ -246,6 +264,15 @@ export default function Detalhes() {
 
   function removerInterface(indice: number) {
     setInterfacesRede((anterior) => anterior.filter((_, i) => i !== indice));
+  }
+
+  function formularioTemAlteracoes(): boolean {
+    if (!dadosOriginais) return false;
+    return (
+      JSON.stringify(dadosMestre) !== JSON.stringify(dadosOriginais.mestre) ||
+      JSON.stringify(dadosDetalhe) !== JSON.stringify(dadosOriginais.detalhe) ||
+      JSON.stringify(interfacesRede) !== JSON.stringify(dadosOriginais.interfaces)
+    );
   }
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
@@ -763,7 +790,17 @@ export default function Detalhes() {
             </button>
           ) : (
             <>
-              <button type="button" className={styles.botaoCancelar} onClick={() => navigate('/equipamentos')}>
+              <button
+                type="button"
+                className={styles.botaoCancelar}
+                onClick={() => {
+                  if (formularioTemAlteracoes()) {
+                    setModalCancelarAberto(true);
+                  } else {
+                    navigate('/equipamentos');
+                  }
+                }}
+              >
                 Cancelar
               </button>
               <button type="submit" className={styles.botaoSalvar}>
@@ -773,5 +810,16 @@ export default function Detalhes() {
           )}
         </div>
       </form>
+
+      <ModalConfirmacao
+        aberto={modalCancelarAberto}
+        titulo="Sair sem salvar?"
+        mensagem="Você tem alterações não salvas nesta edição. Se sair agora, as alterações serão perdidas."
+        textoConfirmar="Sair sem salvar"
+        textoCancelar="Continuar editando"
+        variante="perigo"
+        aoConfirmar={() => navigate('/equipamentos')}
+        aoCancelar={() => setModalCancelarAberto(false)}
+      />
   );
 }
