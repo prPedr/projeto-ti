@@ -45,6 +45,20 @@ const DADOS_MESTRE_INICIAIS: DadosMestre = {
 
 const INTERFACE_REDE_INICIAL: InterfaceRede = { nome_interface: '', ip: '', mac: '' };
 
+function mapCategoriaParaTipoOpcao(categoria: Categoria): string {
+  switch (categoria) {
+    case 'COMPUTADOR':
+      return 'COMPUTADOR';
+    case 'SWITCH':
+      return 'SWITCH';
+    case 'CELULAR':
+      return 'CELULAR';
+    case 'NVR':
+    case 'CAMERA':
+      return 'NVR_CAMERA';
+  }
+}
+
 export default function Detalhes() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -70,11 +84,13 @@ export default function Detalhes() {
     listarLocalizacoes()
       .then((dados) => setLocalizacoes(dados))
       .catch((erro) => console.error('Erro ao carregar localizações:', erro));
+  }, []);
 
-    listarOpcoes()
+  useEffect(() => {
+    listarOpcoes(mapCategoriaParaTipoOpcao(categoria))
       .then((dados) => setOpcoesSugeridas(dados))
       .catch((erro) => console.error('Erro ao carregar opções sugeridas:', erro));
-  }, []);
+  }, [categoria]);
 
   useEffect(() => {
     if (id) {
