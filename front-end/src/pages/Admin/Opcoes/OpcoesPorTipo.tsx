@@ -3,6 +3,7 @@ import type { SubmitEvent } from 'react';
 import { criarOpcao, editarOpcao, excluirOpcao, listarOpcoes } from '../../../services/opcoes';
 import type { OpcoesAgrupadas, OpcaoItem } from '../../../services/opcoes';
 import { useToast } from '../../../contexts/ToastContext';
+import ModalConfirmacao from '../../../components/ModalConfirmacao';
 import styles from './Opcoes.module.css';
 
 export type TipoEquipamento = 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR_CAMERA';
@@ -30,6 +31,7 @@ export function OpcoesPorTipo({
   const [valor, setValor] = useState('');
   const [dependenciaId, setDependenciaId] = useState('');
   const [opcoes, setOpcoes] = useState<OpcoesAgrupadas>({});
+  const [opcaoParaExcluir, setOpcaoParaExcluir] = useState<OpcaoItem | null>(null);
 
   function carregarOpcoes() {
     listarOpcoes(tipoEquipamento)
@@ -83,17 +85,19 @@ export function OpcoesPorTipo({
     }
   }
 
-  async function handleExcluir(id: number, valorExcluido: string) {
-    const confirmar = confirm(`Tem certeza que deseja excluir "${valorExcluido}"?`);
-    if (!confirmar) {
-      return;
-    }
+  function handleExcluir(opcao: OpcaoItem) {
+    setOpcaoParaExcluir(opcao);
+  }
 
+  async function confirmarExclusao() {
+    if (!opcaoParaExcluir) return;
     try {
-      await excluirOpcao(id);
+      await excluirOpcao(opcaoParaExcluir.id);
       carregarOpcoes();
     } catch (erro) {
       mostrarToast(erro instanceof Error ? erro.message : 'Erro ao excluir opção.', 'erro');
+    } finally {
+      setOpcaoParaExcluir(null);
     }
   }
 
@@ -120,7 +124,7 @@ export function OpcoesPorTipo({
             type="button"
             className={styles.botaoIcone}
             title="Excluir"
-            onClick={() => handleExcluir(opcao.id, opcao.valor)}
+            onClick={() => handleExcluir(opcao)}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="3 6 5 6 21 6" />
@@ -133,7 +137,8 @@ export function OpcoesPorTipo({
   }
 
   return (
-    <div className={styles.cartao}>
+    <>
+      <div className={styles.cartao}>
       <div className={styles.cabecalhoAcoes}>
         <div>
           <h1 className={styles.tituloPagina}>{titulo}</h1>
@@ -260,6 +265,17 @@ export function OpcoesPorTipo({
           })}
         </div>
       </div>
-    </div>
+
+      <ModalConfirmacao
+        aberto={opcaoParaExcluir !== null}
+        titulo="Excluir opção?"
+        mensagem={`Tem certeza que deseja excluir "${opcaoParaExcluir?.valor}"? Esta ação não pode ser desfeita.`}
+        textoConfirmar="Excluir"
+        textoCancelar="Cancelar"
+        variante="perigo"
+        aoConfirmar={confirmarExclusao}
+        aoCancelar={() => setOpcaoParaExcluir(null)}
+      />
+    </>
   );
 }

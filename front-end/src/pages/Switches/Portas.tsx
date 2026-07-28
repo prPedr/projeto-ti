@@ -7,6 +7,7 @@ import type { PortaSwitch } from '../../services/portasSwitch';
 import { listarEquipamentosConectaveis } from '../../services/switches';
 import type { EquipamentoConectavel } from '../../services/switches';
 import { useToast } from '../../contexts/ToastContext';
+import ModalConfirmacao from '../../components/ModalConfirmacao';
 import styles from './Portas.module.css';
 
 interface SwitchMestre {
@@ -38,6 +39,7 @@ export default function SwitchesPortas() {
   const [equipamentoSelecionadoId, setEquipamentoSelecionadoId] = useState<string>('');
   const [descricao, setDescricao] = useState<string>('');
   const [salvando, setSalvando] = useState(false);
+  const [portaParaLimpar, setPortaParaLimpar] = useState<PortaSwitch | null>(null);
 
   const carregarDados = async () => {
     if (!switchId || isNaN(switchId)) return;
@@ -91,6 +93,7 @@ export default function SwitchesPortas() {
         descricao: descricao.trim() || null,
       });
 
+      mostrarToast('Alterações da porta salvas com sucesso.', 'sucesso');
       handleFecharModal();
       await carregarDados();
     } catch (erro) {
@@ -101,20 +104,21 @@ export default function SwitchesPortas() {
     }
   };
 
-  const handleLimparPorta = async () => {
-    if (!portaEdicao) return;
-    const confirma = window.confirm(
-      `Deseja realmente desconectar/limpar a Porta ${portaEdicao.numero_porta}?`
-    );
-    if (!confirma) return;
+  const handleLimparPorta = (porta: PortaSwitch) => {
+    setPortaParaLimpar(porta);
+  };
+
+  const confirmarLimpezaPorta = async () => {
+    if (!portaParaLimpar) return;
 
     setSalvando(true);
     try {
-      await atualizarPorta(switchId, portaEdicao.numero_porta, {
+      await atualizarPorta(switchId, portaParaLimpar.numero_porta, {
         equipamento_conectado_id: null,
         descricao: null,
       });
 
+      mostrarToast(`Porta #${portaParaLimpar.numero_porta} limpa com sucesso.`, 'sucesso');
       handleFecharModal();
       await carregarDados();
     } catch (erro) {
@@ -122,6 +126,7 @@ export default function SwitchesPortas() {
       mostrarToast('Não foi possível limpar a porta.', 'erro');
     } finally {
       setSalvando(false);
+      setPortaParaLimpar(null);
     }
   };
 
@@ -131,18 +136,20 @@ export default function SwitchesPortas() {
   ).length;
 
   return (
-    <div className={styles.cartao} style={{ padding: '1.5rem' }}>
-      <div className={styles.cabecalhoAcoes}>
-        <div className={styles.tituloArea}>
-          <h2>
-            Portas do Switch {switchInfo?.nome ? `— ${switchInfo.nome}` : `#${switchId}`}
-          </h2>
-          <span className={styles.subtitulo}>
-            {switchInfo
-              ? `${switchInfo.marca} ${switchInfo.modelo}`
-              : 'Carregando detalhes...'}
-          </span>
-        </div>
+    <>
+      <div className={styles.cartao} style={{ padding: '1.5rem' }}>
+        <div className={styles.cabecalhoAcoes}>
+          <div className={styles.tituloArea}>
+            <h2>
+              Portas do Switch {switchInfo?.nome ? `— ${switchInfo.nome}` : `#${switchId}`}
+            </h2>
+            <span className={styles.subtitulo}>
+              {switchInfo
+                ? `${switchInfo.marca} ${switchInfo.modelo}`
+                : 'Carregando detalhes...'}
+            </span>
+          </div>
+
 
         <button
           type="button"
@@ -430,7 +437,7 @@ export default function SwitchesPortas() {
               <button
                 type="button"
                 className={styles.botaoLimpar}
-                onClick={handleLimparPorta}
+                onClick={() => handleLimparPorta(portaEdicao)}
                 disabled={salvando}
               >
                 Desconectar / Limpar
@@ -459,5 +466,17 @@ export default function SwitchesPortas() {
         </div>
       )}
     </div>
+
+      <ModalConfirmacao
+        aberto={portaParaLimpar !== null}
+        titulo="Desconectar / Limpar Porta?"
+        mensagem={`Deseja realmente desconectar/limpar a Porta #${portaParaLimpar?.numero_porta}?`}
+        textoConfirmar="Desconectar / Limpar"
+        textoCancelar="Cancelar"
+        variante="perigo"
+        aoConfirmar={confirmarLimpezaPorta}
+        aoCancelar={() => setPortaParaLimpar(null)}
+      />
+    </>
   );
 }
