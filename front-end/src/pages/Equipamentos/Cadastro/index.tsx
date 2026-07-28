@@ -121,6 +121,8 @@ export default function Cadastro() {
 
     if (categoria === 'CELULAR') {
       setInterfacesRede([{ nome_interface: 'Wi-Fi', ip: '', mac: '' }]);
+    } else if (categoria === 'SWITCH') {
+      setInterfacesRede([{ nome_interface: 'Ethernet', ip: '', mac: '' }]);
     } else {
       setInterfacesRede([{ ...INTERFACE_REDE_INICIAL }]);
     }
@@ -194,6 +196,9 @@ export default function Cadastro() {
       if (categoria === 'CELULAR' && i.nome_interface === 'Wi-Fi') {
         return i.ip.trim() !== '' || i.mac.trim() !== '';
       }
+      if (categoria === 'SWITCH' && i.nome_interface === 'Ethernet') {
+        return i.ip.trim() !== '' || i.mac.trim() !== '';
+      }
       return i.nome_interface.trim() !== '' || i.ip.trim() !== '' || i.mac.trim() !== '';
     });
 
@@ -212,6 +217,8 @@ export default function Cadastro() {
     setDadosDetalhe({});
     if (categoria === 'CELULAR') {
       setInterfacesRede([{ nome_interface: 'Wi-Fi', ip: '', mac: '' }]);
+    } else if (categoria === 'SWITCH') {
+      setInterfacesRede([{ nome_interface: 'Ethernet', ip: '', mac: '' }]);
     } else {
       setInterfacesRede([{ ...INTERFACE_REDE_INICIAL }]);
     }
@@ -850,7 +857,7 @@ export default function Cadastro() {
                       valor={interfaceRede.nome_interface}
                       aoMudar={(novoValor) => handleInterfaceChange(indice, 'nome_interface', novoValor)}
                       placeholder="Selecione o tipo de interface"
-                      desabilitado={categoria === 'CELULAR'}
+                      desabilitado={categoria === 'CELULAR' || categoria === 'SWITCH'}
                     />
                   </div>
                   <div className={styles.campo}>
@@ -885,7 +892,7 @@ export default function Cadastro() {
               );
             })}
 
-            {categoria !== 'CELULAR' && (
+            {categoria !== 'CELULAR' && categoria !== 'SWITCH' && (
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
                 <button type="button" className={styles.botaoCancelar} onClick={adicionarInterface}>
                   + Adicionar Interface
