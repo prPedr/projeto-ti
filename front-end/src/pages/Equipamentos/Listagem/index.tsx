@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { excluirEquipamento, listarEquipamentos } from '../../../services/equipamentos';
 import type { Equipamento } from '../../../services/equipamentos';
+import { useToast } from '../../../contexts/ToastContext';
 import styles from './Listagem.module.css';
 
 export default function Listagem() {
   const navigate = useNavigate();
+  const { mostrarToast } = useToast();
   const [equipamentos, setEquipamentos] = useState<Equipamento[]>([]);
   const [carregando, setCarregando] = useState(true);
 
@@ -16,7 +18,7 @@ export default function Listagem() {
       setEquipamentos(dados);
     } catch (erro) {
       console.error('Erro ao carregar equipamentos:', erro);
-      alert('Não foi possível carregar a lista de equipamentos.');
+      mostrarToast('Não foi possível carregar a lista de equipamentos.', 'erro');
     } finally {
       setCarregando(false);
     }
@@ -35,7 +37,7 @@ export default function Listagem() {
       await carregarDados();
     } catch (erro) {
       console.error('Erro ao excluir equipamento:', erro);
-      alert('Não foi possível excluir o equipamento.');
+      mostrarToast('Não foi possível excluir o equipamento.', 'erro');
     }
   }
 

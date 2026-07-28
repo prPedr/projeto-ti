@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { listarSwitches } from '../../../services/switches';
 import type { SwitchResumo } from '../../../services/switches';
+import { useToast } from '../../../contexts/ToastContext';
 import styles from './Listagem.module.css';
 
 function corDoStatus(status: string): React.CSSProperties {
@@ -26,6 +27,7 @@ function rotuloStatus(status: string): string {
 
 export default function SwitchesListagem() {
   const navigate = useNavigate();
+  const { mostrarToast } = useToast();
   const [switches, setSwitches] = useState<SwitchResumo[]>([]);
   const [carregando, setCarregando] = useState(true);
 
@@ -34,7 +36,7 @@ export default function SwitchesListagem() {
       .then(setSwitches)
       .catch((erro) => {
         console.error('Erro ao carregar switches:', erro);
-        alert('Não foi possível carregar a lista de switches.');
+        mostrarToast('Não foi possível carregar a lista de switches.', 'erro');
       })
       .finally(() => setCarregando(false));
   }, []);

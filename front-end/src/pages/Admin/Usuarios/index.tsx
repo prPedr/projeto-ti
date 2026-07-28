@@ -3,12 +3,14 @@ import type { SubmitEvent } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { criarUsuario, editarUsuario, listarUsuarios, redefinirSenha } from '../../../services/usuarios';
 import type { Usuario } from '../../../services/usuarios';
+import { useToast } from '../../../contexts/ToastContext';
 import styles from './Usuarios.module.css';
 
 const PERFIS = ['ADMIN', 'TECNICO', 'LEITURA'] as const;
 
 export default function Usuarios() {
   const { usuario: usuarioLogado } = useAuth();
+  const { mostrarToast } = useToast();
 
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -46,7 +48,7 @@ export default function Usuarios() {
       setPerfil('TECNICO');
       carregarUsuarios();
     } catch (erro) {
-      alert(erro instanceof Error ? erro.message : 'Erro ao criar usuário.');
+      mostrarToast(erro instanceof Error ? erro.message : 'Erro ao criar usuário.', 'erro');
     }
   }
 
@@ -55,7 +57,7 @@ export default function Usuarios() {
       await editarUsuario(linha.id, { ativo: !linha.ativo });
       carregarUsuarios();
     } catch (erro) {
-      alert(erro instanceof Error ? erro.message : 'Erro ao atualizar status do usuário.');
+      mostrarToast(erro instanceof Error ? erro.message : 'Erro ao atualizar status do usuário.', 'erro');
     }
   }
 
@@ -68,7 +70,7 @@ export default function Usuarios() {
       await editarUsuario(linha.id, { perfil: novoPerfil });
       carregarUsuarios();
     } catch (erro) {
-      alert(erro instanceof Error ? erro.message : 'Erro ao trocar perfil do usuário.');
+      mostrarToast(erro instanceof Error ? erro.message : 'Erro ao trocar perfil do usuário.', 'erro');
     }
   }
 
@@ -79,15 +81,15 @@ export default function Usuarios() {
     }
 
     if (novaSenha.trim().length < 8) {
-      alert('A senha deve ter no mínimo 8 caracteres.');
+      mostrarToast('A senha deve ter no mínimo 8 caracteres.', 'erro');
       return;
     }
 
     try {
       await redefinirSenha(linha.id, novaSenha.trim());
-      alert('Senha redefinida com sucesso.');
+      mostrarToast('Senha redefinida com sucesso.', 'sucesso');
     } catch (erro) {
-      alert(erro instanceof Error ? erro.message : 'Erro ao redefinir senha.');
+      mostrarToast(erro instanceof Error ? erro.message : 'Erro ao redefinir senha.', 'erro');
     }
   }
 

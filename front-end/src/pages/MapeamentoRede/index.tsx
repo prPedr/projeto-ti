@@ -3,6 +3,7 @@ import type { SubmitEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { listarInterfacesRede } from '../../services/mapeamentoRede';
 import type { InterfaceRede } from '../../services/mapeamentoRede';
+import { useToast } from '../../contexts/ToastContext';
 import styles from './MapeamentoRede.module.css';
 
 function octetos(ip: string): number[] {
@@ -73,6 +74,7 @@ function corDoStatus(status: string): React.CSSProperties {
 
 export default function MapeamentoRede() {
   const navigate = useNavigate();
+  const { mostrarToast } = useToast();
 
   const [interfaces, setInterfaces] = useState<InterfaceRede[]>([]);
   const [subredeBusca, setSubredeBusca] = useState('');
@@ -84,7 +86,7 @@ export default function MapeamentoRede() {
       .then(setInterfaces)
       .catch((erro) => {
         console.error('Erro ao carregar mapeamento de rede:', erro);
-        alert('Não foi possível carregar o mapeamento de rede.');
+        mostrarToast('Não foi possível carregar o mapeamento de rede.', 'erro');
       })
       .finally(() => setCarregando(false));
   }

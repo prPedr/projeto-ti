@@ -8,6 +8,7 @@ import type { OpcoesAgrupadas } from '../../../services/opcoes';
 import { formatarMAC, formatarIMEI, formatarIP, formatarTag } from '../../../utils/formatadores';
 import ComboBoxSelect from '../../../components/ComboBoxSelect';
 import ModalConfirmacao from '../../../components/ModalConfirmacao';
+import { useToast } from '../../../contexts/ToastContext';
 import styles from '../Cadastro/Cadastro.module.css';
 
 type Categoria = 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR' | 'CAMERA';
@@ -67,6 +68,7 @@ export default function Detalhes() {
   const { state } = useLocation();
   const modo = state?.modo || 'visualizar';
   const desabilitado = modo === 'visualizar';
+  const { mostrarToast } = useToast();
 
   const [categoria, setCategoria] = useState<Categoria>('COMPUTADOR');
   const [dadosMestre, setDadosMestre] = useState<DadosMestre>(DADOS_MESTRE_INICIAIS);
@@ -217,7 +219,7 @@ export default function Detalhes() {
         })
         .catch((erro) => {
           console.error('Erro ao carregar equipamento:', erro);
-          alert('Não foi possível carregar os dados do equipamento.');
+          mostrarToast('Não foi possível carregar os dados do equipamento.', 'erro');
           navigate('/equipamentos');
         })
         .finally(() => {
@@ -321,7 +323,7 @@ export default function Detalhes() {
       await atualizarEquipamento(Number(id), categoria.toLowerCase() as CategoriaEquipamento, payload);
       navigate('/equipamentos');
     } catch (erro) {
-      alert(erro instanceof Error ? erro.message : 'Erro ao atualizar equipamento.');
+      mostrarToast(erro instanceof Error ? erro.message : 'Erro ao atualizar equipamento.', 'erro');
     }
   }
 

@@ -3,11 +3,13 @@ import type { SubmitEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { realizarLogin } from '../../services/auth';
+import { useToast } from '../../contexts/ToastContext';
 import styles from './Login.module.css';
 
 export function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { mostrarToast } = useToast();
 
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -20,7 +22,7 @@ export function Login() {
       login(resultado.token, resultado.usuario);
       navigate('/');
     } catch (erro) {
-      alert(erro instanceof Error ? erro.message : 'Erro ao entrar.');
+      mostrarToast(erro instanceof Error ? erro.message : 'Erro ao entrar.', 'erro');
     }
   }
 

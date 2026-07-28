@@ -6,6 +6,7 @@ import { listarPortasSwitch, atualizarPorta } from '../../services/portasSwitch'
 import type { PortaSwitch } from '../../services/portasSwitch';
 import { listarEquipamentosConectaveis } from '../../services/switches';
 import type { EquipamentoConectavel } from '../../services/switches';
+import { useToast } from '../../contexts/ToastContext';
 import styles from './Portas.module.css';
 
 interface SwitchMestre {
@@ -22,6 +23,7 @@ export default function SwitchesPortas() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const switchId = Number(id);
+  const { mostrarToast } = useToast();
 
   const [switchInfo, setSwitchInfo] = useState<SwitchMestre | null>(null);
   const [portas, setPortas] = useState<PortaSwitch[]>([]);
@@ -54,7 +56,7 @@ export default function SwitchesPortas() {
       setEquipamentosDisponiveis(listaEquipamentos || []);
     } catch (erro) {
       console.error('Erro ao carregar portas do switch:', erro);
-      alert('Não foi possível carregar as informações do switch.');
+      mostrarToast('Não foi possível carregar as informações do switch.', 'erro');
     } finally {
       setCarregando(false);
     }
@@ -93,7 +95,7 @@ export default function SwitchesPortas() {
       await carregarDados();
     } catch (erro) {
       console.error('Erro ao atualizar porta:', erro);
-      alert('Não foi possível salvar as alterações da porta.');
+      mostrarToast('Não foi possível salvar as alterações da porta.', 'erro');
     } finally {
       setSalvando(false);
     }
@@ -117,7 +119,7 @@ export default function SwitchesPortas() {
       await carregarDados();
     } catch (erro) {
       console.error('Erro ao limpar porta:', erro);
-      alert('Não foi possível limpar a porta.');
+      mostrarToast('Não foi possível limpar a porta.', 'erro');
     } finally {
       setSalvando(false);
     }

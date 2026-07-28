@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import type { SubmitEvent } from 'react';
 import { criarLocalizacao, listarLocalizacoesAdmin } from '../../../services/localizacoes';
 import type { Localizacao, MetadadosPaginacao } from '../../../services/localizacoes';
+import { useToast } from '../../../contexts/ToastContext';
 import styles from './Localizacoes.module.css';
 
 const LIMITE_POR_PAGINA = 10;
 
 export default function Localizacoes() {
+  const { mostrarToast } = useToast();
   const [filial, setFilial] = useState('');
   const [predio, setPredio] = useState('');
   const [sala, setSala] = useState('');
@@ -59,7 +61,7 @@ export default function Localizacoes() {
       setPagina(1);
       carregarLocalizacoes(1, busca);
     } catch (erro) {
-      alert(erro instanceof Error ? erro.message : 'Erro ao adicionar localização.');
+      mostrarToast(erro instanceof Error ? erro.message : 'Erro ao adicionar localização.', 'erro');
     }
   }
 

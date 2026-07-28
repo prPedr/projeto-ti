@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { SubmitEvent } from 'react';
 import { criarOpcao, editarOpcao, excluirOpcao, listarOpcoes } from '../../../services/opcoes';
 import type { OpcoesAgrupadas, OpcaoItem } from '../../../services/opcoes';
+import { useToast } from '../../../contexts/ToastContext';
 import styles from './Opcoes.module.css';
 
 export type TipoEquipamento = 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR_CAMERA';
@@ -24,6 +25,7 @@ export function OpcoesPorTipo({
   tipoEquipamento,
   categorias,
 }: OpcoesPorTipoProps) {
+  const { mostrarToast } = useToast();
   const [categoria, setCategoria] = useState<string>(categorias[0]?.valor ?? '');
   const [valor, setValor] = useState('');
   const [dependenciaId, setDependenciaId] = useState('');
@@ -63,7 +65,7 @@ export function OpcoesPorTipo({
       setDependenciaId('');
       carregarOpcoes();
     } catch (erro) {
-      alert(erro instanceof Error ? erro.message : 'Erro ao criar opção.');
+      mostrarToast(erro instanceof Error ? erro.message : 'Erro ao criar opção.', 'erro');
     }
   }
 
@@ -77,7 +79,7 @@ export function OpcoesPorTipo({
       await editarOpcao(id, novoValor.trim());
       carregarOpcoes();
     } catch (erro) {
-      alert(erro instanceof Error ? erro.message : 'Erro ao editar opção.');
+      mostrarToast(erro instanceof Error ? erro.message : 'Erro ao editar opção.', 'erro');
     }
   }
 
@@ -91,7 +93,7 @@ export function OpcoesPorTipo({
       await excluirOpcao(id);
       carregarOpcoes();
     } catch (erro) {
-      alert(erro instanceof Error ? erro.message : 'Erro ao excluir opção.');
+      mostrarToast(erro instanceof Error ? erro.message : 'Erro ao excluir opção.', 'erro');
     }
   }
 
