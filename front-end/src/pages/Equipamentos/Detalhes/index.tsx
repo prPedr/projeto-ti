@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import type { ChangeEvent, SubmitEvent } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { listarLocalizacoes, buscarEquipamentoPorId, atualizarEquipamento } from '../../../services/equipamentos';
@@ -123,6 +123,16 @@ export default function Detalhes() {
     [opcoesSugeridas.SISTEMA_OPERACIONAL],
   );
 
+  const opcoesTipoInterface = useMemo(
+    () => (opcoesSugeridas.TIPO_INTERFACE ?? []).map((o) => ({ valor: o.valor, rotulo: o.valor })),
+    [opcoesSugeridas.TIPO_INTERFACE],
+  );
+
+  // Ref para saber se o carregamento inicial já concluiu.
+  // Enquanto false, o useEffect de categoria não reseta interfacesRede
+  // (evita apagar IP/MAC recém-carregados do banco).
+  const dadosJaCarregadosRef = useRef(false);
+
   useEffect(() => {
     listarLocalizacoes()
       .then((dados) => setLocalizacoes(dados))
@@ -135,12 +145,28 @@ export default function Detalhes() {
       .catch((erro) => console.error('Erro ao carregar opções sugeridas:', erro));
   }, [categoria]);
 
+  // Aplica nome_interface fixo ao trocar categoria manualmente.
+  // No carregamento inicial (dadosJaCarregadosRef ainda false), não faz nada
+  // pois o .then de buscarEquipamentoPorId já cuida de preservar ip/mac.
+  useEffect(() => {
+    if (!dadosJaCarregadosRef.current) return;
+
+    if (categoria === 'CELULAR') {
+      setInterfacesRede([{ nome_interface: 'Wi-Fi', ip: '', mac: '' }]);
+    } else if (categoria === 'SWITCH') {
+      setInterfacesRede([{ nome_interface: 'Ethernet', ip: '', mac: '' }]);
+    } else {
+      setInterfacesRede([{ ...INTERFACE_REDE_INICIAL }]);
+    }
+  }, [categoria]);
+
   useEffect(() => {
     if (id) {
       setCarregando(true);
       buscarEquipamentoPorId(Number(id))
         .then((dados) => {
-          setCategoria(dados.mestre.categoria.toUpperCase() as Categoria);
+          const categoriaCarregada = dados.mestre.categoria.toUpperCase() as Categoria;
+          setCategoria(categoriaCarregada);
           setDadosMestre({
             marca: dados.mestre.marca,
             modelo: dados.mestre.modelo,
@@ -151,11 +177,24 @@ export default function Detalhes() {
             observacao: dados.mestre.observacao || '',
           });
           setDadosDetalhe(dados.detalhe || {});
-          
-          if (dados.interfaces && dados.interfaces.length > 0) {
-            setInterfacesRede(dados.interfaces);
+
+          // Carrega interfaces preservando ip/mac do banco.
+          // Para CELULAR e SWITCH, força o nome_interface fixo sem apagar os valores já salvos.
+          const interfacesCarregadas =
+            dados.interfaces && dados.interfaces.length > 0
+              ? dados.interfaces
+              : [{ ...INTERFACE_REDE_INICIAL }];
+
+          if (categoriaCarregada === 'CELULAR') {
+            setInterfacesRede(
+              interfacesCarregadas.map((iface) => ({ ...iface, nome_interface: 'Wi-Fi' })),
+            );
+          } else if (categoriaCarregada === 'SWITCH') {
+            setInterfacesRede(
+              interfacesCarregadas.map((iface) => ({ ...iface, nome_interface: 'Ethernet' })),
+            );
           } else {
-            setInterfacesRede([{ ...INTERFACE_REDE_INICIAL }]);
+            setInterfacesRede(interfacesCarregadas);
           }
         })
         .catch((erro) => {
@@ -163,7 +202,10 @@ export default function Detalhes() {
           alert('Não foi possível carregar os dados do equipamento.');
           navigate('/equipamentos');
         })
-        .finally(() => setCarregando(false));
+        .finally(() => {
+          dadosJaCarregadosRef.current = true;
+          setCarregando(false);
+        });
     }
   }, [id, navigate]);
 
@@ -655,12 +697,13 @@ export default function Detalhes() {
             <div className={styles.grid2} key={indice}>
               <div className={styles.campo}>
                 <label htmlFor={`nome_interface_${indice}`}>Nome da Interface</label>
-                <input
+                <ComboBoxSelect
                   id={`nome_interface_${indice}`}
-                  className={styles.input}
-                  placeholder="Ex: LAN 1, Wi-Fi"
-                  value={interfaceRede.nome_interface}
-                  onChange={(event) => handleInterfaceChange(indice, 'nome_interface', event.target.value)}
+                  opcoes={opcoesTipoInterface}
+                  valor={interfaceRede.nome_interface}
+                  aoMudar={(novoValor) => handleInterfaceChange(indice, 'nome_interface', novoValor)}
+                  placeholder="Selecione o tipo de interface"
+                  desabilitado={desabilitado || categoria === 'CELULAR' || categoria === 'SWITCH'}
                 />
               </div>
               <div className={styles.campo}>
@@ -694,7 +737,7 @@ export default function Detalhes() {
             </div>
           ))}
 
-          {!desabilitado && (
+          {!desabilitado && categoria !== 'CELULAR' && categoria !== 'SWITCH' && (
             <div className={styles.botoesAcao}>
               <button type="button" className={styles.botaoCancelar} onClick={adicionarInterface}>
                 + Adicionar Interface
