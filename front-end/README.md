@@ -1,75 +1,69 @@
-# React + TypeScript + Vite
+# Front-end — Aplicação Web Single Page Application (SPA)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interface do usuário para a plataforma de Gestão de Inventário de TI, desenvolvida com React 19, TypeScript e Vite.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ⚙️ Instalação
 
-## React Compiler
+Dentro do diretório `front-end`, instale as dependências:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🔗 Configuração de Comunicação com a API
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+A URL base do servidor back-end é configurada através da variável de ambiente do Vite:
 
+```env
+VITE_API_URL=http://localhost:3000
 ```
+
+- A camada de serviço HTTP ([`src/services/api.ts`](./src/services/api.ts)) lê a variável `import.meta.env.VITE_API_URL`.
+- Se a variável não estiver definida no ambiente, a aplicação utiliza automaticamente o valor padrão de fallback `http://localhost:3000`.
+
+---
+
+## 🚀 Executando a Aplicação
+
+### Modo Desenvolvimento
+Inicia o servidor de desenvolvimento do Vite com Hot Module Replacement (HMR) na porta `5173`:
+```bash
+npm run dev
+```
+Acesse `http://localhost:5173` no seu navegador.
+
+### Build de Produção
+Executa a checagem de tipos do TypeScript e compila o bundle de produção otimizado:
+```bash
+npm run build
+```
+Os arquivos estáticos resultantes serão gerados no diretório `dist/`.
+
+---
+
+## 📁 Estrutura de Pastas
+
+```text
+front-end/src/
+├── pages/       # Telas da aplicação (Login, Equipamentos, MapeamentoRede, Switches, Admin, etc.).
+├── components/  # Componentes reutilizáveis de UI (Layout, ComboBoxSelect, ModalConfirmacao, etc.).
+├── services/    # Camada de comunicação com a API (api.ts, equipamentos.ts, auth.ts, etc.).
+├── contexts/    # Provedores de estado global do React (AuthContext.tsx, ToastContext.tsx).
+└── utils/       # Utilitários e formatadores reutilizáveis (MAC, IMEI, IP, Tag Patrimonio).
+```
+
+---
+
+## 🎨 Design System e Estilização
+
+- O projeto utiliza **Vanilla CSS** com suporte a **CSS Modules** para isolamento de estilos por componente.
+- Os tokens de design globais do sistema estão centralizados em [`src/index.css`](./src/index.css) sob o seletor `:root`:
+  - **Cores Semânticas & Tema:** `var(--cor-fundo)`, `var(--cor-cartao)`, `var(--cor-acento)`, `var(--cor-texto)`, etc.
+  - **Espaçamento e Raios de Borda:** `var(--raio-sm)`, `var(--raio-md)`, `var(--sombra-cartao)`.
+  - **Tipografia:** `var(--fonte-corpo)` e `var(--fonte-display)`.
+
+> 💡 **Boa Prática:** Novos componentes desenvolvidos devem sempre consumir as variáveis de CSS globais (`var(--...)`) em vez de utilizar valores hexadecimais ou medidas em píxeis soltas.
