@@ -265,6 +265,7 @@ export function OpcoesPorTipo({
           })}
         </div>
       </div>
+    </div>
 
       <ModalConfirmacao
         aberto={opcaoParaExcluir !== null}
@@ -279,3 +280,5 @@ export function OpcoesPorTipo({
     </>
   );
 }
+
+
