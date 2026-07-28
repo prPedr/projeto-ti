@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import type { ChangeEvent, SubmitEvent } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { listarLocalizacoes, buscarEquipamentoPorId, atualizarEquipamento } from '../../../services/equipamentos';
@@ -6,6 +6,7 @@ import type { CategoriaEquipamento } from '../../../services/equipamentos';
 import { listarOpcoes } from '../../../services/opcoes';
 import type { OpcoesAgrupadas } from '../../../services/opcoes';
 import { formatarMAC, formatarIMEI, formatarIP, formatarTag } from '../../../utils/formatadores';
+import ComboBoxSelect from '../../../components/ComboBoxSelect';
 import styles from '../Cadastro/Cadastro.module.css';
 
 type Categoria = 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR' | 'CAMERA';
@@ -74,11 +75,53 @@ export default function Detalhes() {
   const [opcoesSugeridas, setOpcoesSugeridas] = useState<OpcoesAgrupadas>({});
   const [carregando, setCarregando] = useState(true);
 
-  // Deriva o id da marca escolhida pelo texto digitado — usado para filtrar os modelos
+  // Deriva o id da marca escolhida — usado para filtrar os modelos por dependência
   const marcaId =
     opcoesSugeridas.MARCA?.find(
       (m) => m.valor.toLowerCase() === dadosMestre.marca.trim().toLowerCase(),
     )?.id ?? null;
+
+  const opcoesMarca = useMemo(
+    () => (opcoesSugeridas.MARCA ?? []).map((o) => ({ valor: o.valor, rotulo: o.valor })),
+    [opcoesSugeridas.MARCA],
+  );
+
+  const opcoesModelo = useMemo(
+    () =>
+      (opcoesSugeridas.MODELO ?? [])
+        .filter((m) => marcaId === null || m.dependencia_id === marcaId)
+        .map((o) => ({ valor: o.valor, rotulo: o.valor })),
+    [opcoesSugeridas.MODELO, marcaId],
+  );
+
+  const opcoesLocalizacao = useMemo(
+    () =>
+      localizacoes.map((loc) => ({
+        valor: String(loc.id),
+        rotulo: [loc.filial, loc.predio, loc.sala].filter(Boolean).join(' - '),
+      })),
+    [localizacoes],
+  );
+
+  const opcoesProcessador = useMemo(
+    () => (opcoesSugeridas.PROCESSADOR ?? []).map((o) => ({ valor: o.valor, rotulo: o.valor })),
+    [opcoesSugeridas.PROCESSADOR],
+  );
+
+  const opcoesMemoria = useMemo(
+    () => (opcoesSugeridas.MEMORIA ?? []).map((o) => ({ valor: o.valor, rotulo: o.valor })),
+    [opcoesSugeridas.MEMORIA],
+  );
+
+  const opcoesArmazenamento = useMemo(
+    () => (opcoesSugeridas.ARMAZENAMENTO ?? []).map((o) => ({ valor: o.valor, rotulo: o.valor })),
+    [opcoesSugeridas.ARMAZENAMENTO],
+  );
+
+  const opcoesSistemaOperacional = useMemo(
+    () => (opcoesSugeridas.SISTEMA_OPERACIONAL ?? []).map((o) => ({ valor: o.valor, rotulo: o.valor })),
+    [opcoesSugeridas.SISTEMA_OPERACIONAL],
+  );
 
   useEffect(() => {
     listarLocalizacoes()
@@ -257,61 +300,41 @@ export default function Detalhes() {
 
             <div className={styles.campo}>
               <label htmlFor="marca">Marca</label>
-              <input
+              <ComboBoxSelect
                 id="marca"
-                name="marca"
-                className={styles.input}
-                list="lista-marcas"
-                value={dadosMestre.marca}
-                onChange={handleMestreChange}
-                required
+                opcoes={opcoesMarca}
+                valor={dadosMestre.marca}
+                aoMudar={(val) => setDadosMestre((ant) => ({ ...ant, marca: val, modelo: '' }))}
+                placeholder="Selecione ou digite a marca"
+                obrigatorio
+                desabilitado={desabilitado}
               />
-              <datalist id="lista-marcas">
-                {(opcoesSugeridas.MARCA ?? []).map((opcao) => (
-                  <option key={opcao.id} value={opcao.valor} />
-                ))}
-              </datalist>
             </div>
 
             <div className={styles.campo}>
               <label htmlFor="modelo">Modelo</label>
-              <input
+              <ComboBoxSelect
                 id="modelo"
-                name="modelo"
-                className={styles.input}
-                list="lista-modelos"
-                value={dadosMestre.modelo}
-                onChange={handleMestreChange}
-                required
+                opcoes={opcoesModelo}
+                valor={dadosMestre.modelo}
+                aoMudar={(val) => setDadosMestre((ant) => ({ ...ant, modelo: val }))}
+                placeholder="Selecione ou digite o modelo"
+                obrigatorio
+                desabilitado={desabilitado}
               />
-              <datalist id="lista-modelos">
-                {(opcoesSugeridas.MODELO ?? [])
-                  .filter((m) => marcaId === null || m.dependencia_id === marcaId)
-                  .map((opcao) => (
-                    <option key={opcao.id} value={opcao.valor} />
-                  ))}
-              </datalist>
             </div>
 
             <div className={styles.campo}>
               <label htmlFor="localizacao_id">Localização</label>
-              <select
+              <ComboBoxSelect
                 id="localizacao_id"
-                name="localizacao_id"
-                className={styles.select}
-                value={dadosMestre.localizacao_id}
-                onChange={handleMestreChange}
-                required
-              >
-                <option value="" disabled>
-                  Selecione...
-                </option>
-                {localizacoes.map((localizacao) => (
-                  <option key={localizacao.id} value={localizacao.id}>
-                    {[localizacao.filial, localizacao.predio, localizacao.sala].filter(Boolean).join(' - ')}
-                  </option>
-                ))}
-              </select>
+                opcoes={opcoesLocalizacao}
+                valor={dadosMestre.localizacao_id}
+                aoMudar={(val) => setDadosMestre((ant) => ({ ...ant, localizacao_id: val }))}
+                placeholder="Selecione a localização"
+                obrigatorio
+                desabilitado={desabilitado}
+              />
             </div>
 
             <div className={styles.campo}>
@@ -385,62 +408,46 @@ export default function Detalhes() {
                 </div>
                 <div className={styles.campo}>
                   <label htmlFor="processador">Processador</label>
-                  <input
+                  <ComboBoxSelect
                     id="processador"
-                    name="processador"
-                    className={styles.input}
-                    list="lista-processadores"
-                    value={dadosDetalhe.processador ?? ''}
-                    onChange={handleDetalheChange}
+                    opcoes={opcoesProcessador}
+                    valor={dadosDetalhe.processador ?? ''}
+                    aoMudar={(val) => setDadosDetalhe((ant) => ({ ...ant, processador: val }))}
+                    placeholder="Selecione o processador"
+                    desabilitado={desabilitado}
                   />
-                  <datalist id="lista-processadores">
-                    {(opcoesSugeridas.PROCESSADOR ?? []).map((opcao) => (
-                      <option key={opcao.id} value={opcao.valor} />
-                    ))}
-                  </datalist>
                 </div>
                 <div className={styles.campo}>
                   <label htmlFor="memoria">Memória</label>
-                  <input
+                  <ComboBoxSelect
                     id="memoria"
-                    name="memoria"
-                    className={styles.input}
-                    list="lista-memorias"
+                    opcoes={opcoesMemoria}
+                    valor={dadosDetalhe.memoria ?? ''}
+                    aoMudar={(val) => setDadosDetalhe((ant) => ({ ...ant, memoria: val }))}
                     placeholder="Ex: 16GB DDR4"
-                    value={dadosDetalhe.memoria ?? ''}
-                    onChange={handleDetalheChange}
+                    desabilitado={desabilitado}
                   />
-                  <datalist id="lista-memorias">
-                    {(opcoesSugeridas.MEMORIA ?? []).map((opcao) => (
-                      <option key={opcao.id} value={opcao.valor} />
-                    ))}
-                  </datalist>
                 </div>
                 <div className={styles.campo}>
                   <label htmlFor="armazenamento">Armazenamento</label>
-                  <input
+                  <ComboBoxSelect
                     id="armazenamento"
-                    name="armazenamento"
-                    className={styles.input}
-                    list="lista-armazenamentos"
+                    opcoes={opcoesArmazenamento}
+                    valor={dadosDetalhe.armazenamento ?? ''}
+                    aoMudar={(val) => setDadosDetalhe((ant) => ({ ...ant, armazenamento: val }))}
                     placeholder="Ex: 512GB NVMe"
-                    value={dadosDetalhe.armazenamento ?? ''}
-                    onChange={handleDetalheChange}
+                    desabilitado={desabilitado}
                   />
-                  <datalist id="lista-armazenamentos">
-                    {(opcoesSugeridas.ARMAZENAMENTO ?? []).map((opcao) => (
-                      <option key={opcao.id} value={opcao.valor} />
-                    ))}
-                  </datalist>
                 </div>
                 <div className={styles.campo}>
                   <label htmlFor="sistema_operacional">Sistema Operacional</label>
-                  <input
+                  <ComboBoxSelect
                     id="sistema_operacional"
-                    name="sistema_operacional"
-                    className={styles.input}
-                    value={dadosDetalhe.sistema_operacional ?? ''}
-                    onChange={handleDetalheChange}
+                    opcoes={opcoesSistemaOperacional}
+                    valor={dadosDetalhe.sistema_operacional ?? ''}
+                    aoMudar={(val) => setDadosDetalhe((ant) => ({ ...ant, sistema_operacional: val }))}
+                    placeholder="Selecione o sistema operacional"
+                    desabilitado={desabilitado}
                   />
                 </div>
                 <div className={styles.campo}>
