@@ -28,10 +28,16 @@ const ITENS_HUB: ItemHub[] = [
     descricao: 'Marcas, modelos, operadoras e sistemas operacionais de celulares.',
   },
   {
-    to: '/admin/opcoes/nvr-camera',
-    titulo: 'NVR / Câmeras',
+    to: '/admin/opcoes/nvrs',
+    titulo: 'NVRs',
     inicial: 'V',
-    descricao: 'Marcas e modelos para equipamentos e gravadores de CFTV.',
+    descricao: 'Marcas, modelos e tipos de interface para gravadores NVR.',
+  },
+  {
+    to: '/admin/opcoes/cameras',
+    titulo: 'Câmeras',
+    inicial: 'K',
+    descricao: 'Marcas, modelos e tipos de interface para câmeras de segurança.',
   },
   {
     to: '/admin/opcoes/impressoras',

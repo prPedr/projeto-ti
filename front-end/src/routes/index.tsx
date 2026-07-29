@@ -7,7 +7,8 @@ import Opcoes from '../pages/Admin/Opcoes';
 import ComputadoresOpcoes from '../pages/Admin/Opcoes/Computadores';
 import SwitchesOpcoes from '../pages/Admin/Opcoes/Switches';
 import CelularesOpcoes from '../pages/Admin/Opcoes/Celulares';
-import NvrCameraOpcoes from '../pages/Admin/Opcoes/NvrCamera';
+import NvrsOpcoes from '../pages/Admin/Opcoes/Nvrs';
+import CamerasOpcoes from '../pages/Admin/Opcoes/Cameras';
 import ImpressorasOpcoes from '../pages/Admin/Opcoes/Impressoras';
 import AntenasOpcoes from '../pages/Admin/Opcoes/Antenas';
 import Localizacoes from '../pages/Admin/Localizacoes';
@@ -53,7 +54,8 @@ export function AppRoutes() {
             <Route path="/admin/opcoes/computadores" element={<ComputadoresOpcoes />} />
             <Route path="/admin/opcoes/switches" element={<SwitchesOpcoes />} />
             <Route path="/admin/opcoes/celulares" element={<CelularesOpcoes />} />
-            <Route path="/admin/opcoes/nvr-camera" element={<NvrCameraOpcoes />} />
+            <Route path="/admin/opcoes/nvrs" element={<NvrsOpcoes />} />
+            <Route path="/admin/opcoes/cameras" element={<CamerasOpcoes />} />
             <Route path="/admin/opcoes/impressoras" element={<ImpressorasOpcoes />} />
             <Route path="/admin/opcoes/antenas" element={<AntenasOpcoes />} />
             <Route path="/admin/localizacoes" element={<Localizacoes />} />
