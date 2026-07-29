@@ -3,6 +3,8 @@ import type { ChangeEvent, SubmitEvent } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { listarLocalizacoes, buscarEquipamentoPorId, atualizarEquipamento } from '../../../services/equipamentos';
 import type { CategoriaEquipamento } from '../../../services/equipamentos';
+import { listarComputadoresConectaveis } from '../../../services/impressoras';
+import type { ComputadorConectavel } from '../../../services/impressoras';
 import { listarOpcoes } from '../../../services/opcoes';
 import type { OpcoesAgrupadas } from '../../../services/opcoes';
 import { formatarMAC, formatarIMEI, formatarIP, formatarTag } from '../../../utils/formatadores';
@@ -11,7 +13,7 @@ import ModalConfirmacao from '../../../components/ModalConfirmacao';
 import { useToast } from '../../../contexts/ToastContext';
 import styles from '../Cadastro/Cadastro.module.css';
 
-type Categoria = 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR' | 'CAMERA';
+type Categoria = 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR' | 'CAMERA' | 'IMPRESSORA';
 
 interface Localizacao {
   id: number;
@@ -59,6 +61,8 @@ function mapCategoriaParaTipoOpcao(categoria: Categoria): string {
     case 'NVR':
     case 'CAMERA':
       return 'NVR_CAMERA';
+    case 'IMPRESSORA':
+      return 'IMPRESSORA';
   }
 }
 
@@ -79,11 +83,25 @@ export default function Detalhes() {
   const [carregando, setCarregando] = useState(true);
   const [modalCancelarAberto, setModalCancelarAberto] = useState(false);
 
+  const [tipoConexao, setTipoConexao] = useState<'REDE' | 'USB'>('REDE');
+  const [computadorConectadoId, setComputadorConectadoId] = useState('');
+  const [computadoresConectaveis, setComputadoresConectaveis] = useState<ComputadorConectavel[]>([]);
+
+  useEffect(() => {
+    if (categoria === 'IMPRESSORA') {
+      listarComputadoresConectaveis()
+        .then(setComputadoresConectaveis)
+        .catch((erro) => console.error('Erro ao carregar computadores conectáveis:', erro));
+    }
+  }, [categoria]);
+
   // Snapshot dos dados carregados do banco — usado para detectar alterações
   const [dadosOriginais, setDadosOriginais] = useState<{
     mestre: DadosMestre;
     detalhe: Record<string, string>;
     interfaces: InterfaceRede[];
+    tipoConexao?: 'REDE' | 'USB';
+    computadorConectadoId?: string;
   } | null>(null);
 
   // Deriva o id da marca escolhida — usado para filtrar os modelos por dependência
@@ -139,6 +157,15 @@ export default function Detalhes() {
     [opcoesSugeridas.TIPO_INTERFACE],
   );
 
+  const opcoesComputadoresConectaveis = useMemo(
+    () =>
+      computadoresConectaveis.map((c) => ({
+        valor: String(c.id),
+        rotulo: [c.nome, `${c.marca} ${c.modelo}`].filter(Boolean).join(' - '),
+      })),
+    [computadoresConectaveis],
+  );
+
   // Ref para saber se o carregamento inicial já concluiu.
   // Enquanto false, o useEffect de categoria não reseta interfacesRede
   // (evita apagar IP/MAC recém-carregados do banco).
@@ -192,6 +219,21 @@ export default function Detalhes() {
           setDadosMestre(mestreCarregado);
           setDadosDetalhe(detalheCarregado);
 
+          let tipoConexaoCarregado: 'REDE' | 'USB' = 'REDE';
+          let computadorConectadoIdCarregado = '';
+
+          if (categoriaCarregada === 'IMPRESSORA') {
+            const detalheImp = dados.detalhe as { tipo_conexao?: 'REDE' | 'USB'; computador_conectado_id?: number | null } | undefined;
+            if (detalheImp?.tipo_conexao) {
+              tipoConexaoCarregado = detalheImp.tipo_conexao;
+              setTipoConexao(detalheImp.tipo_conexao);
+            }
+            if (detalheImp?.computador_conectado_id) {
+              computadorConectadoIdCarregado = String(detalheImp.computador_conectado_id);
+              setComputadorConectadoId(computadorConectadoIdCarregado);
+            }
+          }
+
           // Carrega interfaces preservando ip/mac do banco.
           // Para CELULAR e SWITCH, força o nome_interface fixo sem apagar os valores já salvos.
           const interfacesCarregadas =
@@ -215,6 +257,8 @@ export default function Detalhes() {
             mestre: { ...mestreCarregado },
             detalhe: { ...detalheCarregado },
             interfaces: interfacesFinais.map((i) => ({ ...i })),
+            tipoConexao: tipoConexaoCarregado,
+            computadorConectadoId: computadorConectadoIdCarregado,
           });
         })
         .catch((erro) => {
@@ -270,10 +314,16 @@ export default function Detalhes() {
 
   function formularioTemAlteracoes(): boolean {
     if (!dadosOriginais) return false;
+    const impressoraAlterada =
+      categoria === 'IMPRESSORA' &&
+      (tipoConexao !== dadosOriginais.tipoConexao ||
+        computadorConectadoId !== dadosOriginais.computadorConectadoId);
+
     return (
       JSON.stringify(dadosMestre) !== JSON.stringify(dadosOriginais.mestre) ||
       JSON.stringify(dadosDetalhe) !== JSON.stringify(dadosOriginais.detalhe) ||
-      JSON.stringify(interfacesRede) !== JSON.stringify(dadosOriginais.interfaces)
+      JSON.stringify(interfacesRede) !== JSON.stringify(dadosOriginais.interfaces) ||
+      impressoraAlterada
     );
   }
 
@@ -281,21 +331,28 @@ export default function Detalhes() {
     event.preventDefault();
     if (modo === 'visualizar') return;
 
-    const detalhe: Record<string, string | boolean | number> = {};
+    let detalhe: Record<string, string | boolean | number> = {};
 
-    Object.entries(dadosDetalhe).forEach(([chave, valor]) => {
-      if (typeof valor === 'string' && valor.trim() !== '') {
-        detalhe[chave] = valor.trim();
+    if (categoria === 'IMPRESSORA') {
+      detalhe = {
+        tipo_conexao: tipoConexao,
+        ...(tipoConexao === 'USB' && computadorConectadoId && { computador_conectado_id: Number(computadorConectadoId) }),
+      };
+    } else {
+      Object.entries(dadosDetalhe).forEach(([chave, valor]) => {
+        if (typeof valor === 'string' && valor.trim() !== '') {
+          detalhe[chave] = valor.trim();
+        }
+      });
+
+      if (categoria === 'COMPUTADOR' && 'antivirus_instalado' in detalhe) {
+        detalhe.antivirus_instalado = detalhe.antivirus_instalado === 'true';
       }
-    });
 
-    if (categoria === 'COMPUTADOR' && 'antivirus_instalado' in detalhe) {
-      detalhe.antivirus_instalado = detalhe.antivirus_instalado === 'true';
-    }
-
-    if (categoria === 'SWITCH') {
-      if ('numero_portas' in detalhe && typeof detalhe.numero_portas === 'string') {
-        detalhe.numero_portas = Number(detalhe.numero_portas);
+      if (categoria === 'SWITCH') {
+        if ('numero_portas' in detalhe && typeof detalhe.numero_portas === 'string') {
+          detalhe.numero_portas = Number(detalhe.numero_portas);
+        }
       }
     }
 
@@ -310,13 +367,15 @@ export default function Detalhes() {
         ...(dadosMestre.observacao.trim() && { observacao: dadosMestre.observacao.trim() }),
       },
       detalhe,
-      interfaces: interfacesRede
-        .map((item) => ({
-          nome_interface: item.nome_interface.trim(),
-          ...(item.ip.trim() && { ip: item.ip.trim() }),
-          ...(item.mac.trim() && { mac: item.mac.trim() }),
-        }))
-        .filter((item) => item.nome_interface || item.ip || item.mac),
+      interfaces: (categoria === 'IMPRESSORA' && tipoConexao === 'USB')
+        ? []
+        : interfacesRede
+            .map((item) => ({
+              nome_interface: item.nome_interface.trim(),
+              ...(item.ip.trim() && { ip: item.ip.trim() }),
+              ...(item.mac.trim() && { mac: item.mac.trim() }),
+            }))
+            .filter((item) => item.nome_interface || item.ip || item.mac),
     };
 
     try {
@@ -350,6 +409,7 @@ export default function Detalhes() {
                 <option value="CELULAR">Celular</option>
                 <option value="NVR">NVR</option>
                 <option value="CAMERA">Câmera</option>
+                <option value="IMPRESSORA">Impressora</option>
               </select>
             </div>
 
@@ -722,7 +782,52 @@ export default function Detalhes() {
             </>
           )}
 
-          <h2 className={styles.secaoTitulo}>Interface de Rede</h2>
+          {categoria === 'IMPRESSORA' && (
+            <>
+              <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
+              <div className={styles.grid2}>
+                <div className={styles.campo}>
+                  <label htmlFor="tipo_conexao">Tipo de Conexão</label>
+                  <select
+                    id="tipo_conexao"
+                    name="tipo_conexao"
+                    className={styles.select}
+                    value={tipoConexao}
+                    disabled={desabilitado}
+                    onChange={(event) => {
+                      const novoTipo = event.target.value as 'REDE' | 'USB';
+                      setTipoConexao(novoTipo);
+                      if (novoTipo === 'REDE') {
+                        setComputadorConectadoId('');
+                      }
+                    }}
+                  >
+                    <option value="REDE">Rede</option>
+                    <option value="USB">USB</option>
+                  </select>
+                </div>
+
+                {tipoConexao === 'USB' && (
+                  <div className={styles.campo}>
+                    <label htmlFor="computador_conectado_id">Computador Conectado</label>
+                    <ComboBoxSelect
+                      id="computador_conectado_id"
+                      opcoes={opcoesComputadoresConectaveis}
+                      valor={computadorConectadoId}
+                      aoMudar={(val) => setComputadorConectadoId(val)}
+                      placeholder="Selecione o computador conectado"
+                      obrigatorio
+                      desabilitado={desabilitado}
+                    />
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {!(categoria === 'IMPRESSORA' && tipoConexao === 'USB') && (
+            <>
+              <h2 className={styles.secaoTitulo}>Interface de Rede</h2>
           {interfacesRede.map((interfaceRede, indice) => (
             <div className={styles.grid2} key={indice}>
               <div className={styles.campo}>
@@ -773,6 +878,8 @@ export default function Detalhes() {
                 + Adicionar Interface
               </button>
             </div>
+          )}
+          </>
           )}
         </fieldset>
 
