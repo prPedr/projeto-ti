@@ -95,20 +95,38 @@ export const celularSchema = z.object({
 })
 
 // ==========================================
-// CFTV (NVR / CAMERA)
+// NVR
 // ==========================================
 
-const detalheCftvSchema = z.object({
-  identificacao_extra: z.string().optional(),
+const detalheNvrSchema = z.object({
+  quantidade_canais: z.number().int().positive('quantidade_canais deve ser maior que zero.').optional(),
   capacidade_armazenamento: z.string().optional(),
-  quantidade_canais_resolucao: z.string().optional(),
   firmware: z.string().optional(),
+  identificacao_extra: z.string().optional(),
 })
 
-export const cftvSchema = z.object({
+export const nvrSchema = z.object({
   body: z.object({
-    mestre: criarMestreSchema(z.enum(['NVR', 'CAMERA'])),
-    detalhe: detalheCftvSchema,
+    mestre: criarMestreSchema(z.literal('NVR')),
+    detalhe: detalheNvrSchema,
+    interfaces: interfacesSchema,
+  }),
+})
+
+// ==========================================
+// CAMERA
+// ==========================================
+
+const detalheCameraSchema = z.object({
+  resolucao: z.string().optional(),
+  firmware: z.string().optional(),
+  identificacao_extra: z.string().optional(),
+})
+
+export const cameraSchema = z.object({
+  body: z.object({
+    mestre: criarMestreSchema(z.literal('CAMERA')),
+    detalhe: detalheCameraSchema,
     interfaces: interfacesSchema,
   }),
 })
@@ -233,6 +251,8 @@ const detalheAtualizarSchema = z
     identificacao_extra: z.string().optional(),
     capacidade_armazenamento: z.string().optional(),
     quantidade_canais_resolucao: z.string().optional(),
+    quantidade_canais: z.number().int().positive('quantidade_canais deve ser maior que zero.').optional(),
+    resolucao: z.string().optional(),
     tipo_conexao: z.enum(['REDE', 'USB']).optional(),
     computador_conectado_id: z.number().int().positive().optional(),
   })
