@@ -114,6 +114,45 @@ export const cftvSchema = z.object({
 })
 
 // ==========================================
+// IMPRESSORA
+// ==========================================
+
+const detalheImpressoraSchema = z
+  .object({
+    tipo_conexao: z.enum(['REDE', 'USB']),
+    computador_conectado_id: z.number().int().positive().optional(),
+  })
+  .refine(
+    (dados) => {
+      if (dados.tipo_conexao === 'USB') return dados.computador_conectado_id !== undefined
+      return true
+    },
+    { message: 'Para conexão USB, é obrigatório informar o computador conectado.', path: ['computador_conectado_id'] },
+  )
+
+export const impressoraSchema = z.object({
+  body: z
+    .object({
+      mestre: criarMestreSchema(z.literal('IMPRESSORA')),
+      detalhe: detalheImpressoraSchema,
+      interfaces: interfacesSchema,
+    })
+    .refine(
+      (body) => {
+        if (body.detalhe.tipo_conexao === 'REDE') {
+          if (!body.interfaces || body.interfaces.length === 0) return false
+          return body.interfaces.some((intf) => Boolean(intf.ip && intf.ip.trim()))
+        }
+        return true
+      },
+      {
+        message: 'Para impressora de rede, informe pelo menos uma interface de rede com IP preenchido.',
+        path: ['interfaces'],
+      },
+    ),
+})
+
+// ==========================================
 // LISTAGEM (query string: paginação e filtros)
 // ==========================================
 
@@ -148,7 +187,7 @@ const mestreAtualizarSchema = z
     fornecedor: z.string().optional(),
     data_garantia: z.string().optional(),
     observacao: z.string().optional(),
-    categoria: z.enum(['COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR', 'CAMERA']).optional(),
+    categoria: z.enum(['COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR', 'CAMERA', 'IMPRESSORA']).optional(),
   })
   .partial()
 
@@ -171,6 +210,8 @@ const detalheAtualizarSchema = z
     identificacao_extra: z.string().optional(),
     capacidade_armazenamento: z.string().optional(),
     quantidade_canais_resolucao: z.string().optional(),
+    tipo_conexao: z.enum(['REDE', 'USB']).optional(),
+    computador_conectado_id: z.number().int().positive().optional(),
   })
   .partial()
 

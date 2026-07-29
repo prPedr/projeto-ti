@@ -18,7 +18,15 @@ CREATE TABLE equipamentos_novo (
     FOREIGN KEY (cadastrado_por) REFERENCES usuarios_sistema(id)
 );
 
-INSERT INTO equipamentos_novo SELECT * FROM equipamentos;
+INSERT INTO equipamentos_novo (
+    id, categoria, nome, marca, modelo, status, localizacao_id,
+    fornecedor, data_garantia, observacao, cadastrado_por, data_cadastro, data_descarte
+)
+SELECT
+    id, categoria, nome, marca, modelo, status, localizacao_id,
+    fornecedor, data_garantia, observacao, cadastrado_por, data_cadastro, data_descarte
+FROM equipamentos;
+
 DROP TABLE equipamentos;
 ALTER TABLE equipamentos_novo RENAME TO equipamentos;
 

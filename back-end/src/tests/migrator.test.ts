@@ -19,6 +19,8 @@ describe('migrator - sistema de migrações', () => {
     const banco: TipoBanco = new Database(':memory:')
     // Cria o estado inicial das tabelas do banco antes da aplicação das migrações
     banco.exec(`
+      CREATE TABLE usuarios_sistema (id INTEGER PRIMARY KEY);
+      CREATE TABLE localizacoes (id INTEGER PRIMARY KEY);
       CREATE TABLE opcoes_predefinidas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         categoria TEXT NOT NULL,
@@ -27,7 +29,18 @@ describe('migrator - sistema de migrações', () => {
       );
       CREATE TABLE equipamentos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        categoria TEXT NOT NULL
+        categoria TEXT NOT NULL CHECK (categoria IN ('COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR', 'CAMERA')),
+        nome TEXT,
+        marca TEXT NOT NULL DEFAULT 'Generica',
+        modelo TEXT NOT NULL DEFAULT 'Modelo',
+        status TEXT NOT NULL DEFAULT 'ATIVO',
+        localizacao_id INTEGER,
+        fornecedor TEXT,
+        data_garantia DATE,
+        observacao TEXT,
+        cadastrado_por INTEGER NOT NULL DEFAULT 1,
+        data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
+        data_descarte DATETIME DEFAULT NULL
       );
       CREATE TABLE eq_switches (
         equipamento_id INTEGER PRIMARY KEY,
@@ -59,6 +72,8 @@ describe('migrator - sistema de migrações', () => {
   it('TESTE 2: Rodar migrations de novo não reaplica nada (idempotência)', () => {
     const banco: TipoBanco = new Database(':memory:')
     banco.exec(`
+      CREATE TABLE usuarios_sistema (id INTEGER PRIMARY KEY);
+      CREATE TABLE localizacoes (id INTEGER PRIMARY KEY);
       CREATE TABLE opcoes_predefinidas (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         categoria TEXT NOT NULL,
@@ -67,7 +82,18 @@ describe('migrator - sistema de migrações', () => {
       );
       CREATE TABLE equipamentos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        categoria TEXT NOT NULL
+        categoria TEXT NOT NULL CHECK (categoria IN ('COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR', 'CAMERA')),
+        nome TEXT,
+        marca TEXT NOT NULL DEFAULT 'Generica',
+        modelo TEXT NOT NULL DEFAULT 'Modelo',
+        status TEXT NOT NULL DEFAULT 'ATIVO',
+        localizacao_id INTEGER,
+        fornecedor TEXT,
+        data_garantia DATE,
+        observacao TEXT,
+        cadastrado_por INTEGER NOT NULL DEFAULT 1,
+        data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
+        data_descarte DATETIME DEFAULT NULL
       );
       CREATE TABLE eq_switches (
         equipamento_id INTEGER PRIMARY KEY,

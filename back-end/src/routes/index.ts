@@ -5,6 +5,7 @@ import rotasCftv from './cftvRoutes.js'
 import rotasComputadores from './computadoresRoutes.js'
 import rotasDashboard from './dashboardRoutes.js'
 import rotasEquipamentos from './equipamentosRoutes.js'
+import rotasImpressoras from './impressorasRoutes.js'
 import rotasLocalizacoes from './localizacoesRoutes.js'
 import rotasMapeamentoRede from './mapeamentoRedeRoutes.js'
 import rotasOpcoes from './opcoesRoutes.js'
@@ -19,6 +20,7 @@ rotas.use('/cftv', rotasCftv)
 rotas.use('/computadores', rotasComputadores)
 rotas.use('/dashboard', rotasDashboard)
 rotas.use('/equipamentos', rotasEquipamentos)
+rotas.use('/impressoras', rotasImpressoras)
 rotas.use('/localizacoes', rotasLocalizacoes)
 rotas.use('/mapeamento-rede', rotasMapeamentoRede)
 rotas.use('/opcoes', rotasOpcoes)

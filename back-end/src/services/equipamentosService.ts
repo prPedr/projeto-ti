@@ -4,7 +4,7 @@ import { listarAnexosPorEquipamento } from './anexosService.js'
 
 export interface EquipamentoListado {
   id: number
-  categoria: 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR' | 'CAMERA'
+  categoria: 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR' | 'CAMERA' | 'IMPRESSORA'
   nome: string | null
   marca: string
   modelo: string
@@ -205,6 +205,9 @@ export const buscarEquipamentoPorId = (id: number) => {
     case 'CAMERA':
       detalhe = banco.prepare('SELECT * FROM eq_cftv WHERE equipamento_id = ?').get(id);
       break;
+    case 'IMPRESSORA':
+      detalhe = banco.prepare('SELECT * FROM eq_impressoras WHERE equipamento_id = ?').get(id);
+      break;
   }
 
   const interfaces = banco.prepare('SELECT * FROM interfaces_rede WHERE equipamento_id = ?').all(id);
@@ -252,6 +255,7 @@ const COLUNAS_PERMITIDAS_DETALHE: Record<string, string[]> = {
     'quantidade_canais_resolucao',
     'firmware',
   ],
+  eq_impressoras: ['tipo_conexao', 'computador_conectado_id'],
 }
 
 export const atualizarEquipamento = (id: number, payload: any) => {
@@ -286,6 +290,7 @@ export const atualizarEquipamento = (id: number, payload: any) => {
         case 'CELULAR': tabelaDetalhe = 'eq_celulares'; break;
         case 'NVR':
         case 'CAMERA': tabelaDetalhe = 'eq_cftv'; break;
+        case 'IMPRESSORA': tabelaDetalhe = 'eq_impressoras'; break;
       }
 
       const colunasPermitidas = COLUNAS_PERMITIDAS_DETALHE[tabelaDetalhe];
