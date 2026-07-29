@@ -56,6 +56,13 @@ describe('Categoria ANTENA - validação de schema e migração', () => {
       CREATE TABLE usuarios_sistema (id INTEGER PRIMARY KEY);
       INSERT INTO usuarios_sistema (id) VALUES (1);
       CREATE TABLE localizacoes (id INTEGER PRIMARY KEY);
+      CREATE TABLE opcoes_predefinidas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        categoria TEXT NOT NULL,
+        valor TEXT NOT NULL,
+        dependencia_id INTEGER DEFAULT NULL,
+        tipo_equipamento TEXT CHECK (tipo_equipamento IN ('COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR_CAMERA'))
+      );
       CREATE TABLE equipamentos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         categoria TEXT NOT NULL CHECK (categoria IN ('COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR', 'CAMERA', 'IMPRESSORA')),

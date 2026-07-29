@@ -32,7 +32,7 @@ CREATE TABLE opcoes_predefinidas (
     categoria TEXT NOT NULL,
     valor TEXT NOT NULL,
     dependencia_id INTEGER DEFAULT NULL,
-    tipo_equipamento TEXT CHECK (tipo_equipamento IN ('COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR_CAMERA')),
+    tipo_equipamento TEXT CHECK (tipo_equipamento IN ('COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR', 'CAMERA', 'IMPRESSORA', 'ANTENA')),
     UNIQUE(categoria, valor),
     FOREIGN KEY (dependencia_id) REFERENCES opcoes_predefinidas(id) ON DELETE SET NULL
 );
@@ -143,6 +143,21 @@ CREATE TABLE eq_cftv (
     
     FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id) ON DELETE CASCADE
 );
+
+-- 4a. Mapeamento canal a canal dos NVRs
+CREATE TABLE IF NOT EXISTS canais_nvr (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nvr_id INTEGER NOT NULL,
+    numero_canal INTEGER NOT NULL,
+    camera_conectada_id INTEGER,
+    descricao TEXT,
+    data_atualizacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (nvr_id) REFERENCES equipamentos(id) ON DELETE CASCADE,
+    FOREIGN KEY (camera_conectada_id) REFERENCES equipamentos(id) ON DELETE SET NULL,
+    UNIQUE(nvr_id, numero_canal)
+);
+
+CREATE INDEX IF NOT EXISTS idx_canais_nvr_nvr_id ON canais_nvr(nvr_id);
 
 -- 5. Impressoras
 CREATE TABLE eq_impressoras (
