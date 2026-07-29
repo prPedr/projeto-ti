@@ -13,7 +13,7 @@ import ModalConfirmacao from '../../../components/ModalConfirmacao';
 import { useToast } from '../../../contexts/ToastContext';
 import styles from '../Cadastro/Cadastro.module.css';
 
-type Categoria = 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR' | 'CAMERA' | 'IMPRESSORA';
+type Categoria = 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR' | 'CAMERA' | 'IMPRESSORA' | 'ANTENA';
 
 interface Localizacao {
   id: number;
@@ -63,6 +63,8 @@ function mapCategoriaParaTipoOpcao(categoria: Categoria): string {
       return 'NVR_CAMERA';
     case 'IMPRESSORA':
       return 'IMPRESSORA';
+    case 'ANTENA':
+      return 'ANTENA';
   }
 }
 
@@ -410,6 +412,7 @@ export default function Detalhes() {
                 <option value="NVR">NVR</option>
                 <option value="CAMERA">Câmera</option>
                 <option value="IMPRESSORA">Impressora</option>
+                <option value="ANTENA">Antena Wi-Fi</option>
               </select>
             </div>
 

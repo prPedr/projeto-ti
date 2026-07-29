@@ -12,7 +12,7 @@ import type { OpcoesAgrupadas } from '../../../services/opcoes';
 import { formatarMAC, formatarIMEI, formatarIP, formatarTag } from '../../../utils/formatadores';
 import styles from './Cadastro.module.css';
 
-type Categoria = 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR' | 'CAMERA' | 'IMPRESSORA';
+type Categoria = 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR' | 'CAMERA' | 'IMPRESSORA' | 'ANTENA';
 
 interface Localizacao {
   id: number;
@@ -62,6 +62,8 @@ function mapCategoriaParaEndpoint(categoria: Categoria): CategoriaEquipamento {
       return 'cftv';
     case 'IMPRESSORA':
       return 'impressora';
+    case 'ANTENA':
+      return 'antena';
   }
 }
 
@@ -78,6 +80,8 @@ function mapCategoriaParaTipoOpcao(categoria: Categoria): string {
       return 'NVR_CAMERA';
     case 'IMPRESSORA':
       return 'IMPRESSORA';
+    case 'ANTENA':
+      return 'ANTENA';
   }
 }
 
@@ -483,6 +487,7 @@ export default function Cadastro() {
                   <option value="NVR">NVR</option>
                   <option value="CAMERA">Câmera</option>
                   <option value="IMPRESSORA">Impressora</option>
+                  <option value="ANTENA">Antena Wi-Fi</option>
                 </select>
               </div>
 

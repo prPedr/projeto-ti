@@ -1,6 +1,6 @@
 import { fetchComToken } from './api';
 
-export type CategoriaEquipamento = 'computador' | 'switch' | 'celular' | 'cftv' | 'impressora';
+export type CategoriaEquipamento = 'computador' | 'switch' | 'celular' | 'cftv' | 'impressora' | 'antena';
 
 export async function criarEquipamento(categoria: CategoriaEquipamento, payload: unknown) {
   let endpoint: string;
@@ -20,6 +20,9 @@ export async function criarEquipamento(categoria: CategoriaEquipamento, payload:
       break;
     case 'impressora':
       endpoint = '/api/impressoras';
+      break;
+    case 'antena':
+      endpoint = '/api/antenas';
       break;
     default:
       throw new Error(`Categoria de equipamento desconhecida: ${categoria}`);
