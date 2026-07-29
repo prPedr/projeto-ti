@@ -63,3 +63,10 @@ npm run dev
 A aplicação web estará disponível no navegador em `http://localhost:5173`.
 
 *Para mais detalhes sobre consumo da API, estrutura de componentes e design system, acesse o [README do Front-end](./front-end/README.md).*
+
+---
+
+## Licença
+
+Este projeto está licenciado sob a licença MIT — veja o arquivo LICENSE para mais detalhes.
+
