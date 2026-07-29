@@ -58,8 +58,9 @@ function mapCategoriaParaEndpoint(categoria: Categoria): CategoriaEquipamento {
     case 'CELULAR':
       return 'celular';
     case 'NVR':
+      return 'nvr';
     case 'CAMERA':
-      return 'cftv';
+      return 'camera';
     case 'IMPRESSORA':
       return 'impressora';
     case 'ANTENA':
@@ -76,8 +77,9 @@ function mapCategoriaParaTipoOpcao(categoria: Categoria): string {
     case 'CELULAR':
       return 'CELULAR';
     case 'NVR':
+      return 'NVR';
     case 'CAMERA':
-      return 'NVR_CAMERA';
+      return 'CAMERA';
     case 'IMPRESSORA':
       return 'IMPRESSORA';
     case 'ANTENA':
@@ -359,6 +361,12 @@ export default function Cadastro() {
       if (categoria === 'SWITCH') {
         if ('numero_portas' in detalhe && typeof detalhe.numero_portas === 'string') {
           detalhe.numero_portas = Number(detalhe.numero_portas);
+        }
+      }
+
+      if (categoria === 'NVR') {
+        if ('quantidade_canais' in detalhe && typeof detalhe.quantidade_canais === 'string') {
+          detalhe.quantidade_canais = Number(detalhe.quantidade_canais);
         }
       }
     }
@@ -825,17 +833,19 @@ export default function Cadastro() {
             </div>
           )}
 
-          {(categoria === 'NVR' || categoria === 'CAMERA') && (
+          {categoria === 'NVR' && (
             <div className={styles.secaoMonobloco}>
               <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
               <div className={styles.grid2}>
                 <div className={styles.campo}>
-                  <label htmlFor="identificacao_extra">Identificação Extra</label>
+                  <label htmlFor="quantidade_canais">Quantidade de Canais</label>
                   <input
-                    id="identificacao_extra"
-                    name="identificacao_extra"
+                    id="quantidade_canais"
+                    name="quantidade_canais"
+                    type="number"
                     className={styles.input}
-                    value={dadosDetalhe.identificacao_extra ?? ''}
+                    placeholder="Ex: 8, 16, 32"
+                    value={dadosDetalhe.quantidade_canais ?? ''}
                     onChange={handleDetalheChange}
                   />
                 </div>
@@ -851,13 +861,41 @@ export default function Cadastro() {
                   />
                 </div>
                 <div className={styles.campo}>
-                  <label htmlFor="quantidade_canais_resolucao">Canais / Resolução</label>
+                  <label htmlFor="firmware">Firmware</label>
                   <input
-                    id="quantidade_canais_resolucao"
-                    name="quantidade_canais_resolucao"
+                    id="firmware"
+                    name="firmware"
+                    className={`${styles.input} ${styles.inputMono}`}
+                    value={dadosDetalhe.firmware ?? ''}
+                    onChange={handleDetalheChange}
+                  />
+                </div>
+                <div className={styles.campo}>
+                  <label htmlFor="identificacao_extra">Identificação Extra</label>
+                  <input
+                    id="identificacao_extra"
+                    name="identificacao_extra"
                     className={styles.input}
-                    placeholder="Ex: 16 Canais ou 1080p"
-                    value={dadosDetalhe.quantidade_canais_resolucao ?? ''}
+                    value={dadosDetalhe.identificacao_extra ?? ''}
+                    onChange={handleDetalheChange}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {categoria === 'CAMERA' && (
+            <div className={styles.secaoMonobloco}>
+              <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
+              <div className={styles.grid2}>
+                <div className={styles.campo}>
+                  <label htmlFor="resolucao">Resolução</label>
+                  <input
+                    id="resolucao"
+                    name="resolucao"
+                    className={styles.input}
+                    placeholder="Ex: 1080p ou 4K"
+                    value={dadosDetalhe.resolucao ?? ''}
                     onChange={handleDetalheChange}
                   />
                 </div>
@@ -868,6 +906,16 @@ export default function Cadastro() {
                     name="firmware"
                     className={`${styles.input} ${styles.inputMono}`}
                     value={dadosDetalhe.firmware ?? ''}
+                    onChange={handleDetalheChange}
+                  />
+                </div>
+                <div className={styles.campo}>
+                  <label htmlFor="identificacao_extra">Identificação Extra</label>
+                  <input
+                    id="identificacao_extra"
+                    name="identificacao_extra"
+                    className={styles.input}
+                    value={dadosDetalhe.identificacao_extra ?? ''}
                     onChange={handleDetalheChange}
                   />
                 </div>

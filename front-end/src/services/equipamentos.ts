@@ -1,6 +1,6 @@
 import { fetchComToken } from './api';
 
-export type CategoriaEquipamento = 'computador' | 'switch' | 'celular' | 'cftv' | 'impressora' | 'antena';
+export type CategoriaEquipamento = 'computador' | 'switch' | 'celular' | 'nvr' | 'camera' | 'impressora' | 'antena';
 
 export async function criarEquipamento(categoria: CategoriaEquipamento, payload: unknown) {
   let endpoint: string;
@@ -15,8 +15,11 @@ export async function criarEquipamento(categoria: CategoriaEquipamento, payload:
     case 'celular':
       endpoint = '/api/celulares';
       break;
-    case 'cftv':
-      endpoint = '/api/cftv';
+    case 'nvr':
+      endpoint = '/api/nvrs';
+      break;
+    case 'camera':
+      endpoint = '/api/cameras';
       break;
     case 'impressora':
       endpoint = '/api/impressoras';
