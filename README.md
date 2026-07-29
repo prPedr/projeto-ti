@@ -66,7 +66,39 @@ A aplicação web estará disponível no navegador em `http://localhost:5173`.
 
 ---
 
+## ⚠️ Segurança — antes de usar em produção
+
+### 1. Credenciais Padrão do Administrador
+Ao executar o script `npx tsx src/scripts/criarAdmin.ts` sem que as variáveis de ambiente `ADMIN_EMAIL` e `ADMIN_SENHA` estejam definidas no arquivo `.env`, o script utiliza credenciais padrão previsíveis (`admin@admin.com` / `admin123`) e exibe um aviso no console.
+
+> 🚨 **Atenção:** O uso do fallback padrão destina-se exclusivamente para facilitar o desenvolvimento local. Executar esse script em ambiente de produção sem definir essas variáveis cria uma vulnerabilidade grave de segurança, pois qualquer pessoa com conhecimento do projeto saberá as credenciais de acesso.
+
+**Recomendação:** Defina sempre `ADMIN_EMAIL` e `ADMIN_SENHA` (com senha de no mínimo 8 caracteres, validada pelo script) no arquivo `.env` antes de executar `npx tsx src/scripts/criarAdmin.ts` em qualquer ambiente que não seja sua máquina local de desenvolvimento.
+
+### 2. Troca de Senha no Primeiro Acesso
+Mesmo definindo uma senha customizada no arquivo `.env` durante a inicialização, recomenda-se que, após o primeiro login, a senha do administrador seja alterada através da própria interface da aplicação como boa prática adicional.
+- **Caminho na interface:** Acesse a tela de **Usuários** (`/admin/usuarios` no menu lateral) e utilize o botão de redefinir senha do usuário desejado.
+
+### 3. Configuração Obrigatória da `JWT_SECRET`
+A variável de ambiente `JWT_SECRET` é obrigatória para a segurança dos tokens de autenticação. Conforme implementado no middleware de autenticação (`authMiddleware.ts`) e no serviço de autenticação (`authService.ts`), a aplicação lançará um erro e recusará a inicialização caso a `JWT_SECRET` não esteja definida.
+
+Em ambiente de produção, gere um segredo forte e aleatório executando o comando no terminal:
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+### 4. Checklist Rápido Antes de Colocar em Produção
+- [ ] **`JWT_SECRET`**: Variável configurada no `.env` com um valor forte e aleatório gerado via Node.js / Crypto.
+- [ ] **`FRONTEND_URL`**: Ajustada no `.env` para corresponder ao domínio real de produção (ex: `https://meusistema.com`), e não `http://localhost:5173`.
+- [ ] **`ADMIN_EMAIL` e `ADMIN_SENHA`**: Definidas no `.env` com valores seguros (mínimo de 8 caracteres) antes da execução de `npx tsx src/scripts/criarAdmin.ts`.
+- [ ] **Troca de Senha Pós-Login**: Senha do administrador alterada via interface gráfica em **Usuários** (`/admin/usuarios`).
+- [ ] **`PORT`**: Porta de execução ajustada para o ambiente do servidor HTTP.
+- [ ] **Arquivo `.env`**: Protegido e não incluído no repositório de controle de versão.
+
+---
+
 ## Licença
 
 Este projeto está licenciado sob a licença MIT — veja o arquivo LICENSE para mais detalhes.
+
 

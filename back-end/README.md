@@ -32,6 +32,8 @@ cp .env.example .env
 | `ADMIN_EMAIL` | *(Opcional)* E-mail usado pelo script de criação do admin inicial. | `admin@suaempresa.com` |
 | `ADMIN_SENHA` | *(Opcional)* Senha usada pelo script de criação do admin inicial. | `SenhaForteAdmin123!` |
 
+> ⚠️ **Aviso de Segurança:** Antes de realizar a implantação em ambiente de produção, leia atentamente a seção [⚠️ Segurança — antes de usar em produção](../README.md#-segurança--antes-de-usar-em-produção) no README principal.
+
 ---
 
 ## 🗄️ Banco de Dados e Migrações
