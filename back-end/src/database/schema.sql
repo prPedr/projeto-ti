@@ -43,7 +43,7 @@ CREATE TABLE opcoes_predefinidas (
 
 CREATE TABLE equipamentos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    categoria TEXT NOT NULL CHECK (categoria IN ('COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR', 'CAMERA', 'IMPRESSORA')),
+    categoria TEXT NOT NULL CHECK (categoria IN ('COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR', 'CAMERA', 'IMPRESSORA', 'ANTENA')),
     nome TEXT, -- Opcional, celulares podem não ter um nome amigável
     marca TEXT NOT NULL,
     modelo TEXT NOT NULL,
