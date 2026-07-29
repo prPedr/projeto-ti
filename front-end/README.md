@@ -43,6 +43,13 @@ npm run build
 ```
 Os arquivos estáticos resultantes serão gerados no diretório `dist/`.
 
+### Captura Automatizada de Screenshots (Playwright)
+Com os servidores de back-end (`:3000`) e front-end (`:5173`) já em execução:
+```bash
+npm run screenshots
+```
+O script automatizado (Playwright) faz o login, percorre as telas principais com um viewport de notebook (`1440x900`) e atualiza as imagens no diretório `docs/screenshots/` da raiz do projeto.
+
 ---
 
 ## 📁 Estrutura de Pastas

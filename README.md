@@ -28,6 +28,29 @@ Com base no planejamento inicial, as seguintes funcionalidades ficaram **fora de
 
 ---
 
+## 📸 Screenshots
+
+<img src="docs/screenshots/dashboard.png" width="800" alt="Dashboard" />
+
+<img src="docs/screenshots/listagem-equipamentos.png" width="800" alt="Listagem de equipamentos" />
+
+<img src="docs/screenshots/cadastro-equipamento.png" width="800" alt="Cadastro de equipamento" />
+
+<img src="docs/screenshots/mapa-portas-switch.png" width="800" alt="Mapa de portas do switch" />
+
+<img src="docs/screenshots/mapeamento-rede.png" width="800" alt="Mapeamento de rede" />
+
+> 💡 **Como regenerar os screenshots:**
+> 1. Certifique-se de que o **back-end** (porta 3000) e o **front-end** (porta 5173) estejam em execução.
+> 2. *(Opcional)* Defina as variáveis de ambiente `SCREENSHOT_EMAIL` e `SCREENSHOT_SENHA` caso utilize credenciais diferentes de `admin@admin.com` / `admin123`.
+> 3. No diretório `front-end/`, execute o comando:
+>    ```bash
+>    npm run screenshots
+>    ```
+>    O script via **Playwright** emulando o viewport de notebook (1440x900) atualizará automaticamente as capturas em `docs/screenshots/`.
+
+---
+
 ## 🛠️ Stack Tecnológica
 
 ### Back-end
