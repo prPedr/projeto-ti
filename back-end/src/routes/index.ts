@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import rotasAntenas from './antenasRoutes.js'
 import rotasAuth from './authRoutes.js'
 import rotasCelulares from './celularesRoutes.js'
 import rotasCftv from './cftvRoutes.js'
@@ -14,6 +15,7 @@ import rotasUsuarios from './usuariosRoutes.js'
 
 const rotas = Router()
 
+rotas.use('/antenas', rotasAntenas)
 rotas.use('/auth', rotasAuth)
 rotas.use('/celulares', rotasCelulares)
 rotas.use('/cftv', rotasCftv)

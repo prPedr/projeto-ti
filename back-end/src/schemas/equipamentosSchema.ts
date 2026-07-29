@@ -153,6 +153,29 @@ export const impressoraSchema = z.object({
 })
 
 // ==========================================
+// ANTENA
+// ==========================================
+
+export const antenaSchema = z.object({
+  body: z
+    .object({
+      mestre: criarMestreSchema(z.literal('ANTENA')),
+      detalhe: z.object({}).optional(),
+      interfaces: interfacesSchema,
+    })
+    .refine(
+      (body) => {
+        if (!body.interfaces || body.interfaces.length === 0) return false
+        return body.interfaces.some((intf) => Boolean(intf.ip && intf.ip.trim()))
+      },
+      {
+        message: 'Informe pelo menos uma interface de rede com IP preenchido.',
+        path: ['interfaces'],
+      },
+    ),
+})
+
+// ==========================================
 // LISTAGEM (query string: paginação e filtros)
 // ==========================================
 
@@ -187,7 +210,7 @@ const mestreAtualizarSchema = z
     fornecedor: z.string().optional(),
     data_garantia: z.string().optional(),
     observacao: z.string().optional(),
-    categoria: z.enum(['COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR', 'CAMERA', 'IMPRESSORA']).optional(),
+    categoria: z.enum(['COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR', 'CAMERA', 'IMPRESSORA', 'ANTENA']).optional(),
   })
   .partial()
 
