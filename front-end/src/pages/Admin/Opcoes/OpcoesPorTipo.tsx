@@ -6,7 +6,7 @@ import { useToast } from '../../../contexts/ToastContext';
 import ModalConfirmacao from '../../../components/ModalConfirmacao';
 import styles from './Opcoes.module.css';
 
-export type TipoEquipamento = 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR_CAMERA';
+export type TipoEquipamento = 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR_CAMERA' | 'IMPRESSORA';
 
 export interface CategoriaConfig {
   valor: string;

@@ -74,7 +74,7 @@ export async function buscarEquipamentoPorId(id: number) {
   return resposta.dados;
 }
 
-export async function atualizarEquipamento(id: number, categoria: string, payload: unknown) {
+export async function atualizarEquipamento(id: number, _categoria: string, payload: unknown) {
   return fetchComToken(`/api/equipamentos/${id}`, {
     method: 'PUT',
     body: JSON.stringify(payload),

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Outlet, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import { PrivateRoute } from './PrivateRoute';
 import { Layout } from '../components/Layout/Layout';
 import { Login } from '../pages/Login/Login';
@@ -8,6 +8,7 @@ import ComputadoresOpcoes from '../pages/Admin/Opcoes/Computadores';
 import SwitchesOpcoes from '../pages/Admin/Opcoes/Switches';
 import CelularesOpcoes from '../pages/Admin/Opcoes/Celulares';
 import NvrCameraOpcoes from '../pages/Admin/Opcoes/NvrCamera';
+import ImpressorasOpcoes from '../pages/Admin/Opcoes/Impressoras';
 import Localizacoes from '../pages/Admin/Localizacoes';
 import Usuarios from '../pages/Admin/Usuarios';
 import Listagem from '../pages/Equipamentos/Listagem';
@@ -52,6 +53,7 @@ export function AppRoutes() {
             <Route path="/admin/opcoes/switches" element={<SwitchesOpcoes />} />
             <Route path="/admin/opcoes/celulares" element={<CelularesOpcoes />} />
             <Route path="/admin/opcoes/nvr-camera" element={<NvrCameraOpcoes />} />
+            <Route path="/admin/opcoes/impressoras" element={<ImpressorasOpcoes />} />
             <Route path="/admin/localizacoes" element={<Localizacoes />} />
             <Route path="/admin/usuarios" element={<Usuarios />} />
           </Route>

@@ -201,9 +201,9 @@ export default function Detalhes() {
 
           let interfacesFinais: InterfaceRede[];
           if (categoriaCarregada === 'CELULAR') {
-            interfacesFinais = interfacesCarregadas.map((iface) => ({ ...iface, nome_interface: 'Wi-Fi' }));
+            interfacesFinais = interfacesCarregadas.map((iface: InterfaceRede) => ({ ...iface, nome_interface: 'Wi-Fi' }));
           } else if (categoriaCarregada === 'SWITCH') {
-            interfacesFinais = interfacesCarregadas.map((iface) => ({ ...iface, nome_interface: 'Ethernet' }));
+            interfacesFinais = interfacesCarregadas.map((iface: InterfaceRede) => ({ ...iface, nome_interface: 'Ethernet' }));
           } else {
             interfacesFinais = interfacesCarregadas;
           }

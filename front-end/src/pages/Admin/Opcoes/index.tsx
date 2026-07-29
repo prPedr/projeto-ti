@@ -33,6 +33,12 @@ const ITENS_HUB: ItemHub[] = [
     inicial: 'V',
     descricao: 'Marcas e modelos para equipamentos e gravadores de CFTV.',
   },
+  {
+    to: '/admin/opcoes/impressoras',
+    titulo: 'Impressoras',
+    inicial: 'I',
+    descricao: 'Marcas, modelos e tipos de interface para impressoras de rede/USB.',
+  },
 ];
 
 export default function OpcoesHub() {
