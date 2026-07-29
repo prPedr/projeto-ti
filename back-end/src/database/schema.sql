@@ -43,7 +43,7 @@ CREATE TABLE opcoes_predefinidas (
 
 CREATE TABLE equipamentos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    categoria TEXT NOT NULL CHECK (categoria IN ('COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR', 'CAMERA')),
+    categoria TEXT NOT NULL CHECK (categoria IN ('COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR', 'CAMERA', 'IMPRESSORA')),
     nome TEXT, -- Opcional, celulares podem não ter um nome amigável
     marca TEXT NOT NULL,
     modelo TEXT NOT NULL,
@@ -142,6 +142,15 @@ CREATE TABLE eq_cftv (
     firmware TEXT,
     
     FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id) ON DELETE CASCADE
+);
+
+-- 5. Impressoras
+CREATE TABLE eq_impressoras (
+    equipamento_id INTEGER PRIMARY KEY,
+    tipo_conexao TEXT NOT NULL CHECK (tipo_conexao IN ('REDE', 'USB')),
+    computador_conectado_id INTEGER,
+    FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id) ON DELETE CASCADE,
+    FOREIGN KEY (computador_conectado_id) REFERENCES equipamentos(id) ON DELETE SET NULL
 );
 
 -- ==========================================

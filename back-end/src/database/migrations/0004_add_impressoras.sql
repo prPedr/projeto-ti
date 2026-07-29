@@ -1,0 +1,33 @@
+PRAGMA foreign_keys=off;
+
+CREATE TABLE equipamentos_novo (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    categoria TEXT NOT NULL CHECK (categoria IN ('COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR', 'CAMERA', 'IMPRESSORA')),
+    nome TEXT,
+    marca TEXT NOT NULL,
+    modelo TEXT NOT NULL,
+    status TEXT NOT NULL CHECK (status IN ('ATIVO', 'ESTOQUE', 'MANUTENCAO', 'DESCARTADO')),
+    localizacao_id INTEGER,
+    fornecedor TEXT,
+    data_garantia DATE,
+    observacao TEXT,
+    cadastrado_por INTEGER NOT NULL,
+    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    data_descarte DATETIME DEFAULT NULL,
+    FOREIGN KEY (localizacao_id) REFERENCES localizacoes(id) ON DELETE SET NULL,
+    FOREIGN KEY (cadastrado_por) REFERENCES usuarios_sistema(id)
+);
+
+INSERT INTO equipamentos_novo SELECT * FROM equipamentos;
+DROP TABLE equipamentos;
+ALTER TABLE equipamentos_novo RENAME TO equipamentos;
+
+PRAGMA foreign_keys=on;
+
+CREATE TABLE eq_impressoras (
+    equipamento_id INTEGER PRIMARY KEY,
+    tipo_conexao TEXT NOT NULL CHECK (tipo_conexao IN ('REDE', 'USB')),
+    computador_conectado_id INTEGER,
+    FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id) ON DELETE CASCADE,
+    FOREIGN KEY (computador_conectado_id) REFERENCES equipamentos(id) ON DELETE SET NULL
+);
