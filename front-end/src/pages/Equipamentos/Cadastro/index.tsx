@@ -5,12 +5,14 @@ import ComboBoxSelect from '../../../components/ComboBoxSelect';
 import ModalConfirmacao from '../../../components/ModalConfirmacao';
 import { criarEquipamento, enviarAnexoEquipamento, listarLocalizacoes } from '../../../services/equipamentos';
 import type { CategoriaEquipamento } from '../../../services/equipamentos';
+import { listarComputadoresConectaveis } from '../../../services/impressoras';
+import type { ComputadorConectavel } from '../../../services/impressoras';
 import { listarOpcoes } from '../../../services/opcoes';
 import type { OpcoesAgrupadas } from '../../../services/opcoes';
 import { formatarMAC, formatarIMEI, formatarIP, formatarTag } from '../../../utils/formatadores';
 import styles from './Cadastro.module.css';
 
-type Categoria = 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR' | 'CAMERA';
+type Categoria = 'COMPUTADOR' | 'SWITCH' | 'CELULAR' | 'NVR' | 'CAMERA' | 'IMPRESSORA';
 
 interface Localizacao {
   id: number;
@@ -58,6 +60,8 @@ function mapCategoriaParaEndpoint(categoria: Categoria): CategoriaEquipamento {
     case 'NVR':
     case 'CAMERA':
       return 'cftv';
+    case 'IMPRESSORA':
+      return 'impressora';
   }
 }
 
@@ -72,6 +76,8 @@ function mapCategoriaParaTipoOpcao(categoria: Categoria): string {
     case 'NVR':
     case 'CAMERA':
       return 'NVR_CAMERA';
+    case 'IMPRESSORA':
+      return 'IMPRESSORA';
   }
 }
 
@@ -96,6 +102,18 @@ export default function Cadastro() {
   const [erroInterfaces, setErroInterfaces] = useState<{ mensagem: string; campo?: 'ip' | 'mac' } | null>(null);
   const [modalCancelarAberto, setModalCancelarAberto] = useState(false);
 
+  const [tipoConexao, setTipoConexao] = useState<'REDE' | 'USB'>('REDE');
+  const [computadorConectadoId, setComputadorConectadoId] = useState('');
+  const [computadoresConectaveis, setComputadoresConectaveis] = useState<ComputadorConectavel[]>([]);
+
+  useEffect(() => {
+    if (categoria === 'IMPRESSORA') {
+      listarComputadoresConectaveis()
+        .then(setComputadoresConectaveis)
+        .catch((erro) => console.error('Erro ao carregar computadores conectáveis:', erro));
+    }
+  }, [categoria]);
+
   // Deriva o id da marca escolhida pelo texto digitado — usado para filtrar os modelos
   const marcaId =
     opcoesSugeridas.MARCA?.find(
@@ -118,6 +136,8 @@ export default function Cadastro() {
     setDadosDetalhe({});
     setDadosMestre((anterior) => ({ ...anterior, marca: '', modelo: '' }));
     setMensagemStatus(null);
+    setTipoConexao('REDE');
+    setComputadorConectadoId('');
 
     if (categoria === 'CELULAR') {
       setInterfacesRede([{ nome_interface: 'Wi-Fi', ip: '', mac: '' }]);
@@ -179,6 +199,15 @@ export default function Cadastro() {
     [opcoesSugeridas.TIPO_INTERFACE],
   );
 
+  const opcoesComputadoresConectaveis = useMemo(
+    () =>
+      computadoresConectaveis.map((c) => ({
+        valor: String(c.id),
+        rotulo: [c.nome, `${c.marca} ${c.modelo}`].filter(Boolean).join(' - '),
+      })),
+    [computadoresConectaveis],
+  );
+
   function formularioTemDadosRelevantes(): boolean {
     const mestreAlterado =
       dadosMestre.marca.trim() !== '' ||
@@ -215,6 +244,8 @@ export default function Cadastro() {
       localizacao_id: anterior.localizacao_id,
     }));
     setDadosDetalhe({});
+    setTipoConexao('REDE');
+    setComputadorConectadoId('');
     if (categoria === 'CELULAR') {
       setInterfacesRede([{ nome_interface: 'Wi-Fi', ip: '', mac: '' }]);
     } else if (categoria === 'SWITCH') {
@@ -303,21 +334,28 @@ export default function Cadastro() {
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const detalhe: Record<string, string | boolean | number> = {};
+    let detalhe: Record<string, string | boolean | number> = {};
 
-    Object.entries(dadosDetalhe).forEach(([chave, valor]) => {
-      if (typeof valor === 'string' && valor.trim() !== '') {
-        detalhe[chave] = valor.trim();
+    if (categoria === 'IMPRESSORA') {
+      detalhe = {
+        tipo_conexao: tipoConexao,
+        ...(tipoConexao === 'USB' && computadorConectadoId && { computador_conectado_id: Number(computadorConectadoId) }),
+      };
+    } else {
+      Object.entries(dadosDetalhe).forEach(([chave, valor]) => {
+        if (typeof valor === 'string' && valor.trim() !== '') {
+          detalhe[chave] = valor.trim();
+        }
+      });
+
+      if (categoria === 'COMPUTADOR' && 'antivirus_instalado' in detalhe) {
+        detalhe.antivirus_instalado = detalhe.antivirus_instalado === 'true';
       }
-    });
 
-    if (categoria === 'COMPUTADOR' && 'antivirus_instalado' in detalhe) {
-      detalhe.antivirus_instalado = detalhe.antivirus_instalado === 'true';
-    }
-
-    if (categoria === 'SWITCH') {
-      if ('numero_portas' in detalhe && typeof detalhe.numero_portas === 'string') {
-        detalhe.numero_portas = Number(detalhe.numero_portas);
+      if (categoria === 'SWITCH') {
+        if ('numero_portas' in detalhe && typeof detalhe.numero_portas === 'string') {
+          detalhe.numero_portas = Number(detalhe.numero_portas);
+        }
       }
     }
 
@@ -333,13 +371,15 @@ export default function Cadastro() {
         ...(dadosMestre.observacao.trim() && { observacao: dadosMestre.observacao.trim() }),
       },
       detalhe,
-      interfaces: interfacesRede
-        .map((item) => ({
-          nome_interface: item.nome_interface.trim(),
-          ...(item.ip.trim() && { ip: item.ip.trim() }),
-          ...(item.mac.trim() && { mac: item.mac.trim() }),
-        }))
-        .filter((item) => item.nome_interface || item.ip || item.mac),
+      interfaces: (categoria === 'IMPRESSORA' && tipoConexao === 'USB')
+        ? []
+        : interfacesRede
+            .map((item) => ({
+              nome_interface: item.nome_interface.trim(),
+              ...(item.ip.trim() && { ip: item.ip.trim() }),
+              ...(item.mac.trim() && { mac: item.mac.trim() }),
+            }))
+            .filter((item) => item.nome_interface || item.ip || item.mac),
     };
 
     try {
@@ -442,6 +482,7 @@ export default function Cadastro() {
                   <option value="CELULAR">Celular</option>
                   <option value="NVR">NVR</option>
                   <option value="CAMERA">Câmera</option>
+                  <option value="IMPRESSORA">Impressora</option>
                 </select>
               </div>
 
@@ -829,7 +870,53 @@ export default function Cadastro() {
             </div>
           )}
 
-          <div className={styles.secaoMonobloco} id="secao-interfaces-rede">
+          {categoria === 'IMPRESSORA' && (
+            <div className={styles.secaoMonobloco}>
+              <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
+              <div className={styles.grid2}>
+                <div className={styles.campo}>
+                  <label htmlFor="tipo_conexao">
+                    Tipo de Conexão <span className={styles.obrigatorio}>*</span>
+                  </label>
+                  <select
+                    id="tipo_conexao"
+                    name="tipo_conexao"
+                    className={styles.select}
+                    value={tipoConexao}
+                    onChange={(event) => {
+                      const novoTipo = event.target.value as 'REDE' | 'USB';
+                      setTipoConexao(novoTipo);
+                      if (novoTipo === 'REDE') {
+                        setComputadorConectadoId('');
+                      }
+                    }}
+                  >
+                    <option value="REDE">Rede</option>
+                    <option value="USB">USB</option>
+                  </select>
+                </div>
+
+                {tipoConexao === 'USB' && (
+                  <div className={styles.campo}>
+                    <label htmlFor="computador_conectado_id">
+                      Computador Conectado <span className={styles.obrigatorio}>*</span>
+                    </label>
+                    <ComboBoxSelect
+                      id="computador_conectado_id"
+                      opcoes={opcoesComputadoresConectaveis}
+                      valor={computadorConectadoId}
+                      aoMudar={(val) => setComputadorConectadoId(val)}
+                      placeholder="Selecione o computador conectado"
+                      obrigatorio
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {!(categoria === 'IMPRESSORA' && tipoConexao === 'USB') && (
+            <div className={styles.secaoMonobloco} id="secao-interfaces-rede">
             <h2 className={styles.secaoTitulo}>Interface de Rede</h2>
             {erroInterfaces && (
               <span className={styles.textoErroSecao}>
@@ -900,6 +987,7 @@ export default function Cadastro() {
               </div>
             )}
           </div>
+          )}
         </div>
 
         <div className={styles.botoesAcao}>
