@@ -133,13 +133,23 @@ CREATE TABLE eq_celulares (
     FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id) ON DELETE CASCADE
 );
 
--- 4. NVRs e Câmeras
-CREATE TABLE eq_cftv (
+-- 4. NVRs
+CREATE TABLE eq_nvrs (
     equipamento_id INTEGER PRIMARY KEY,
-    identificacao_extra TEXT, -- Pode guardar S/N ou TAG específicos
+    quantidade_canais INTEGER,
     capacidade_armazenamento TEXT, -- Ex: 'HD 4TB' ou 'Retenção 30 dias'
-    quantidade_canais_resolucao TEXT, -- Ex: '16 Canais' (NVR) ou '1080p' (Câmera)
     firmware TEXT,
+    identificacao_extra TEXT, -- Pode guardar S/N ou TAG específicos
+    
+    FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id) ON DELETE CASCADE
+);
+
+-- 4a. Câmeras
+CREATE TABLE eq_cameras (
+    equipamento_id INTEGER PRIMARY KEY,
+    resolucao TEXT, -- Ex: '1080p', '4K'
+    firmware TEXT,
+    identificacao_extra TEXT, -- Pode guardar S/N ou TAG específicos
     
     FOREIGN KEY (equipamento_id) REFERENCES equipamentos(id) ON DELETE CASCADE
 );

@@ -202,8 +202,10 @@ export const buscarEquipamentoPorId = (id: number) => {
       detalhe = banco.prepare('SELECT * FROM eq_celulares WHERE equipamento_id = ?').get(id);
       break;
     case 'NVR':
+      detalhe = banco.prepare('SELECT * FROM eq_nvrs WHERE equipamento_id = ?').get(id);
+      break;
     case 'CAMERA':
-      detalhe = banco.prepare('SELECT * FROM eq_cftv WHERE equipamento_id = ?').get(id);
+      detalhe = banco.prepare('SELECT * FROM eq_cameras WHERE equipamento_id = ?').get(id);
       break;
     case 'IMPRESSORA':
       detalhe = banco.prepare('SELECT * FROM eq_impressoras WHERE equipamento_id = ?').get(id);
@@ -249,12 +251,13 @@ const COLUNAS_PERMITIDAS_DETALHE: Record<string, string[]> = {
     'modalidade',
     'sistema_operacional',
   ],
-  eq_cftv: [
-    'identificacao_extra',
+  eq_nvrs: [
+    'quantidade_canais',
     'capacidade_armazenamento',
-    'quantidade_canais_resolucao',
     'firmware',
+    'identificacao_extra',
   ],
+  eq_cameras: ['resolucao', 'firmware', 'identificacao_extra'],
   eq_impressoras: ['tipo_conexao', 'computador_conectado_id'],
 }
 
@@ -288,8 +291,8 @@ export const atualizarEquipamento = (id: number, payload: any) => {
         case 'COMPUTADOR': tabelaDetalhe = 'eq_computadores'; break;
         case 'SWITCH': tabelaDetalhe = 'eq_switches'; break;
         case 'CELULAR': tabelaDetalhe = 'eq_celulares'; break;
-        case 'NVR':
-        case 'CAMERA': tabelaDetalhe = 'eq_cftv'; break;
+        case 'NVR': tabelaDetalhe = 'eq_nvrs'; break;
+        case 'CAMERA': tabelaDetalhe = 'eq_cameras'; break;
         case 'IMPRESSORA': tabelaDetalhe = 'eq_impressoras'; break;
       }
 
