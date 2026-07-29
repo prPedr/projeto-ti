@@ -19,6 +19,8 @@ import Dashboard from '../pages/Dashboard';
 import MapeamentoRede from '../pages/MapeamentoRede';
 import SwitchesListagem from '../pages/Switches/Listagem';
 import SwitchesPortas from '../pages/Switches/Portas';
+import NvrsListagem from '../pages/Nvrs/Listagem';
+import NvrsCanais from '../pages/Nvrs/Canais';
 
 export function AppRoutes() {
   return (
@@ -42,6 +44,8 @@ export function AppRoutes() {
           <Route path="/mapeamento-rede" element={<MapeamentoRede />} />
           <Route path="/switches" element={<SwitchesListagem />} />
           <Route path="/switches/:id" element={<SwitchesPortas />} />
+          <Route path="/nvrs" element={<NvrsListagem />} />
+          <Route path="/nvrs/:id" element={<NvrsCanais />} />
 
           <Route
             element={

@@ -944,6 +944,16 @@ export default function Detalhes() {
             </button>
           )}
 
+          {categoria === 'NVR' && (
+            <button
+              type="button"
+              className={styles.botaoAdicionar}
+              onClick={() => navigate(`/nvrs/${id}`)}
+            >
+              📹 Ver mapa de canais
+            </button>
+          )}
+
           {modo === 'visualizar' ? (
             <button type="button" className={styles.botaoCancelar} onClick={() => navigate('/equipamentos')}>
               Voltar
