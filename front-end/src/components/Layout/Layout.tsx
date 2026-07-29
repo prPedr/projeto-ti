@@ -35,6 +35,7 @@ const ITENS_MENU_ADMIN: ItemMenu[] = [
       { to: '/admin/opcoes/switches', rotulo: 'Switches', inicial: 'S' },
       { to: '/admin/opcoes/celulares', rotulo: 'Celulares', inicial: 'M' },
       { to: '/admin/opcoes/nvr-camera', rotulo: 'NVR/Câmeras', inicial: 'N' },
+      { to: '/admin/opcoes/impressoras', rotulo: 'Impressoras', inicial: 'I' },
     ],
   },
   { to: '/admin/localizacoes', rotulo: 'Localizações', inicial: 'L' },
