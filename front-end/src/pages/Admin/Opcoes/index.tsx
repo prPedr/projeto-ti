@@ -39,6 +39,12 @@ const ITENS_HUB: ItemHub[] = [
     inicial: 'I',
     descricao: 'Marcas, modelos e tipos de interface para impressoras de rede/USB.',
   },
+  {
+    to: '/admin/opcoes/antenas',
+    titulo: 'Antenas',
+    inicial: 'A',
+    descricao: 'Marcas, modelos e tipos de interface para antenas e pontos de acesso Wi-Fi.',
+  },
 ];
 
 export default function OpcoesHub() {
