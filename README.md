@@ -4,6 +4,30 @@ Sistema web para controle e gestão centralizada de ativos e infraestrutura de T
 
 ---
 
+## 🎯 Escopo e Contexto do Projeto
+
+### 1. Para quem este projeto foi pensado
+O sistema foi desenvolvido para atender **pequenas equipes de TI** (na faixa de 1 a 10 usuários operando o sistema), gerenciando o inventário de uma **única organização**.
+- **Instância Única (sem Multi-tenant):** Não há isolamento de dados entre empresas distintas em uma mesma execução. Cada instalação serve exclusivamente a uma organização.
+
+### 2. Limitações técnicas deliberadas
+- **Banco de dados SQLite:** Escolhido pela excelente simplicidade de deploy e manutenção (banco em arquivo único, dispensando servidores de banco de dados separados) e pela adequação ao volume de dados de pequenas equipes. Não é voltado para altíssima concorrência de escrita ou volumes massivos de dados. Caso o volume cresça, o próximo passo natural é a migração para **PostgreSQL** — inclusive, o schema relacional (`schema.sql`) utiliza SQL padrão de forma simples e direta, facilitando essa migração se necessário.
+- **Idioma único (`pt-BR`):** A interface e mensagens do sistema estão disponíveis apenas em Português do Brasil (sem camada de internacionalização/i18n).
+- **Autenticação própria por e-mail e senha:** Login baseado em e-mail/senha com hashes `bcrypt` e tokens `JWT`, sem suporte nativo a SSO, OAuth2 ou provedores de identidade externos (como Active Directory/SAML).
+
+### 3. O que o sistema deliberadamente NÃO faz (Fora de Escopo)
+Com base no planejamento inicial, as seguintes funcionalidades ficaram **fora de escopo por decisão de projeto**:
+- **Gestão de licenças de software:** Não faz controle de licenças ou chaves de software.
+- **Abertura de chamados e Help Desk:** Projetado para ser utilizado em conjunto com ferramentas dedicadas de Help Desk (como o GLPI), e não para substituí-las.
+- **Histórico e trilha de auditoria completa:** Não registra logs de cada alteração individual realizada nos ativos ao longo do tempo.
+- **Processos formais de descarte e compliance LGPD:** Não inclui fluxos formais de aprovação de descarte ou ciclo de vida de privacidade.
+
+*Estas decisões visam manter o sistema leve e focado. Como o projeto é código aberto sob licença MIT, qualquer equipe pode adaptar o código fonte para incluir essas capacidades conforme suas necessidades.*
+
+> Se o seu caso de uso tem necessidades diferentes dessas (multi-tenant, alta escala, i18n ou integração SSO), este projeto pode servir de ponto de partida, mas vai precisar de adaptações antes de ser usado nesse cenário.
+
+---
+
 ## 🛠️ Stack Tecnológica
 
 ### Back-end
