@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { listarNvrs } from '../../../services/nvrs';
 import type { NvrResumo } from '../../../services/nvrs';
@@ -30,6 +30,7 @@ export default function NvrsListagem() {
   const { mostrarToast } = useToast();
   const [nvrs, setNvrs] = useState<NvrResumo[]>([]);
   const [carregando, setCarregando] = useState(true);
+  const [filtroNvr, setFiltroNvr] = useState('');
 
   useEffect(() => {
     listarNvrs()
@@ -41,10 +42,29 @@ export default function NvrsListagem() {
       .finally(() => setCarregando(false));
   }, []);
 
+  const nvrsFiltrados = useMemo(() => {
+    if (!filtroNvr.trim()) return nvrs;
+    const termo = filtroNvr.toLowerCase();
+    return nvrs.filter((nvr) => {
+      const texto = `${nvr.nome ?? ''} ${nvr.marca} ${nvr.modelo} ${(nvr.ips ?? []).join(' ')} ${(nvr.macs ?? []).join(' ')}`.toLowerCase();
+      return texto.includes(termo);
+    });
+  }, [nvrs, filtroNvr]);
+
   return (
     <div className={styles.cartao} style={{ padding: '1.5rem' }}>
       <div className={styles.cabecalhoAcoes}>
         <h2>NVRs</h2>
+      </div>
+
+      <div className={styles.barraBusca}>
+        <input
+          className={styles.inputBusca}
+          type="search"
+          value={filtroNvr}
+          onChange={(e) => setFiltroNvr(e.target.value)}
+          placeholder="Buscar por nome, IP, MAC, marca ou modelo..."
+        />
       </div>
 
       <div className={styles.areaRolagem}>
@@ -52,6 +72,8 @@ export default function NvrsListagem() {
           <p>Carregando NVRs...</p>
         ) : nvrs.length === 0 ? (
           <p className={styles.listaVazia}>Nenhum NVR cadastrado.</p>
+        ) : nvrsFiltrados.length === 0 ? (
+          <p className={styles.listaVazia}>Nenhum NVR encontrado para essa busca.</p>
         ) : (
           <table className={styles.tabela}>
             <thead>
@@ -63,7 +85,7 @@ export default function NvrsListagem() {
               </tr>
             </thead>
             <tbody>
-              {nvrs.map((item) => {
+              {nvrsFiltrados.map((item) => {
                 const totalCanais = item.quantidade_canais ?? 0;
                 const emUso = item.canais_ocupados ?? 0;
                 const textoLocalizacao =

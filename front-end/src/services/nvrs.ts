@@ -10,6 +10,8 @@ export interface NvrResumo {
   canais_ocupados: number;
   filial: string | null;
   sala: string | null;
+  ips: string[];
+  macs: string[];
 }
 
 export interface CanalNvr {

@@ -88,6 +88,8 @@ export interface NvrListado {
   filial: string | null
   sala: string | null
   canais_ocupados: number
+  ips: string[]
+  macs: string[]
 }
 
 export const listarNvrs = (): NvrListado[] => {
@@ -106,13 +108,25 @@ export const listarNvrs = (): NvrListado[] => {
         FROM canais_nvr cn
         WHERE cn.nvr_id = e.id
           AND (cn.camera_conectada_id IS NOT NULL OR cn.descricao IS NOT NULL)
-      ) AS canais_ocupados
+      ) AS canais_ocupados,
+      GROUP_CONCAT(DISTINCT ir.ip) AS ips,
+      GROUP_CONCAT(DISTINCT ir.mac) AS macs
     FROM equipamentos e
     JOIN eq_nvrs en ON en.equipamento_id = e.id
     LEFT JOIN localizacoes l ON l.id = e.localizacao_id
+    LEFT JOIN interfaces_rede ir ON ir.equipamento_id = e.id
     WHERE e.status != 'DESCARTADO'
+    GROUP BY e.id
     ORDER BY e.nome
   `)
 
-  return consulta.all() as NvrListado[]
+  const linhas = consulta.all() as Array<
+    Omit<NvrListado, 'ips' | 'macs'> & { ips: string | null; macs: string | null }
+  >
+
+  return linhas.map((linha) => ({
+    ...linha,
+    ips: linha.ips ? linha.ips.split(',') : [],
+    macs: linha.macs ? linha.macs.split(',') : [],
+  }))
 }

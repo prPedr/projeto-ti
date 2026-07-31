@@ -15,6 +15,28 @@
   border-bottom: 1px solid var(--cor-borda);
 }
 
+.barraBusca {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.inputBusca {
+  flex: 1;
+  padding: 0.6rem 0.875rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-md);
+  font-size: 14px;
+  color: var(--cor-texto);
+  background-color: var(--cor-fundo-input, #f9f9f9);
+  transition: border-color 0.2s ease;
+  outline: none;
+}
+
+.inputBusca:focus {
+  border-color: var(--cor-primaria);
+}
+
 .areaRolagem {
   flex: 1;
   overflow-y: auto;
