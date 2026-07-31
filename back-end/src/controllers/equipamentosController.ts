@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { z } from 'zod'
 import { atualizarEquipamentoSchema, listarEquipamentosQuerySchema } from '../schemas/equipamentosSchema.js'
-import { descartarEquipamento, FiltrosListagem, listarEquipamentos, buscarEquipamentoPorId, atualizarEquipamento } from '../services/equipamentosService.js'
+import { descartarEquipamento, FiltrosListagem, listarEquipamentos, listarMarcasModelosDisponiveis, buscarEquipamentoPorId, atualizarEquipamento } from '../services/equipamentosService.js'
 
 type DadosValidadosListagem = {
   query: z.infer<typeof listarEquipamentosQuerySchema>
@@ -20,17 +20,25 @@ const criarErro = (mensagem: string, statusCode: number): ErroComStatus => {
 }
 
 export const listar = (requisicao: Request, resposta: Response) => {
-  const { pagina, limite, busca, status } = (requisicao.dadosValidados as DadosValidadosListagem).query
+  const { pagina, limite, busca, status, marca, modelo } = (requisicao.dadosValidados as DadosValidadosListagem).query
 
   const filtros: FiltrosListagem = {
     pagina,
     limite,
     ...(busca ? { busca } : {}),
     ...(status ? { status } : {}),
+    ...(marca ? { marca } : {}),
+    ...(modelo ? { modelo } : {}),
   }
 
   const { dados, metadados } = listarEquipamentos(filtros)
   resposta.status(200).json({ sucesso: true, dados, metadados })
+}
+
+export const listarFiltrosDisponiveis = (requisicao: Request, resposta: Response) => {
+  const marca = typeof requisicao.query.marca === 'string' ? requisicao.query.marca : undefined
+  const { marcas, modelos } = listarMarcasModelosDisponiveis(marca)
+  resposta.status(200).json({ sucesso: true, marcas, modelos })
 }
 
 export const descartar = (requisicao: Request, resposta: Response) => {

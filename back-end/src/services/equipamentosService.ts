@@ -29,6 +29,8 @@ export interface FiltrosListagem {
   limite: number
   busca?: string
   status?: string
+  marca?: string
+  modelo?: string
 }
 
 export interface ResultadoListagemEquipamentos {
@@ -63,6 +65,16 @@ export const listarEquipamentos = (filtros: FiltrosListagem): ResultadoListagemE
       OR EXISTS (SELECT 1 FROM interfaces_rede ir WHERE ir.equipamento_id = e.id AND ir.ip LIKE @busca)
     )`)
     parametros.busca = `%${filtros.busca}%`
+  }
+
+  if (filtros.marca) {
+    condicoes.push('e.marca = @marca')
+    parametros.marca = filtros.marca
+  }
+
+  if (filtros.modelo) {
+    condicoes.push('e.modelo = @modelo')
+    parametros.modelo = filtros.modelo
   }
 
   const clausulaWhere = condicoes.length > 0 ? `WHERE ${condicoes.join(' AND ')}` : ''
@@ -133,6 +145,25 @@ export const listarEquipamentos = (filtros: FiltrosListagem): ResultadoListagemE
       totalPaginas: Math.ceil(totalRegistros / filtros.limite),
     },
   }
+}
+
+export const listarMarcasModelosDisponiveis = (marcaFiltro?: string) => {
+  const marcas = banco
+    .prepare("SELECT DISTINCT marca FROM equipamentos WHERE status != 'DESCARTADO' ORDER BY marca")
+    .all()
+    .map((linha: any) => linha.marca)
+
+  const modelos = marcaFiltro
+    ? banco
+        .prepare("SELECT DISTINCT modelo FROM equipamentos WHERE status != 'DESCARTADO' AND marca = @marca ORDER BY modelo")
+        .all({ marca: marcaFiltro })
+        .map((linha: any) => linha.modelo)
+    : banco
+        .prepare("SELECT DISTINCT modelo FROM equipamentos WHERE status != 'DESCARTADO' ORDER BY modelo")
+        .all()
+        .map((linha: any) => linha.modelo)
+
+  return { marcas, modelos }
 }
 
 export type ResultadoDescarte = 'NAO_ENCONTRADO' | 'JA_DESCARTADO' | 'DESCARTADO'

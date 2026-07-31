@@ -208,6 +208,8 @@ export const listarEquipamentosQuerySchema = z.object({
     .default(20),
   busca: z.string().optional(),
   status: statusSchema.optional(),
+  marca: z.string().optional(),
+  modelo: z.string().optional(),
 })
 
 export const listarEquipamentosSchema = z.object({
