@@ -83,18 +83,23 @@ export async function listarEquipamentos(
   busca?: string,
   marca?: string,
   modelo?: string,
+  categoria?: string,
 ): Promise<RespostaListagemEquipamentos> {
   const parametros = new URLSearchParams({ pagina: String(pagina), limite: String(limite) });
-  if (busca)  parametros.set('busca',  busca);
-  if (marca)  parametros.set('marca',  marca);
-  if (modelo) parametros.set('modelo', modelo);
+  if (busca)     parametros.set('busca',     busca);
+  if (marca)     parametros.set('marca',     marca);
+  if (modelo)    parametros.set('modelo',    modelo);
+  if (categoria) parametros.set('categoria', categoria);
   const resposta = await fetchComToken(`/api/equipamentos?${parametros.toString()}`);
   return { dados: resposta.dados, metadados: resposta.metadados };
 }
 
-export async function listarFiltrosDisponiveis(marca?: string) {
-  const parametros = marca ? `?marca=${encodeURIComponent(marca)}` : '';
-  const resposta = await fetchComToken(`/api/equipamentos/filtros-disponiveis${parametros}`);
+export async function listarFiltrosDisponiveis(categoria?: string, marca?: string) {
+  const parametros = new URLSearchParams();
+  if (categoria) parametros.set('categoria', categoria);
+  if (marca)     parametros.set('marca',     marca);
+  const qs = parametros.toString();
+  const resposta = await fetchComToken(`/api/equipamentos/filtros-disponiveis${qs ? `?${qs}` : ''}`);
   return { marcas: resposta.marcas as string[], modelos: resposta.modelos as string[] };
 }
 

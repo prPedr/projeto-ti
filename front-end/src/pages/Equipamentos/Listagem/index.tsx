@@ -8,6 +8,17 @@ import styles from './Listagem.module.css';
 
 const LIMITE_POR_PAGINA = 20;
 
+const CATEGORIAS_FILTRO = [
+  { valor: '',           rotulo: 'Todos os tipos'   },
+  { valor: 'COMPUTADOR', rotulo: 'Computadores'     },
+  { valor: 'SWITCH',     rotulo: 'Switches'         },
+  { valor: 'CELULAR',    rotulo: 'Celulares'        },
+  { valor: 'NVR',        rotulo: 'NVRs'             },
+  { valor: 'CAMERA',     rotulo: 'Câmeras'          },
+  { valor: 'IMPRESSORA', rotulo: 'Impressoras'      },
+  { valor: 'ANTENA',     rotulo: 'Antenas Wi-Fi'    },
+];
+
 export default function Listagem() {
   const navigate = useNavigate();
   const { mostrarToast } = useToast();
@@ -19,12 +30,13 @@ export default function Listagem() {
   const [pagina, setPagina] = useState(1);
   const [metadados, setMetadados] = useState<RespostaListagemEquipamentos['metadados'] | null>(null);
 
+  const [filtroCategoria, setFiltroCategoria] = useState('');
   const [filtroMarca, setFiltroMarca] = useState('');
   const [filtroModelo, setFiltroModelo] = useState('');
   const [marcasDisponiveis, setMarcasDisponiveis] = useState<string[]>([]);
   const [modelosDisponiveis, setModelosDisponiveis] = useState<string[]>([]);
 
-  // Carrega lista inicial de marcas e modelos ao montar
+  // Carrega lista inicial de marcas e modelos ao montar (sem filtros)
   useEffect(() => {
     listarFiltrosDisponiveis().then(({ marcas, modelos }) => {
       setMarcasDisponiveis(marcas);
@@ -32,18 +44,19 @@ export default function Listagem() {
     });
   }, []);
 
-  // Cascata: quando a marca muda, recarrega modelos disponíveis
+  // Cascata: quando filtroMarca muda, recarrega modelos respeitando categoria ativa
   useEffect(() => {
-    listarFiltrosDisponiveis(filtroMarca || undefined).then(({ modelos }) => {
-      setModelosDisponiveis(modelos);
-      // Reseta modelo se ele não existe mais na nova lista
-      setFiltroModelo((prev) => (modelos.includes(prev) ? prev : ''));
-    });
-  }, [filtroMarca]);
+    listarFiltrosDisponiveis(filtroCategoria || undefined, filtroMarca || undefined)
+      .then(({ modelos }) => {
+        setModelosDisponiveis(modelos);
+        setFiltroModelo((prev) => (modelos.includes(prev) ? prev : ''));
+      });
+  }, [filtroMarca]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function carregarDados(
     paginaAlvo = pagina,
     buscaAlvo = busca,
+    categoriaAlvo = filtroCategoria,
     marcaAlvo = filtroMarca,
     modeloAlvo = filtroModelo,
   ) {
@@ -51,9 +64,10 @@ export default function Listagem() {
     listarEquipamentos(
       paginaAlvo,
       LIMITE_POR_PAGINA,
-      buscaAlvo || undefined,
-      marcaAlvo || undefined,
-      modeloAlvo || undefined,
+      buscaAlvo    || undefined,
+      marcaAlvo    || undefined,
+      modeloAlvo   || undefined,
+      categoriaAlvo || undefined,
     )
       .then(({ dados, metadados: meta }) => {
         setEquipamentos(dados);
@@ -67,32 +81,45 @@ export default function Listagem() {
   }
 
   useEffect(() => {
-    carregarDados(1, '', '', '');
+    carregarDados(1, '', '', '', '');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleBuscar(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPagina(1);
-    carregarDados(1, busca, filtroMarca, filtroModelo);
+    carregarDados(1, busca, filtroCategoria, filtroMarca, filtroModelo);
+  }
+
+  function handleCategoriaChange(novaCategoria: string) {
+    setFiltroCategoria(novaCategoria);
+    setFiltroMarca('');
+    setFiltroModelo('');
+    setPagina(1);
+    // Recarrega marcas disponíveis para a nova categoria
+    listarFiltrosDisponiveis(novaCategoria || undefined).then(({ marcas, modelos }) => {
+      setMarcasDisponiveis(marcas);
+      setModelosDisponiveis(modelos);
+    });
+    carregarDados(1, busca, novaCategoria, '', '');
   }
 
   function handleMarcaChange(novaMarca: string) {
     setFiltroMarca(novaMarca);
     setFiltroModelo('');
     setPagina(1);
-    carregarDados(1, busca, novaMarca, '');
+    carregarDados(1, busca, filtroCategoria, novaMarca, '');
   }
 
   function handleModeloChange(novoModelo: string) {
     setFiltroModelo(novoModelo);
     setPagina(1);
-    carregarDados(1, busca, filtroMarca, novoModelo);
+    carregarDados(1, busca, filtroCategoria, filtroMarca, novoModelo);
   }
 
   function irParaPagina(novaPagina: number) {
     setPagina(novaPagina);
-    carregarDados(novaPagina, busca, filtroMarca, filtroModelo);
+    carregarDados(novaPagina, busca, filtroCategoria, filtroMarca, filtroModelo);
   }
 
   function handleExcluir(equipamento: Equipamento) {
@@ -104,7 +131,7 @@ export default function Listagem() {
     try {
       await excluirEquipamento(equipamentoParaExcluir.id);
       mostrarToast('Equipamento descartado com sucesso.', 'sucesso');
-      carregarDados(pagina, busca, filtroMarca, filtroModelo);
+      carregarDados(pagina, busca, filtroCategoria, filtroMarca, filtroModelo);
     } catch (erro) {
       console.error('Erro ao excluir equipamento:', erro);
       mostrarToast('Não foi possível excluir o equipamento.', 'erro');
@@ -157,6 +184,15 @@ export default function Listagem() {
             onChange={(e) => setBusca(e.target.value)}
             placeholder="Buscar por nome ou IP..."
           />
+          <select
+            className={styles.selectFiltro}
+            value={filtroCategoria}
+            onChange={(e) => handleCategoriaChange(e.target.value)}
+          >
+            {CATEGORIAS_FILTRO.map(({ valor, rotulo }) => (
+              <option key={valor} value={valor}>{rotulo}</option>
+            ))}
+          </select>
           <select
             className={styles.selectFiltro}
             value={filtroMarca}
