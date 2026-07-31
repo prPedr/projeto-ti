@@ -149,3 +149,63 @@
   border-color: var(--cor-acento);
   color: var(--cor-acento);
 }
+
+/* ─── Barra de Busca ─────────────────────────────────────────────────────── */
+.barraBusca {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.inputBusca {
+  flex: 1;
+  padding: 0.6rem 0.875rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-md);
+  font-size: 14px;
+  color: var(--cor-texto);
+  background-color: var(--cor-fundo-input, #f9f9f9);
+  transition: border-color 0.2s ease;
+  outline: none;
+}
+
+.inputBusca:focus {
+  border-color: var(--cor-primaria);
+}
+
+/* ─── Paginação ──────────────────────────────────────────────────────────── */
+.paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 0 0;
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+}
+
+.botaoPaginacao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-md);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cor-texto);
+  background-color: transparent;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.botaoPaginacao:hover:not(:disabled) {
+  border-color: var(--cor-primaria);
+  color: var(--cor-primaria);
+}
+
+.botaoPaginacao:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { excluirEquipamento, listarEquipamentos } from '../../../services/equipamentos';
-import type { Equipamento } from '../../../services/equipamentos';
+import type { Equipamento, RespostaListagemEquipamentos } from '../../../services/equipamentos';
 import { useToast } from '../../../contexts/ToastContext';
 import ModalConfirmacao from '../../../components/ModalConfirmacao';
 import styles from './Listagem.module.css';
+
+const LIMITE_POR_PAGINA = 20;
 
 export default function Listagem() {
   const navigate = useNavigate();
@@ -13,22 +15,39 @@ export default function Listagem() {
   const [carregando, setCarregando] = useState(true);
   const [equipamentoParaExcluir, setEquipamentoParaExcluir] = useState<Equipamento | null>(null);
 
-  async function carregarDados() {
+  const [busca, setBusca] = useState('');
+  const [pagina, setPagina] = useState(1);
+  const [metadados, setMetadados] = useState<RespostaListagemEquipamentos['metadados'] | null>(null);
+
+  function carregarDados(paginaAlvo = pagina, buscaAlvo = busca) {
     setCarregando(true);
-    try {
-      const dados = await listarEquipamentos();
-      setEquipamentos(dados);
-    } catch (erro) {
-      console.error('Erro ao carregar equipamentos:', erro);
-      mostrarToast('Não foi possível carregar a lista de equipamentos.', 'erro');
-    } finally {
-      setCarregando(false);
-    }
+    listarEquipamentos(paginaAlvo, LIMITE_POR_PAGINA, buscaAlvo || undefined)
+      .then(({ dados, metadados: meta }) => {
+        setEquipamentos(dados);
+        setMetadados(meta);
+      })
+      .catch((erro) => {
+        console.error('Erro ao carregar equipamentos:', erro);
+        mostrarToast('Não foi possível carregar a lista de equipamentos.', 'erro');
+      })
+      .finally(() => setCarregando(false));
   }
 
   useEffect(() => {
-    carregarDados();
+    carregarDados(1, '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  function handleBuscar(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPagina(1);
+    carregarDados(1, busca);
+  }
+
+  function irParaPagina(novaPagina: number) {
+    setPagina(novaPagina);
+    carregarDados(novaPagina, busca);
+  }
 
   function handleExcluir(equipamento: Equipamento) {
     setEquipamentoParaExcluir(equipamento);
@@ -84,6 +103,18 @@ export default function Listagem() {
             + Novo Equipamento
           </Link>
         </div>
+
+        <form className={styles.barraBusca} onSubmit={handleBuscar}>
+          <input
+            className={styles.inputBusca}
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            placeholder="Buscar por nome ou IP..."
+          />
+          <button type="submit" className={styles.botaoNovo} style={{ whiteSpace: 'nowrap' }}>
+            Buscar
+          </button>
+        </form>
 
         <div className={styles.areaRolagem}>
           {carregando ? (
@@ -213,6 +244,30 @@ export default function Listagem() {
                 ))}
               </tbody>
             </table>
+          )}
+
+          {metadados && metadados.totalPaginas > 1 && (
+            <div className={styles.paginacao}>
+              <span>
+                Página {metadados.paginaAtual} de {metadados.totalPaginas} ({metadados.totalRegistros} registros)
+              </span>
+              <button
+                type="button"
+                className={styles.botaoPaginacao}
+                onClick={() => irParaPagina(pagina - 1)}
+                disabled={pagina <= 1}
+              >
+                Anterior
+              </button>
+              <button
+                type="button"
+                className={styles.botaoPaginacao}
+                onClick={() => irParaPagina(pagina + 1)}
+                disabled={pagina >= metadados.totalPaginas}
+              >
+                Próxima
+              </button>
+            </div>
           )}
         </div>
       </div>

@@ -67,9 +67,25 @@ export async function listarLocalizacoes() {
   return resposta.dados;
 }
 
-export async function listarEquipamentos(): Promise<Equipamento[]> {
-  const resposta = await fetchComToken('/api/equipamentos');
-  return resposta.dados;
+export interface RespostaListagemEquipamentos {
+  dados: Equipamento[];
+  metadados: {
+    totalRegistros: number;
+    paginaAtual: number;
+    limite: number;
+    totalPaginas: number;
+  };
+}
+
+export async function listarEquipamentos(
+  pagina = 1,
+  limite = 20,
+  busca?: string,
+): Promise<RespostaListagemEquipamentos> {
+  const parametros = new URLSearchParams({ pagina: String(pagina), limite: String(limite) });
+  if (busca) parametros.set('busca', busca);
+  const resposta = await fetchComToken(`/api/equipamentos?${parametros.toString()}`);
+  return { dados: resposta.dados, metadados: resposta.metadados };
 }
 
 export async function excluirEquipamento(id: number) {
