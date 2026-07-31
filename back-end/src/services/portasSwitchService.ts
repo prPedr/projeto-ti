@@ -19,6 +19,7 @@ export interface PortaSwitch {
   conectado_modelo: string | null
   conectado_status: string | null
   conectado_ips: string[]
+  conectado_macs: string[]
 }
 
 // ==========================================
@@ -91,7 +92,8 @@ export const listarPortasSwitch = (switchId: number): PortaSwitch[] => {
       e.nome AS conectado_nome, e.categoria AS conectado_categoria,
       e.marca AS conectado_marca, e.modelo AS conectado_modelo,
       e.status AS conectado_status,
-      GROUP_CONCAT(DISTINCT ir.ip) AS conectado_ips
+      GROUP_CONCAT(DISTINCT ir.ip) AS conectado_ips,
+      GROUP_CONCAT(DISTINCT ir.mac) AS conectado_macs
     FROM portas_switch ps
     LEFT JOIN equipamentos e ON e.id = ps.equipamento_conectado_id
     LEFT JOIN interfaces_rede ir ON ir.equipamento_id = e.id
@@ -101,12 +103,16 @@ export const listarPortasSwitch = (switchId: number): PortaSwitch[] => {
   `)
 
   const linhas = consulta.all({ switchId }) as Array<
-    Omit<PortaSwitch, 'conectado_ips'> & { conectado_ips: string | null }
+    Omit<PortaSwitch, 'conectado_ips' | 'conectado_macs'> & {
+      conectado_ips: string | null
+      conectado_macs: string | null
+    }
   >
 
   return linhas.map((linha) => ({
     ...linha,
     conectado_ips: linha.conectado_ips ? linha.conectado_ips.split(',') : [],
+    conectado_macs: linha.conectado_macs ? linha.conectado_macs.split(',') : [],
   }))
 }
 
