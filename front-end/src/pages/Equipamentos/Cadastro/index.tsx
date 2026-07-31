@@ -699,7 +699,7 @@ export default function Cadastro() {
           </div>
 
           {categoria === 'COMPUTADOR' && (
-            <div className={`${styles.secaoMonobloco} ${styles.secaoDinamica}`}>
+            <div className={styles.secaoMonobloco}>
               <div className={styles.cabecalhoSecao}>
                 <svg className={styles.iconeSecao} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
@@ -805,7 +805,7 @@ export default function Cadastro() {
           )}
 
           {categoria === 'SWITCH' && (
-            <div className={`${styles.secaoMonobloco} ${styles.secaoDinamica}`}>
+            <div className={styles.secaoMonobloco}>
               <div className={styles.cabecalhoSecao}>
                 <svg className={styles.iconeSecao} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
@@ -858,7 +858,7 @@ export default function Cadastro() {
           )}
 
           {categoria === 'CELULAR' && (
-            <div className={`${styles.secaoMonobloco} ${styles.secaoDinamica}`}>
+            <div className={styles.secaoMonobloco}>
               <div className={styles.cabecalhoSecao}>
                 <svg className={styles.iconeSecao} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
@@ -965,7 +965,7 @@ export default function Cadastro() {
           )}
 
           {categoria === 'NVR' && (
-            <div className={`${styles.secaoMonobloco} ${styles.secaoDinamica}`}>
+            <div className={styles.secaoMonobloco}>
               <div className={styles.cabecalhoSecao}>
                 <svg className={styles.iconeSecao} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
@@ -1030,7 +1030,7 @@ export default function Cadastro() {
           )}
 
           {categoria === 'CAMERA' && (
-            <div className={`${styles.secaoMonobloco} ${styles.secaoDinamica}`}>
+            <div className={styles.secaoMonobloco}>
               <div className={styles.cabecalhoSecao}>
                 <svg className={styles.iconeSecao} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
@@ -1083,7 +1083,7 @@ export default function Cadastro() {
           )}
 
           {categoria === 'IMPRESSORA' && (
-            <div className={`${styles.secaoMonobloco} ${styles.secaoDinamica}`}>
+            <div className={styles.secaoMonobloco}>
               <div className={styles.cabecalhoSecao}>
                 <svg className={styles.iconeSecao} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>

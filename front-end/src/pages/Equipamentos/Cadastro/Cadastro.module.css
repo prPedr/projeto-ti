@@ -40,14 +40,10 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  background-color: var(--cor-fundo-cartao);
   border: 1px solid var(--cor-borda);
   border-radius: var(--raio-sm);
   padding: 1.5rem;
-}
-
-.secaoDinamica {
-  background-color: var(--cor-acento-suave);
-  border-left: 3px solid var(--cor-acento);
 }
 
 /* ─── Seleção de Categoria (Cards) ───────────────────────────────────────── */
@@ -55,7 +51,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .labelCategoria {
@@ -124,7 +120,7 @@
 .grid2 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem;
+  gap: 1.5rem 1.25rem;
 }
 
 .cabecalhoSecao {
@@ -147,6 +143,7 @@
   font-family: var(--fonte-display);
   font-size: 16px;
   font-weight: 700;
+  line-height: 1.3;
   color: var(--cor-texto);
 }
 
