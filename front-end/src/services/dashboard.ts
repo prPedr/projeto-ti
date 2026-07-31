@@ -18,9 +18,19 @@ export interface GarantiaVencendo {
   data_garantia: string;
 }
 
-export interface UtilizacaoRecurso {
+export interface RedeMetrica {
   total: number;
-  ocupadas: number;
+  emUso: number;
+}
+
+export interface CameraMetrica {
+  total: number;
+  ativas: number;
+  inativas: number;
+}
+
+export interface ImpressoraMetrica {
+  total: number;
 }
 
 export interface ResumoDashboard {
@@ -30,10 +40,11 @@ export interface ResumoDashboard {
   totalEstoque: number;
   totalDescartados: number;
   ativosPorCategoria: AtivoPorCategoria[];
-  portasSwitch: UtilizacaoRecurso;
-  canaisNvr: UtilizacaoRecurso;
   garantiasVencendo: GarantiaVencendo[];
   garantiasVencendoTotal: number;
+  rede: RedeMetrica;
+  cameras: CameraMetrica;
+  impressoras: ImpressoraMetrica;
 }
 
 export async function buscarResumoDashboard(): Promise<ResumoDashboard> {

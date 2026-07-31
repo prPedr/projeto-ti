@@ -14,14 +14,19 @@ export interface GarantiaVencendo {
   data_garantia: string
 }
 
-export interface MapeamentoRedeMetrica {
-  disponiveis: number
+export interface RedeMetrica {
+  total: number
   emUso: number
 }
 
-export interface CameraPorStatus {
-  status: string
-  quantidade: number
+export interface CameraMetrica {
+  total: number
+  ativas: number
+  inativas: number
+}
+
+export interface ImpressoraMetrica {
+  total: number
 }
 
 export interface ResumoDashboard {
@@ -32,12 +37,9 @@ export interface ResumoDashboard {
   ativosPorCategoria: AtivoPorCategoria[]
   garantiasVencendo: GarantiaVencendo[]
   garantiasVencendoTotal: number
-  mapeamentoRede: MapeamentoRedeMetrica
-  cameras: {
-    total: number
-    porStatus: CameraPorStatus[]
-  }
-  totalImpressoras: number
+  rede: RedeMetrica
+  cameras: CameraMetrica
+  impressoras: ImpressoraMetrica
 }
 
 export const obterResumoDashboard = (): ResumoDashboard => {
@@ -88,7 +90,7 @@ export const obterResumoDashboard = (): ResumoDashboard => {
     `)
     .get() as { garantiasVencendoTotal: number }
 
-  // Mapeamento de Rede: IPs em uso vs IPs disponíveis
+  // Mapeamento de Rede: IPs em uso vs Total de IPs nas sub-redes
   const { emUso } = banco
     .prepare(`
       SELECT COUNT(*) AS emUso
@@ -110,9 +112,8 @@ export const obterResumoDashboard = (): ResumoDashboard => {
     .get() as { totalSubredes: number }
 
   const totalIpsCapacidade = (subredesCount.totalSubredes || 1) * 254
-  const disponiveis = Math.max(0, totalIpsCapacidade - emUso)
 
-  // Câmeras: Total e contagem por status
+  // Câmeras: Total, ativas e inativas (não ativas)
   const { totalCameras } = banco
     .prepare(`
       SELECT COUNT(*) AS totalCameras
@@ -122,16 +123,18 @@ export const obterResumoDashboard = (): ResumoDashboard => {
     `)
     .get() as { totalCameras: number }
 
-  const camerasPorStatus = banco
+  const { ativasCameras } = banco
     .prepare(`
-      SELECT e.status, COUNT(*) AS quantidade
+      SELECT COUNT(*) AS ativasCameras
       FROM eq_cameras c
       JOIN equipamentos e ON e.id = c.equipamento_id
-      GROUP BY e.status
+      WHERE e.status = 'ATIVO'
     `)
-    .all() as CameraPorStatus[]
+    .get() as { ativasCameras: number }
 
-  // Impressoras: Total de impressoras
+  const inativasCameras = Math.max(0, totalCameras - ativasCameras)
+
+  // Impressoras: Total de impressoras na tabela eq_impressoras
   const { totalImpressoras } = banco
     .prepare(`
       SELECT COUNT(*) AS totalImpressoras
@@ -149,14 +152,17 @@ export const obterResumoDashboard = (): ResumoDashboard => {
     ativosPorCategoria,
     garantiasVencendo,
     garantiasVencendoTotal,
-    mapeamentoRede: {
-      disponiveis,
+    rede: {
+      total: totalIpsCapacidade,
       emUso,
     },
     cameras: {
       total: totalCameras,
-      porStatus: camerasPorStatus,
+      ativas: ativasCameras,
+      inativas: inativasCameras,
     },
-    totalImpressoras,
+    impressoras: {
+      total: totalImpressoras,
+    },
   }
 }

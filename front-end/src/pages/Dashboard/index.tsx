@@ -98,132 +98,64 @@ export default function Dashboard() {
     },
   ];
 
-  const temInfraestrutura =
-    dados &&
-    ((dados.portasSwitch?.total ?? 0) > 0 || (dados.canaisNvr?.total ?? 0) > 0);
-
-  return (
-    <div>
-      {/* ── Cabeçalho ─────────────────────────────────────────────────────── */}
-      <div className={styles.cabecalho}>
-        <h1 className={styles.titulo}>Visão Geral</h1>
-        <p className={styles.subtitulo}>Resumo do inventário de equipamentos de TI</p>
-      </div>
-
-      {/* ── Cards de métrica principal ────────────────────────────────────── */}
-      <div className={styles.gradeMetricas}>
-        {cardsMetrica.map((card) => (
-          <div key={card.label} className={styles.cardMetrica}>
-            <div className={styles.cardPip} style={{ backgroundColor: card.pip }} />
-            <span className={styles.cardValor}>{card.valor}</span>
-            <span className={styles.cardLabel}>{card.label}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* ── Ativos por categoria ──────────────────────────────────────────── */}
-      {dados && dados.ativosPorCategoria.length > 0 && (
+      {/* ── Seção "Infraestrutura e Dispositivos" ──────────────────────────── */}
+      {dados && (dados.rede || dados.cameras || dados.impressoras) && (
         <section className={styles.secao}>
-          <h2 className={styles.secaoTitulo}>Ativos por categoria</h2>
-          <div className={styles.gradeCategorias}>
-            {dados.ativosPorCategoria.map((item) => (
-              <div key={item.categoria} className={styles.cardCategoria}>
-                <span className={styles.categoriaValor}>{item.quantidade}</span>
-                <span className={styles.categoriaLabel}>
-                  {ROTULOS_CATEGORIA[item.categoria] ?? item.categoria.toLowerCase()}
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ── Seção "Garantias Vencendo" ────────────────────────────────────── */}
-      {dados && (dados.garantiasVencendoTotal ?? 0) > 0 && (
-        <section className={styles.secao}>
-          <h2 className={`${styles.secaoTitulo} ${styles.secaoTituloAviso}`}>
-            Garantias vencendo nos próximos 30 dias ({dados.garantiasVencendoTotal})
-          </h2>
-          <div className={styles.listaGarantias}>
-            {dados.garantiasVencendo.map((item) => {
-              const dataFormatada = item.data_garantia
-                ? item.data_garantia.split('-').reverse().join('/')
-                : '—';
-              const tituloItem = [item.nome, `${item.marca} ${item.modelo}`].filter(Boolean).join(' - ');
-              const rotuloCat = ROTULOS_CATEGORIA[item.categoria] ?? item.categoria;
-
-              return (
-                <Link
-                  key={item.id}
-                  to={`/equipamentos/${item.id}`}
-                  className={styles.cardGarantia}
-                >
-                  <div className={styles.garantiaInfo}>
-                    <span className={styles.garantiaTitulo}>{tituloItem}</span>
-                    <span className={styles.garantiaCategoria}>{rotuloCat}</span>
-                  </div>
-                  <div className={styles.garantiaDataContainer}>
-                    <span className={styles.garantiaDataLabel}>Vence em</span>
-                    <span className={styles.garantiaData}>{dataFormatada}</span>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-          {dados.garantiasVencendoTotal > (dados.garantiasVencendo?.length ?? 0) && (
-            <p className={styles.garantiasMaisInfo}>
-              + {dados.garantiasVencendoTotal - dados.garantiasVencendo.length} outros equipamentos com garantia a vencer.
-            </p>
-          )}
-        </section>
-      )}
-
-      {/* ── Seção "Utilização de infraestrutura" ──────────────────────────── */}
-      {temInfraestrutura && (
-        <section className={styles.secao}>
-          <h2 className={styles.secaoTitulo}>Utilização de infraestrutura</h2>
+          <h2 className={styles.secaoTitulo}>Infraestrutura e Dispositivos</h2>
           <div className={styles.gradeInfraestrutura}>
-            {(dados.portasSwitch?.total ?? 0) > 0 && (() => {
-              const { total, ocupadas } = dados.portasSwitch;
-              const perc = Math.round((ocupadas / total) * 100);
-              return (
-                <div className={styles.cardInfraestrutura}>
-                  <div className={styles.infraCabecalho}>
-                    <span className={styles.infraTitulo}>Portas de Switch em uso</span>
-                    <span className={styles.infraValorText}>
-                      {ocupadas} de {total} ({perc}%)
-                    </span>
-                  </div>
-                  <div className={styles.barraProgressoTrilho}>
-                    <div
-                      className={styles.barraProgressoPreenchimento}
-                      style={{ width: `${Math.min(perc, 100)}%` }}
-                    />
-                  </div>
+            {dados.rede && (
+              <div className={styles.cardInfraestrutura}>
+                <div className={styles.infraCabecalho}>
+                  <span className={styles.infraTitulo}>Mapeamento de Rede</span>
+                  <span className={styles.infraValorText}>
+                    {dados.rede.emUso} de {dados.rede.total} IPs em uso (
+                    {Math.round((dados.rede.emUso / (dados.rede.total || 1)) * 100)}%)
+                  </span>
                 </div>
-              );
-            })()}
+                <div className={styles.barraProgressoTrilho}>
+                  <div
+                    className={styles.barraProgressoPreenchimento}
+                    style={{
+                      width: `${Math.min(
+                        Math.round((dados.rede.emUso / (dados.rede.total || 1)) * 100),
+                        100
+                      )}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            )}
 
-            {(dados.canaisNvr?.total ?? 0) > 0 && (() => {
-              const { total, ocupadas } = dados.canaisNvr;
-              const perc = Math.round((ocupadas / total) * 100);
-              return (
-                <div className={styles.cardInfraestrutura}>
-                  <div className={styles.infraCabecalho}>
-                    <span className={styles.infraTitulo}>Canais de NVR em uso</span>
-                    <span className={styles.infraValorText}>
-                      {ocupadas} de {total} ({perc}%)
-                    </span>
-                  </div>
-                  <div className={styles.barraProgressoTrilho}>
-                    <div
-                      className={styles.barraProgressoPreenchimento}
-                      style={{ width: `${Math.min(perc, 100)}%` }}
-                    />
-                  </div>
+            {dados.cameras && (
+              <div className={styles.cardInfraestrutura}>
+                <div className={styles.infraCabecalho}>
+                  <span className={styles.infraTitulo}>Câmeras de Segurança</span>
+                  <span className={styles.infraValorText}>
+                    {dados.cameras.total} total ({dados.cameras.ativas} ativas, {dados.cameras.inativas} inativas)
+                  </span>
                 </div>
-              );
-            })()}
+                <div className={styles.barraProgressoTrilho}>
+                  <div
+                    className={styles.barraProgressoPreenchimento}
+                    style={{
+                      width: `${Math.min(
+                        Math.round((dados.cameras.ativas / (dados.cameras.total || 1)) * 100),
+                        100
+                      )}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {dados.impressoras && (
+              <div className={styles.cardInfraestrutura}>
+                <div className={styles.infraCabecalho}>
+                  <span className={styles.infraTitulo}>Impressoras Cadastradas</span>
+                  <span className={styles.infraValorText}>{dados.impressoras.total} unidades</span>
+                </div>
+              </div>
+            )}
           </div>
         </section>
       )}
