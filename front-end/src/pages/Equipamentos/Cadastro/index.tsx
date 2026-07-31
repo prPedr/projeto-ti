@@ -49,6 +49,88 @@ const DADOS_MESTRE_INICIAIS: DadosMestre = {
 
 const INTERFACE_REDE_INICIAL: InterfaceRede = { nome_interface: '', ip: '', mac: '' };
 
+const CATEGORIAS_CADASTRO: Array<{ valor: Categoria; rotulo: string; icone: JSX.Element }> = [
+  {
+    valor: 'COMPUTADOR',
+    rotulo: 'Computador',
+    icone: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+        <line x1="8" y1="21" x2="16" y2="21" />
+        <line x1="12" y1="17" x2="12" y2="21" />
+      </svg>
+    ),
+  },
+  {
+    valor: 'SWITCH',
+    rotulo: 'Switch',
+    icone: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="6" width="20" height="12" rx="2" />
+        <line x1="6" y1="12" x2="6.01" y2="12" strokeWidth="3" />
+        <line x1="10" y1="12" x2="10.01" y2="12" strokeWidth="3" />
+        <line x1="14" y1="12" x2="14.01" y2="12" strokeWidth="3" />
+        <line x1="18" y1="12" x2="18.01" y2="12" strokeWidth="3" />
+      </svg>
+    ),
+  },
+  {
+    valor: 'CELULAR',
+    rotulo: 'Celular',
+    icone: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="5" y="2" width="14" height="20" rx="3" ry="3" />
+        <line x1="12" y1="18" x2="12.01" y2="18" strokeWidth="2" />
+      </svg>
+    ),
+  },
+  {
+    valor: 'NVR',
+    rotulo: 'NVR',
+    icone: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="5" width="20" height="14" rx="2" />
+        <line x1="6" y1="10" x2="12" y2="10" />
+        <line x1="6" y1="14" x2="12" y2="14" />
+        <circle cx="17" cy="12" r="2" fill="currentColor" />
+      </svg>
+    ),
+  },
+  {
+    valor: 'CAMERA',
+    rotulo: 'Câmera',
+    icone: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+        <circle cx="12" cy="13" r="4" />
+      </svg>
+    ),
+  },
+  {
+    valor: 'IMPRESSORA',
+    rotulo: 'Impressora',
+    icone: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="6 9 6 2 18 2 18 9" />
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+        <rect x="6" y="14" width="12" height="8" />
+      </svg>
+    ),
+  },
+  {
+    valor: 'ANTENA',
+    rotulo: 'Antena Wi-Fi',
+    icone: (
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 12.55a11 11 0 0 1 14.08 0" />
+        <path d="M1.42 9a16 16 0 0 1 21.16 0" />
+        <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+        <circle cx="12" cy="20" r="1" fill="currentColor" />
+      </svg>
+    ),
+  },
+];
+
 function mapCategoriaParaEndpoint(categoria: Categoria): CategoriaEquipamento {
   switch (categoria) {
     case 'COMPUTADOR':
@@ -483,28 +565,28 @@ export default function Cadastro() {
               </svg>
               <h2 className={styles.secaoTitulo}>Dados Básicos</h2>
             </div>
-            <div className={styles.grid2}>
-              <div className={styles.campo}>
-                <label htmlFor="categoria">
-                  Categoria <span className={styles.obrigatorio}>*</span>
-                </label>
-                <select
-                  id="categoria"
-                  name="categoria"
-                  className={styles.select}
-                  value={categoria}
-                  onChange={(event) => setCategoria(event.target.value as Categoria)}
-                  required
-                >
-                  <option value="COMPUTADOR">Computador</option>
-                  <option value="SWITCH">Switch</option>
-                  <option value="CELULAR">Celular</option>
-                  <option value="NVR">NVR</option>
-                  <option value="CAMERA">Câmera</option>
-                  <option value="IMPRESSORA">Impressora</option>
-                  <option value="ANTENA">Antena Wi-Fi</option>
-                </select>
+            <div className={styles.campoCategoriaFull}>
+              <label className={styles.labelCategoria}>
+                Categoria <span className={styles.obrigatorio}>*</span>
+              </label>
+              <div className={styles.gradeCategorias} role="radiogroup" aria-label="Categoria do equipamento">
+                {CATEGORIAS_CADASTRO.map((item) => (
+                  <button
+                    key={item.valor}
+                    type="button"
+                    role="radio"
+                    aria-checked={categoria === item.valor}
+                    className={`${styles.cardCategoria} ${categoria === item.valor ? styles.cardCategoriaAtivo : ''}`}
+                    onClick={() => setCategoria(item.valor)}
+                  >
+                    <span className={styles.cardCategoriaIcone}>{item.icone}</span>
+                    <span className={styles.cardCategoriaRotulo}>{item.rotulo}</span>
+                  </button>
+                ))}
               </div>
+            </div>
+
+            <div className={styles.grid2}>
 
               <div className={styles.campo}>
                 <label htmlFor="status">
