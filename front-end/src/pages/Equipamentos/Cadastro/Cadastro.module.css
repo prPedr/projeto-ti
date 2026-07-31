@@ -14,9 +14,10 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: #ffffff;
+  background-color: var(--cor-cartao);
   border: 1px solid var(--cor-borda);
-  border-radius: 12px;
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-cartao);
 }
 
 .form {
@@ -40,22 +41,23 @@
   flex-direction: column;
   gap: 1.5rem;
   border: 1px solid var(--cor-borda);
-  border-radius: 8px;
+  border-radius: var(--raio-sm);
   padding: 1.5rem;
 }
 
 .grid2 {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1.5rem;
 }
 
 .secaoTitulo {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--cor-texto-destaque, var(--cor-texto));
+  font-family: var(--fonte-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cor-texto);
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--cor-borda, #eaeaea);
+  border-bottom: 1px solid var(--cor-borda);
   margin-bottom: 1rem;
 }
 
@@ -63,7 +65,6 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 1.25rem;
 }
 
 .campo label {
@@ -76,10 +77,10 @@
 .select {
   width: 100%;
   font-size: 1rem;
-  color: var(--cor-texto, #333);
-  background-color: #ffffff;
-  border: 1px solid var(--cor-borda);
-  border-radius: 6px;
+  color: var(--cor-texto);
+  background-color: var(--cor-input-fundo);
+  border: 1px solid var(--cor-input-borda);
+  border-radius: var(--raio-sm);
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -102,13 +103,13 @@
 .input:focus,
 .select:focus {
   outline: none;
-  border-color: var(--cor-primaria, #0056b3);
-  box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
 }
 
 .input:disabled,
 .select:disabled {
-  background-color: #f3f4f6;
+  background-color: var(--cor-input-fundo);
   cursor: not-allowed;
   opacity: 0.7;
 }
@@ -127,8 +128,8 @@
   gap: 1rem;
   padding: 1.5rem 2rem;
   border-top: 1px solid var(--cor-borda);
-  background-color: #ffffff;
-  border-radius: 0 0 12px 12px;
+  background-color: var(--cor-cartao);
+  border-radius: 0 0 var(--raio-lg) var(--raio-lg);
 }
 
 .botaoSalvar {
@@ -204,7 +205,7 @@
 
 .banner {
   padding: 0.75rem 1rem;
-  border-radius: var(--raio-sm, 8px);
+  border-radius: var(--raio-sm);
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 1rem;
@@ -229,12 +230,12 @@
 }
 
 .inputComErro {
-  border-color: var(--status-descartado-texto, #ef4444) !important;
+  border-color: var(--status-descartado-texto) !important;
 }
 
 .textoErroSecao {
   display: block;
-  color: var(--status-descartado-texto, #ef4444);
+  color: var(--status-descartado-texto);
   font-size: 0.875rem;
   font-weight: 500;
   margin-top: -0.5rem;
@@ -242,12 +243,12 @@
 }
 
 .obrigatorio {
-  color: var(--status-descartado-texto, #ef4444);
+  color: var(--status-descartado-texto);
   margin-left: 2px;
 }
 
 .legendaObrigatorio {
   font-size: 0.8125rem;
-  color: var(--cor-texto-suave, #6b7280);
+  color: var(--cor-texto-suave);
   margin-bottom: -1rem;
 }
