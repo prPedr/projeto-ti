@@ -143,6 +143,7 @@ export default function SwitchesPortas() {
         porta.conectado_marca    ?? '',
         porta.conectado_modelo   ?? '',
         ...(porta.conectado_ips  ?? []),
+        ...(porta.conectado_macs ?? []),
         porta.descricao          ?? '',
       ].join(' ').toLowerCase();
       return texto.includes(termo);
@@ -201,7 +202,7 @@ export default function SwitchesPortas() {
                 type="search"
                 value={filtroPorta}
                 onChange={(e) => setFiltroPorta(e.target.value)}
-                placeholder="Buscar por IP, marca, modelo ou equipamento..."
+                placeholder="Buscar por IP, MAC, marca, modelo ou equipamento..."
               />
 
               <div className={styles.grupoAlternancia}>
