@@ -475,7 +475,14 @@ export default function Cadastro() {
           </p>
 
           <div className={styles.secaoMonobloco}>
-            <h2 className={styles.secaoTitulo}>Dados Básicos</h2>
+            <div className={styles.cabecalhoSecao}>
+              <svg className={styles.iconeSecao} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+              </svg>
+              <h2 className={styles.secaoTitulo}>Dados Básicos</h2>
+            </div>
             <div className={styles.grid2}>
               <div className={styles.campo}>
                 <label htmlFor="categoria">
@@ -610,8 +617,22 @@ export default function Cadastro() {
           </div>
 
           {categoria === 'COMPUTADOR' && (
-            <div className={styles.secaoMonobloco}>
-              <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
+            <div className={`${styles.secaoMonobloco} ${styles.secaoDinamica}`}>
+              <div className={styles.cabecalhoSecao}>
+                <svg className={styles.iconeSecao} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                  <rect x="9" y="9" width="6" height="6"></rect>
+                  <line x1="9" y1="1" x2="9" y2="4"></line>
+                  <line x1="15" y1="1" x2="15" y2="4"></line>
+                  <line x1="9" y1="20" x2="9" y2="23"></line>
+                  <line x1="15" y1="20" x2="15" y2="23"></line>
+                  <line x1="20" y1="9" x2="23" y2="9"></line>
+                  <line x1="20" y1="15" x2="23" y2="15"></line>
+                  <line x1="1" y1="9" x2="4" y2="9"></line>
+                  <line x1="1" y1="15" x2="4" y2="15"></line>
+                </svg>
+                <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
+              </div>
               <div className={styles.grid2}>
                 <div className={styles.campo}>
                   <label htmlFor="usuario_alocado">Usuário Alocado</label>
@@ -702,8 +723,22 @@ export default function Cadastro() {
           )}
 
           {categoria === 'SWITCH' && (
-            <div className={styles.secaoMonobloco}>
-              <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
+            <div className={`${styles.secaoMonobloco} ${styles.secaoDinamica}`}>
+              <div className={styles.cabecalhoSecao}>
+                <svg className={styles.iconeSecao} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                  <rect x="9" y="9" width="6" height="6"></rect>
+                  <line x1="9" y1="1" x2="9" y2="4"></line>
+                  <line x1="15" y1="1" x2="15" y2="4"></line>
+                  <line x1="9" y1="20" x2="9" y2="23"></line>
+                  <line x1="15" y1="20" x2="15" y2="23"></line>
+                  <line x1="20" y1="9" x2="23" y2="9"></line>
+                  <line x1="20" y1="15" x2="23" y2="15"></line>
+                  <line x1="1" y1="9" x2="4" y2="9"></line>
+                  <line x1="1" y1="15" x2="4" y2="15"></line>
+                </svg>
+                <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
+              </div>
               <div className={styles.grid2}>
                 <div className={styles.campo}>
                   <label htmlFor="numero_portas">Número de Portas</label>
@@ -741,8 +776,22 @@ export default function Cadastro() {
           )}
 
           {categoria === 'CELULAR' && (
-            <div className={styles.secaoMonobloco}>
-              <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
+            <div className={`${styles.secaoMonobloco} ${styles.secaoDinamica}`}>
+              <div className={styles.cabecalhoSecao}>
+                <svg className={styles.iconeSecao} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                  <rect x="9" y="9" width="6" height="6"></rect>
+                  <line x1="9" y1="1" x2="9" y2="4"></line>
+                  <line x1="15" y1="1" x2="15" y2="4"></line>
+                  <line x1="9" y1="20" x2="9" y2="23"></line>
+                  <line x1="15" y1="20" x2="15" y2="23"></line>
+                  <line x1="20" y1="9" x2="23" y2="9"></line>
+                  <line x1="20" y1="15" x2="23" y2="15"></line>
+                  <line x1="1" y1="9" x2="4" y2="9"></line>
+                  <line x1="1" y1="15" x2="4" y2="15"></line>
+                </svg>
+                <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
+              </div>
               <div className={styles.grid2}>
                 <div className={styles.campo}>
                   <label htmlFor="usuario_alocado">Usuário Alocado</label>
@@ -834,8 +883,22 @@ export default function Cadastro() {
           )}
 
           {categoria === 'NVR' && (
-            <div className={styles.secaoMonobloco}>
-              <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
+            <div className={`${styles.secaoMonobloco} ${styles.secaoDinamica}`}>
+              <div className={styles.cabecalhoSecao}>
+                <svg className={styles.iconeSecao} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                  <rect x="9" y="9" width="6" height="6"></rect>
+                  <line x1="9" y1="1" x2="9" y2="4"></line>
+                  <line x1="15" y1="1" x2="15" y2="4"></line>
+                  <line x1="9" y1="20" x2="9" y2="23"></line>
+                  <line x1="15" y1="20" x2="15" y2="23"></line>
+                  <line x1="20" y1="9" x2="23" y2="9"></line>
+                  <line x1="20" y1="15" x2="23" y2="15"></line>
+                  <line x1="1" y1="9" x2="4" y2="9"></line>
+                  <line x1="1" y1="15" x2="4" y2="15"></line>
+                </svg>
+                <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
+              </div>
               <div className={styles.grid2}>
                 <div className={styles.campo}>
                   <label htmlFor="quantidade_canais">Quantidade de Canais</label>
@@ -885,8 +948,22 @@ export default function Cadastro() {
           )}
 
           {categoria === 'CAMERA' && (
-            <div className={styles.secaoMonobloco}>
-              <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
+            <div className={`${styles.secaoMonobloco} ${styles.secaoDinamica}`}>
+              <div className={styles.cabecalhoSecao}>
+                <svg className={styles.iconeSecao} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                  <rect x="9" y="9" width="6" height="6"></rect>
+                  <line x1="9" y1="1" x2="9" y2="4"></line>
+                  <line x1="15" y1="1" x2="15" y2="4"></line>
+                  <line x1="9" y1="20" x2="9" y2="23"></line>
+                  <line x1="15" y1="20" x2="15" y2="23"></line>
+                  <line x1="20" y1="9" x2="23" y2="9"></line>
+                  <line x1="20" y1="15" x2="23" y2="15"></line>
+                  <line x1="1" y1="9" x2="4" y2="9"></line>
+                  <line x1="1" y1="15" x2="4" y2="15"></line>
+                </svg>
+                <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
+              </div>
               <div className={styles.grid2}>
                 <div className={styles.campo}>
                   <label htmlFor="resolucao">Resolução</label>
@@ -924,8 +1001,22 @@ export default function Cadastro() {
           )}
 
           {categoria === 'IMPRESSORA' && (
-            <div className={styles.secaoMonobloco}>
-              <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
+            <div className={`${styles.secaoMonobloco} ${styles.secaoDinamica}`}>
+              <div className={styles.cabecalhoSecao}>
+                <svg className={styles.iconeSecao} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                  <rect x="9" y="9" width="6" height="6"></rect>
+                  <line x1="9" y1="1" x2="9" y2="4"></line>
+                  <line x1="15" y1="1" x2="15" y2="4"></line>
+                  <line x1="9" y1="20" x2="9" y2="23"></line>
+                  <line x1="15" y1="20" x2="15" y2="23"></line>
+                  <line x1="20" y1="9" x2="23" y2="9"></line>
+                  <line x1="20" y1="15" x2="23" y2="15"></line>
+                  <line x1="1" y1="9" x2="4" y2="9"></line>
+                  <line x1="1" y1="15" x2="4" y2="15"></line>
+                </svg>
+                <h2 className={styles.secaoTitulo}>Detalhes Técnicos</h2>
+              </div>
               <div className={styles.grid2}>
                 <div className={styles.campo}>
                   <label htmlFor="tipo_conexao">
@@ -970,7 +1061,16 @@ export default function Cadastro() {
 
           {!(categoria === 'IMPRESSORA' && tipoConexao === 'USB') && (
             <div className={styles.secaoMonobloco} id="secao-interfaces-rede">
-            <h2 className={styles.secaoTitulo}>Interface de Rede</h2>
+              <div className={styles.cabecalhoSecao}>
+                <svg className={styles.iconeSecao} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="6" height="6" rx="1"></rect>
+                  <rect x="16" y="2" width="6" height="6" rx="1"></rect>
+                  <rect x="9" y="16" width="6" height="6" rx="1"></rect>
+                  <path d="M5 8v4h14V8"></path>
+                  <path d="M12 12v4"></path>
+                </svg>
+                <h2 className={styles.secaoTitulo}>Interface de Rede</h2>
+              </div>
             {erroInterfaces && (
               <span className={styles.textoErroSecao}>
                 {erroInterfaces.mensagem}

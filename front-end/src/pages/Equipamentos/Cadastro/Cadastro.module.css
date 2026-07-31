@@ -32,7 +32,7 @@
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 3.25rem;
 }
 
 .cartaoSecao,
@@ -45,10 +45,31 @@
   padding: 1.5rem;
 }
 
+.secaoDinamica {
+  background-color: var(--cor-acento-suave);
+  border-left: 3px solid var(--cor-acento);
+}
+
 .grid2 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1.5rem;
+}
+
+.cabecalhoSecao {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--cor-borda);
+  margin-bottom: 1rem;
+}
+
+.iconeSecao {
+  width: 20px;
+  height: 20px;
+  color: var(--cor-acento);
+  flex-shrink: 0;
 }
 
 .secaoTitulo {
@@ -56,9 +77,6 @@
   font-size: 16px;
   font-weight: 700;
   color: var(--cor-texto);
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--cor-borda);
-  margin-bottom: 1rem;
 }
 
 .campo {
