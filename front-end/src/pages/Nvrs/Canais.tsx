@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ComboBoxSelect from '../../components/ComboBoxSelect';
 import { buscarEquipamentoPorId } from '../../services/equipamentos';
@@ -31,6 +31,9 @@ export default function NvrsCanais() {
 
   // Estado do modo de visualização ('grade' | 'lista')
   const [modoVisualizacao, setModoVisualizacao] = useState<'grade' | 'lista'>('grade');
+
+  // Estado do filtro client-side de busca de canais
+  const [filtroCanal, setFiltroCanal] = useState('');
 
   // Estado do modal / edição de canal
   const [canalEdicao, setCanalEdicao] = useState<CanalNvr | null>(null);
@@ -128,6 +131,16 @@ export default function NvrsCanais() {
     }
   };
 
+  // Lista derivada filtrada (client-side, sem chamada à API)
+  const canaisFiltrados = useMemo(() => {
+    if (!filtroCanal.trim()) return canais;
+    const termo = filtroCanal.toLowerCase();
+    return canais.filter((canal) => {
+      const texto = `${canal.conectado_nome ?? ''} ${canal.conectado_marca ?? ''} ${canal.conectado_modelo ?? ''} ${(canal.conectado_ips ?? []).join(' ')} ${(canal.conectado_macs ?? []).join(' ')} ${canal.descricao ?? ''}`.toLowerCase();
+      return texto.includes(termo);
+    });
+  }, [canais, filtroCanal]);
+
   const totalCanais = canais.length;
   const canaisEmUso = canais.filter(
     (c) => c.camera_conectada_id !== null || (c.descricao && c.descricao.trim() !== '')
@@ -174,9 +187,19 @@ export default function NvrsCanais() {
                   </div>
                 </div>
 
+                <input
+                  className={styles.inputFiltroCanal}
+                  type="search"
+                  value={filtroCanal}
+                  onChange={(e) => setFiltroCanal(e.target.value)}
+                  placeholder="Buscar por IP, MAC, marca, modelo ou equipamento..."
+                />
+
                 <div className={styles.grupoAlternancia}>
                   <div className={styles.resumoUso}>
-                    {canaisEmUso} de {totalCanais} canais em uso
+                    {filtroCanal.trim()
+                      ? `Mostrando ${canaisFiltrados.length} de ${totalCanais} canais`
+                      : `${canaisEmUso} de ${totalCanais} canais em uso`}
                   </div>
 
                   <div className={styles.botoesAlternancia}>
@@ -239,9 +262,11 @@ export default function NvrsCanais() {
 
               {canais.length === 0 ? (
                 <p>Nenhum canal cadastrado para este NVR.</p>
+              ) : canaisFiltrados.length === 0 ? (
+                <p className={styles.textoVazio}>Nenhum canal encontrado para essa busca.</p>
               ) : modoVisualizacao === 'grade' ? (
                 <div className={styles.gridPortas}>
-                  {canais.map((canal) => {
+                  {canaisFiltrados.map((canal) => {
                     const estaOcupado =
                       canal.camera_conectada_id !== null ||
                       (canal.descricao && canal.descricao.trim() !== '');
@@ -294,7 +319,7 @@ export default function NvrsCanais() {
                       </tr>
                     </thead>
                     <tbody>
-                      {canais.map((canal) => {
+                      {canaisFiltrados.map((canal) => {
                         const estaOcupado =
                           canal.camera_conectada_id !== null ||
                           (canal.descricao && canal.descricao.trim() !== '');

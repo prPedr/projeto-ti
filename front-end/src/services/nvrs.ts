@@ -27,6 +27,7 @@ export interface CanalNvr {
   conectado_modelo: string | null;
   conectado_status: string | null;
   conectado_ips: string[];
+  conectado_macs: string[];
 }
 
 export interface CameraConectavel {

@@ -43,6 +43,24 @@
   margin-bottom: 1.5rem;
 }
 
+/* Campo de busca client-side de canais */
+.inputFiltroCanal {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-md);
+  font-size: 13px;
+  color: var(--cor-texto);
+  background-color: var(--cor-fundo-input, #f9f9f9);
+  transition: border-color 0.2s ease;
+  outline: none;
+}
+
+.inputFiltroCanal:focus {
+  border-color: var(--cor-primaria);
+}
+
 .legenda {
   display: flex;
   align-items: center;
