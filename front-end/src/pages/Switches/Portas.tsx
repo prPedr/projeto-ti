@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ComboBoxSelect from '../../components/ComboBoxSelect';
 import { buscarEquipamentoPorId } from '../../services/equipamentos';
@@ -33,6 +33,9 @@ export default function SwitchesPortas() {
 
   // Estado do modo de visualização ('grade' | 'lista')
   const [modoVisualizacao, setModoVisualizacao] = useState<'grade' | 'lista'>('grade');
+
+  // Estado do filtro client-side de busca de portas
+  const [filtroPorta, setFiltroPorta] = useState('');
 
   // Estado do modal / edição de porta
   const [portaEdicao, setPortaEdicao] = useState<PortaSwitch | null>(null);
@@ -130,6 +133,22 @@ export default function SwitchesPortas() {
     }
   };
 
+  // Lista derivada filtrada (client-side, sem chamada à API)
+  const portasFiltradas = useMemo(() => {
+    if (!filtroPorta.trim()) return portas;
+    const termo = filtroPorta.toLowerCase();
+    return portas.filter((porta) => {
+      const texto = [
+        porta.conectado_nome     ?? '',
+        porta.conectado_marca    ?? '',
+        porta.conectado_modelo   ?? '',
+        ...(porta.conectado_ips  ?? []),
+        porta.descricao          ?? '',
+      ].join(' ').toLowerCase();
+      return texto.includes(termo);
+    });
+  }, [portas, filtroPorta]);
+
   const totalPortas = portas.length;
   const portasEmUso = portas.filter(
     (p) => p.equipamento_conectado_id !== null || (p.descricao && p.descricao.trim() !== '')
@@ -177,9 +196,19 @@ export default function SwitchesPortas() {
                 </div>
               </div>
 
+              <input
+                className={styles.inputFiltroPorta}
+                type="search"
+                value={filtroPorta}
+                onChange={(e) => setFiltroPorta(e.target.value)}
+                placeholder="Buscar por IP, marca, modelo ou equipamento..."
+              />
+
               <div className={styles.grupoAlternancia}>
                 <div className={styles.resumoUso}>
-                  {portasEmUso} de {totalPortas} portas em uso
+                  {filtroPorta.trim()
+                    ? `Mostrando ${portasFiltradas.length} de ${totalPortas} portas`
+                    : `${portasEmUso} de ${totalPortas} portas em uso`}
                 </div>
 
                 <div className={styles.botoesAlternancia}>
@@ -242,9 +271,11 @@ export default function SwitchesPortas() {
 
             {portas.length === 0 ? (
               <p>Nenhuma porta cadastrada para este switch.</p>
+            ) : portasFiltradas.length === 0 ? (
+              <p className={styles.textoVazio}>Nenhuma porta encontrada para essa busca.</p>
             ) : modoVisualizacao === 'grade' ? (
               <div className={styles.gridPortas}>
-                {portas.map((porta) => {
+                {portasFiltradas.map((porta) => {
                   const estaOcupada =
                     porta.equipamento_conectado_id !== null ||
                     (porta.descricao && porta.descricao.trim() !== '');
@@ -297,7 +328,7 @@ export default function SwitchesPortas() {
                     </tr>
                   </thead>
                   <tbody>
-                    {portas.map((porta) => {
+                    {portasFiltradas.map((porta) => {
                       const estaOcupada =
                         porta.equipamento_conectado_id !== null ||
                         (porta.descricao && porta.descricao.trim() !== '');
