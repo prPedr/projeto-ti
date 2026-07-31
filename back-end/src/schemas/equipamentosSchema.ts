@@ -210,6 +210,7 @@ export const listarEquipamentosQuerySchema = z.object({
   status: statusSchema.optional(),
   marca: z.string().optional(),
   modelo: z.string().optional(),
+  categoria: z.enum(['COMPUTADOR', 'SWITCH', 'CELULAR', 'NVR', 'CAMERA', 'IMPRESSORA', 'ANTENA']).optional(),
 })
 
 export const listarEquipamentosSchema = z.object({

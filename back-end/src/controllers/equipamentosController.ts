@@ -20,15 +20,16 @@ const criarErro = (mensagem: string, statusCode: number): ErroComStatus => {
 }
 
 export const listar = (requisicao: Request, resposta: Response) => {
-  const { pagina, limite, busca, status, marca, modelo } = (requisicao.dadosValidados as DadosValidadosListagem).query
+  const { pagina, limite, busca, status, marca, modelo, categoria } = (requisicao.dadosValidados as DadosValidadosListagem).query
 
   const filtros: FiltrosListagem = {
     pagina,
     limite,
-    ...(busca ? { busca } : {}),
-    ...(status ? { status } : {}),
-    ...(marca ? { marca } : {}),
-    ...(modelo ? { modelo } : {}),
+    ...(busca     ? { busca }     : {}),
+    ...(status    ? { status }    : {}),
+    ...(marca     ? { marca }     : {}),
+    ...(modelo    ? { modelo }    : {}),
+    ...(categoria ? { categoria } : {}),
   }
 
   const { dados, metadados } = listarEquipamentos(filtros)
@@ -36,8 +37,9 @@ export const listar = (requisicao: Request, resposta: Response) => {
 }
 
 export const listarFiltrosDisponiveis = (requisicao: Request, resposta: Response) => {
-  const marca = typeof requisicao.query.marca === 'string' ? requisicao.query.marca : undefined
-  const { marcas, modelos } = listarMarcasModelosDisponiveis(marca)
+  const categoria = typeof requisicao.query.categoria === 'string' ? requisicao.query.categoria : undefined
+  const marca     = typeof requisicao.query.marca     === 'string' ? requisicao.query.marca     : undefined
+  const { marcas, modelos } = listarMarcasModelosDisponiveis(categoria, marca)
   resposta.status(200).json({ sucesso: true, marcas, modelos })
 }
 

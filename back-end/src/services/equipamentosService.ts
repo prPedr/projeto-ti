@@ -31,6 +31,7 @@ export interface FiltrosListagem {
   status?: string
   marca?: string
   modelo?: string
+  categoria?: string
 }
 
 export interface ResultadoListagemEquipamentos {
@@ -75,6 +76,11 @@ export const listarEquipamentos = (filtros: FiltrosListagem): ResultadoListagemE
   if (filtros.modelo) {
     condicoes.push('e.modelo = @modelo')
     parametros.modelo = filtros.modelo
+  }
+
+  if (filtros.categoria) {
+    condicoes.push('e.categoria = @categoria')
+    parametros.categoria = filtros.categoria
   }
 
   const clausulaWhere = condicoes.length > 0 ? `WHERE ${condicoes.join(' AND ')}` : ''
@@ -147,21 +153,30 @@ export const listarEquipamentos = (filtros: FiltrosListagem): ResultadoListagemE
   }
 }
 
-export const listarMarcasModelosDisponiveis = (marcaFiltro?: string) => {
+export const listarMarcasModelosDisponiveis = (categoriaFiltro?: string, marcaFiltro?: string) => {
+  const condicoesBase = ["status != 'DESCARTADO'"]
+  const paramsBase: any = {}
+  if (categoriaFiltro) {
+    condicoesBase.push('categoria = @categoria')
+    paramsBase.categoria = categoriaFiltro
+  }
+  const whereBase = condicoesBase.join(' AND ')
+
   const marcas = banco
-    .prepare("SELECT DISTINCT marca FROM equipamentos WHERE status != 'DESCARTADO' ORDER BY marca")
-    .all()
+    .prepare(`SELECT DISTINCT marca FROM equipamentos WHERE ${whereBase} ORDER BY marca`)
+    .all(paramsBase)
     .map((linha: any) => linha.marca)
 
-  const modelos = marcaFiltro
-    ? banco
-        .prepare("SELECT DISTINCT modelo FROM equipamentos WHERE status != 'DESCARTADO' AND marca = @marca ORDER BY modelo")
-        .all({ marca: marcaFiltro })
-        .map((linha: any) => linha.modelo)
-    : banco
-        .prepare("SELECT DISTINCT modelo FROM equipamentos WHERE status != 'DESCARTADO' ORDER BY modelo")
-        .all()
-        .map((linha: any) => linha.modelo)
+  const condicoesModelo = [...condicoesBase]
+  const paramsModelo = { ...paramsBase }
+  if (marcaFiltro) {
+    condicoesModelo.push('marca = @marca')
+    paramsModelo.marca = marcaFiltro
+  }
+  const modelos = banco
+    .prepare(`SELECT DISTINCT modelo FROM equipamentos WHERE ${condicoesModelo.join(' AND ')} ORDER BY modelo`)
+    .all(paramsModelo)
+    .map((linha: any) => linha.modelo)
 
   return { marcas, modelos }
 }
