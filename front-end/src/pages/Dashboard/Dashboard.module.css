@@ -159,3 +159,128 @@
   align-items: center;
   gap: 10px;
 }
+
+/* ─── Seção "Garantias Vencendo" ─────────────────────────────────────────── */
+.secaoTituloAviso {
+  color: var(--status-manutencao-texto);
+}
+
+.listaGarantias {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.cardGarantia {
+  background-color: var(--cor-cartao);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-cartao);
+  padding: 1rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-decoration: none;
+  color: var(--cor-texto);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.cardGarantia:hover {
+  transform: translateY(-2px);
+  border-color: var(--cor-acento);
+}
+
+.garantiaInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.garantiaTitulo {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--cor-texto);
+}
+
+.garantiaCategoria {
+  font-size: 12px;
+  color: var(--cor-texto-suave);
+}
+
+.garantiaDataContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.garantiaDataLabel {
+  font-size: 11px;
+  color: var(--cor-texto-suave);
+  text-transform: uppercase;
+}
+
+.garantiaData {
+  font-family: var(--fonte-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--status-manutencao-texto);
+}
+
+.garantiasMaisInfo {
+  margin-top: 1rem;
+  font-size: 13px;
+  color: var(--cor-texto-suave);
+  font-weight: 500;
+}
+
+/* ─── Seção "Utilização de infraestrutura" ───────────────────────────────── */
+.gradeInfraestrutura {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.cardInfraestrutura {
+  background-color: var(--cor-cartao);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-md);
+  box-shadow: var(--sombra-cartao);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.infraCabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.infraTitulo {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--cor-texto);
+}
+
+.infraValorText {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cor-texto-suave);
+}
+
+.barraProgressoTrilho {
+  width: 100%;
+  height: 8px;
+  background-color: var(--cor-borda);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.barraProgressoPreenchimento {
+  height: 100%;
+  background-color: var(--cor-acento);
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}

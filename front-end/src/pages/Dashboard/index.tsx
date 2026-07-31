@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { buscarResumoDashboard, type ResumoDashboard } from '../../services/dashboard';
 import styles from './Dashboard.module.css';
 
@@ -9,6 +10,8 @@ const ROTULOS_CATEGORIA: Record<string, string> = {
   CELULAR:    'Celulares',
   NVR:        'NVRs',
   CAMERA:     'Câmeras',
+  IMPRESSORA: 'Impressoras',
+  ANTENA:     'Antenas Wi-Fi',
 };
 
 export default function Dashboard() {
@@ -37,7 +40,7 @@ export default function Dashboard() {
           <p className={styles.subtitulo}>Carregando dados…</p>
         </div>
         <div className={styles.skeleton}>
-          {Array.from({ length: 4 }).map((_, i) => (
+          {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className={styles.skeletonCard} />
           ))}
         </div>
@@ -67,8 +70,6 @@ export default function Dashboard() {
   }
 
   // ── Dashboard com dados ───────────────────────────────────────────────────
-  const totalDescartados = 0; // backend não expõe ainda — placeholder tipado
-
   const cardsMetrica = [
     {
       label: 'Equipamentos ativos',
@@ -81,13 +82,25 @@ export default function Dashboard() {
       pip: 'var(--status-manutencao-texto)',
     },
     {
+      label: 'Em estoque',
+      valor: dados?.totalEstoque ?? 0,
+      pip: 'var(--status-estoque-texto)',
+    },
+    {
+      label: 'Descartados',
+      valor: dados?.totalDescartados ?? 0,
+      pip: 'var(--status-descartado-texto)',
+    },
+    {
       label: 'Total no inventário',
-      valor: (dados?.totalAtivos ?? 0) + (dados?.totalEmManutencao ?? 0),
+      valor: (dados?.totalAtivos ?? 0) + (dados?.totalEmManutencao ?? 0) + (dados?.totalEstoque ?? 0),
       pip: 'var(--cor-acento)',
     },
   ];
 
-  void totalDescartados; // silencia lint enquanto o backend não expõe o campo
+  const temInfraestrutura =
+    dados &&
+    ((dados.portasSwitch?.total ?? 0) > 0 || (dados.canaisNvr?.total ?? 0) > 0);
 
   return (
     <div>
@@ -121,6 +134,96 @@ export default function Dashboard() {
                 </span>
               </div>
             ))}
+          </div>
+        </section>
+      )}
+
+      {/* ── Seção "Garantias Vencendo" ────────────────────────────────────── */}
+      {dados && (dados.garantiasVencendoTotal ?? 0) > 0 && (
+        <section className={styles.secao}>
+          <h2 className={`${styles.secaoTitulo} ${styles.secaoTituloAviso}`}>
+            Garantias vencendo nos próximos 30 dias ({dados.garantiasVencendoTotal})
+          </h2>
+          <div className={styles.listaGarantias}>
+            {dados.garantiasVencendo.map((item) => {
+              const dataFormatada = item.data_garantia
+                ? item.data_garantia.split('-').reverse().join('/')
+                : '—';
+              const tituloItem = [item.nome, `${item.marca} ${item.modelo}`].filter(Boolean).join(' - ');
+              const rotuloCat = ROTULOS_CATEGORIA[item.categoria] ?? item.categoria;
+
+              return (
+                <Link
+                  key={item.id}
+                  to={`/equipamentos/${item.id}`}
+                  className={styles.cardGarantia}
+                >
+                  <div className={styles.garantiaInfo}>
+                    <span className={styles.garantiaTitulo}>{tituloItem}</span>
+                    <span className={styles.garantiaCategoria}>{rotuloCat}</span>
+                  </div>
+                  <div className={styles.garantiaDataContainer}>
+                    <span className={styles.garantiaDataLabel}>Vence em</span>
+                    <span className={styles.garantiaData}>{dataFormatada}</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+          {dados.garantiasVencendoTotal > (dados.garantiasVencendo?.length ?? 0) && (
+            <p className={styles.garantiasMaisInfo}>
+              + {dados.garantiasVencendoTotal - dados.garantiasVencendo.length} outros equipamentos com garantia a vencer.
+            </p>
+          )}
+        </section>
+      )}
+
+      {/* ── Seção "Utilização de infraestrutura" ──────────────────────────── */}
+      {temInfraestrutura && (
+        <section className={styles.secao}>
+          <h2 className={styles.secaoTitulo}>Utilização de infraestrutura</h2>
+          <div className={styles.gradeInfraestrutura}>
+            {(dados.portasSwitch?.total ?? 0) > 0 && (() => {
+              const { total, ocupadas } = dados.portasSwitch;
+              const perc = Math.round((ocupadas / total) * 100);
+              return (
+                <div className={styles.cardInfraestrutura}>
+                  <div className={styles.infraCabecalho}>
+                    <span className={styles.infraTitulo}>Portas de Switch em uso</span>
+                    <span className={styles.infraValorText}>
+                      {ocupadas} de {total} ({perc}%)
+                    </span>
+                  </div>
+                  <div className={styles.barraProgressoTrilho}>
+                    <div
+                      className={styles.barraProgressoPreenchimento}
+                      style={{ width: `${Math.min(perc, 100)}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })()}
+
+            {(dados.canaisNvr?.total ?? 0) > 0 && (() => {
+              const { total, ocupadas } = dados.canaisNvr;
+              const perc = Math.round((ocupadas / total) * 100);
+              return (
+                <div className={styles.cardInfraestrutura}>
+                  <div className={styles.infraCabecalho}>
+                    <span className={styles.infraTitulo}>Canais de NVR em uso</span>
+                    <span className={styles.infraValorText}>
+                      {ocupadas} de {total} ({perc}%)
+                    </span>
+                  </div>
+                  <div className={styles.barraProgressoTrilho}>
+                    <div
+                      className={styles.barraProgressoPreenchimento}
+                      style={{ width: `${Math.min(perc, 100)}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </section>
       )}
