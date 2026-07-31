@@ -55,7 +55,13 @@ export const listarEquipamentos = (filtros: FiltrosListagem): ResultadoListagemE
   }
 
   if (filtros.busca) {
-    condicoes.push('(e.nome LIKE @busca OR e.marca LIKE @busca OR e.modelo LIKE @busca OR eqc.tag_patrimonio LIKE @busca)')
+    condicoes.push(`(
+      e.nome LIKE @busca
+      OR e.marca LIKE @busca
+      OR e.modelo LIKE @busca
+      OR eqc.tag_patrimonio LIKE @busca
+      OR EXISTS (SELECT 1 FROM interfaces_rede ir WHERE ir.equipamento_id = e.id AND ir.ip LIKE @busca)
+    )`)
     parametros.busca = `%${filtros.busca}%`
   }
 
