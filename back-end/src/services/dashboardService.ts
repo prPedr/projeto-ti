@@ -14,9 +14,14 @@ export interface GarantiaVencendo {
   data_garantia: string
 }
 
-export interface UtilizacaoRecurso {
-  total: number
-  ocupadas: number
+export interface MapeamentoRedeMetrica {
+  disponiveis: number
+  emUso: number
+}
+
+export interface CameraPorStatus {
+  status: string
+  quantidade: number
 }
 
 export interface ResumoDashboard {
@@ -25,10 +30,14 @@ export interface ResumoDashboard {
   totalEstoque: number
   totalDescartados: number
   ativosPorCategoria: AtivoPorCategoria[]
-  portasSwitch: UtilizacaoRecurso
-  canaisNvr: UtilizacaoRecurso
   garantiasVencendo: GarantiaVencendo[]
   garantiasVencendoTotal: number
+  mapeamentoRede: MapeamentoRedeMetrica
+  cameras: {
+    total: number
+    porStatus: CameraPorStatus[]
+  }
+  totalImpressoras: number
 }
 
 export const obterResumoDashboard = (): ResumoDashboard => {
@@ -57,22 +66,6 @@ export const obterResumoDashboard = (): ResumoDashboard => {
     `)
     .all() as AtivoPorCategoria[]
 
-  const portasSwitch = banco
-    .prepare(`
-      SELECT
-        (SELECT COALESCE(SUM(numero_portas), 0) FROM eq_switches) AS total,
-        (SELECT COUNT(*) FROM portas_switch WHERE equipamento_conectado_id IS NOT NULL OR descricao IS NOT NULL) AS ocupadas
-    `)
-    .get() as UtilizacaoRecurso
-
-  const canaisNvr = banco
-    .prepare(`
-      SELECT
-        (SELECT COALESCE(SUM(quantidade_canais), 0) FROM eq_nvrs) AS total,
-        (SELECT COUNT(*) FROM canais_nvr WHERE camera_conectada_id IS NOT NULL OR descricao IS NOT NULL) AS ocupadas
-    `)
-    .get() as UtilizacaoRecurso
-
   const garantiasVencendo = banco
     .prepare(`
       SELECT id, nome, marca, modelo, categoria, data_garantia
@@ -95,15 +88,75 @@ export const obterResumoDashboard = (): ResumoDashboard => {
     `)
     .get() as { garantiasVencendoTotal: number }
 
+  // Mapeamento de Rede: IPs em uso vs IPs disponíveis
+  const { emUso } = banco
+    .prepare(`
+      SELECT COUNT(*) AS emUso
+      FROM interfaces_rede ir
+      JOIN equipamentos e ON e.id = ir.equipamento_id
+      WHERE e.status != 'DESCARTADO' AND ir.ip IS NOT NULL
+    `)
+    .get() as { emUso: number }
+
+  const subredesCount = banco
+    .prepare(`
+      SELECT COUNT(DISTINCT (
+        substr(ir.ip, 1, length(ir.ip) - length(substr(ir.ip, instr(ir.ip, '.'))) - length(substr(substr(ir.ip, instr(ir.ip, '.') + 1), instr(substr(ir.ip, instr(ir.ip, '.') + 1), '.'))))
+      )) AS totalSubredes
+      FROM interfaces_rede ir
+      JOIN equipamentos e ON e.id = ir.equipamento_id
+      WHERE e.status != 'DESCARTADO' AND ir.ip IS NOT NULL
+    `)
+    .get() as { totalSubredes: number }
+
+  const totalIpsCapacidade = (subredesCount.totalSubredes || 1) * 254
+  const disponiveis = Math.max(0, totalIpsCapacidade - emUso)
+
+  // Câmeras: Total e contagem por status
+  const { totalCameras } = banco
+    .prepare(`
+      SELECT COUNT(*) AS totalCameras
+      FROM eq_cameras c
+      JOIN equipamentos e ON e.id = c.equipamento_id
+      WHERE e.status != 'DESCARTADO'
+    `)
+    .get() as { totalCameras: number }
+
+  const camerasPorStatus = banco
+    .prepare(`
+      SELECT e.status, COUNT(*) AS quantidade
+      FROM eq_cameras c
+      JOIN equipamentos e ON e.id = c.equipamento_id
+      GROUP BY e.status
+    `)
+    .all() as CameraPorStatus[]
+
+  // Impressoras: Total de impressoras
+  const { totalImpressoras } = banco
+    .prepare(`
+      SELECT COUNT(*) AS totalImpressoras
+      FROM eq_impressoras i
+      JOIN equipamentos e ON e.id = i.equipamento_id
+      WHERE e.status != 'DESCARTADO'
+    `)
+    .get() as { totalImpressoras: number }
+
   return {
     totalAtivos,
     totalEmManutencao,
     totalEstoque,
     totalDescartados,
     ativosPorCategoria,
-    portasSwitch,
-    canaisNvr,
     garantiasVencendo,
     garantiasVencendoTotal,
+    mapeamentoRede: {
+      disponiveis,
+      emUso,
+    },
+    cameras: {
+      total: totalCameras,
+      porStatus: camerasPorStatus,
+    },
+    totalImpressoras,
   }
 }
