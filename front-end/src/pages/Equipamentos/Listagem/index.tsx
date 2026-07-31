@@ -169,9 +169,9 @@ export default function Listagem() {
 
   return (
     <>
-      <div className={styles.cartao} style={{ padding: '1.5rem' }}>
+      <div className={styles.cartao}>
         <div className={styles.cabecalhoAcoes}>
-          <h2>Equipamentos</h2>
+          <h2 className={styles.tituloPagina}>Equipamentos</h2>
           <Link to="/equipamentos/cadastro" className={styles.botaoNovo}>
             + Novo Equipamento
           </Link>

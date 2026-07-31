@@ -6,12 +6,15 @@
  *                       — transparente com borda; destaque no hover via acento.
  */
 
-
-
 .cartao {
-  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--cor-cartao);
   border: 1px solid var(--cor-borda);
-  border-radius: 12px;
+  border-radius: var(--raio-lg);
+  box-shadow: var(--sombra-cartao);
+  padding: 1.5rem 2rem;
 }
 
 .cabecalhoAcoes {
@@ -20,6 +23,13 @@
   align-items: center;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--cor-borda);
+}
+
+.tituloPagina {
+  font-family: var(--fonte-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--cor-texto);
 }
 
 .areaRolagem {
@@ -37,7 +47,7 @@
   text-align: left;
   padding: 1rem;
   border-bottom: 1px solid var(--cor-borda);
-  color: var(--cor-texto-destaque, var(--cor-texto));
+  color: var(--cor-texto);
   font-weight: 600;
   font-size: 14px;
 }
@@ -61,7 +71,7 @@
 }
 
 .tabela tbody tr:hover {
-  background-color: #d6d9df83;
+  background-color: var(--cor-input-fundo);
 }
 
 .grupoAcoes {
@@ -89,12 +99,12 @@
 }
 
 .botaoIconeTermo {
-  color: var(--cor-acento, #B08A4E);
+  color: var(--cor-acento);
   opacity: 0.85;
 }
 
 .botaoIconeTermo:hover {
-  color: var(--cor-acento-hover, #9C7A42);
+  color: var(--cor-acento-hover);
   opacity: 1;
 }
 
@@ -121,6 +131,8 @@
   font-weight: 600;
   text-decoration: none;
   transition: background-color 0.2s ease;
+  border: none;
+  cursor: pointer;
 }
 
 .botaoNovo:hover {
@@ -128,7 +140,7 @@
 }
 
 /* ─── Botão Secundário ───────────────────────────────────────────────────── */
-/* Use para ações secundárias: filtros, "Cancelar", "Voltar", exportão, etc.  */
+/* Use para ações secundárias: filtros, "Cancelar", "Voltar", exportação, etc.  */
 .botaoSecundario {
   display: inline-flex;
   align-items: center;
@@ -150,47 +162,57 @@
   color: var(--cor-acento);
 }
 
-/* ─── Barra de Busca ─────────────────────────────────────────────────────── */
+/* ─── Barra de Busca e Filtros ───────────────────────────────────────────── */
 .barraBusca {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
   flex-wrap: wrap;
 }
 
-
 .inputBusca {
   flex: 1;
-  padding: 0.6rem 0.875rem;
-  border: 1px solid var(--cor-borda);
-  border-radius: var(--raio-md);
+  min-width: 220px;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--cor-input-borda);
+  border-radius: var(--raio-sm);
   font-size: 14px;
   color: var(--cor-texto);
-  background-color: var(--cor-fundo-input, #f9f9f9);
-  transition: border-color 0.2s ease;
+  background-color: var(--cor-input-fundo);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
   outline: none;
 }
 
 .inputBusca:focus {
   border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
 }
 
-/* Selects de Marca e Modelo — visual idêntico ao inputBusca */
+/* Selects de Categoria, Marca e Modelo — visual idêntico ao inputBusca */
 .selectFiltro {
-  padding: 0.6rem 0.875rem;
-  border: 1px solid var(--cor-borda);
-  border-radius: var(--raio-md);
+  padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+  border: 1px solid var(--cor-input-borda);
+  border-radius: var(--raio-sm);
   font-size: 14px;
   color: var(--cor-texto);
-  background-color: var(--cor-fundo-input, #f9f9f9);
+  background-color: var(--cor-input-fundo);
   cursor: pointer;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
   outline: none;
-  min-width: 140px;
+  min-width: 150px;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%236b7280%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
 }
 
 .selectFiltro:focus {
   border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
 }
 
 /* ─── Paginação ──────────────────────────────────────────────────────────── */
@@ -198,8 +220,8 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.75rem;
-  padding: 1rem 0 0;
+  gap: 1rem;
+  padding: 1.5rem 0 0;
   font-size: 13px;
   color: var(--cor-texto-suave);
 }
@@ -209,19 +231,20 @@
   align-items: center;
   justify-content: center;
   padding: 0.4rem 1rem;
-  border: 1px solid var(--cor-borda);
+  border: 1px solid var(--cor-input-borda);
   border-radius: var(--raio-md);
   font-size: 13px;
   font-weight: 600;
   color: var(--cor-texto);
-  background-color: transparent;
+  background-color: var(--cor-cartao);
   cursor: pointer;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .botaoPaginacao:hover:not(:disabled) {
   border-color: var(--cor-primaria);
   color: var(--cor-primaria);
+  background-color: var(--cor-input-fundo);
 }
 
 .botaoPaginacao:disabled {
