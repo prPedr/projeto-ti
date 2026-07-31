@@ -91,6 +91,8 @@ export interface SwitchListado {
   filial: string | null;
   sala: string | null;
   portas_ocupadas: number;
+  ips: string[];
+  macs: string[];
 }
 
 export const listarSwitches = (): SwitchListado[] => {
@@ -109,15 +111,27 @@ export const listarSwitches = (): SwitchListado[] => {
         FROM portas_switch ps
         WHERE ps.switch_id = e.id
           AND (ps.equipamento_conectado_id IS NOT NULL OR ps.descricao IS NOT NULL)
-      ) AS portas_ocupadas
+      ) AS portas_ocupadas,
+      GROUP_CONCAT(DISTINCT ir.ip) AS ips,
+      GROUP_CONCAT(DISTINCT ir.mac) AS macs
     FROM equipamentos e
     JOIN eq_switches es ON es.equipamento_id = e.id
     LEFT JOIN localizacoes l ON l.id = e.localizacao_id
+    LEFT JOIN interfaces_rede ir ON ir.equipamento_id = e.id
     WHERE e.status != 'DESCARTADO'
+    GROUP BY e.id
     ORDER BY e.nome
   `)
 
-  return consulta.all() as SwitchListado[]
+  const linhas = consulta.all() as Array<
+    Omit<SwitchListado, 'ips' | 'macs'> & { ips: string | null; macs: string | null }
+  >
+
+  return linhas.map((linha) => ({
+    ...linha,
+    ips: linha.ips ? linha.ips.split(',') : [],
+    macs: linha.macs ? linha.macs.split(',') : [],
+  }))
 }
 
 export interface EquipamentoConectavel {

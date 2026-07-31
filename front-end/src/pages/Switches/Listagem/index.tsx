@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { listarSwitches } from '../../../services/switches';
 import type { SwitchResumo } from '../../../services/switches';
@@ -30,6 +30,7 @@ export default function SwitchesListagem() {
   const { mostrarToast } = useToast();
   const [switches, setSwitches] = useState<SwitchResumo[]>([]);
   const [carregando, setCarregando] = useState(true);
+  const [filtroSwitch, setFiltroSwitch] = useState('');
 
   useEffect(() => {
     listarSwitches()
@@ -41,10 +42,29 @@ export default function SwitchesListagem() {
       .finally(() => setCarregando(false));
   }, []);
 
+  const switchesFiltrados = useMemo(() => {
+    if (!filtroSwitch.trim()) return switches;
+    const termo = filtroSwitch.toLowerCase();
+    return switches.filter((sw) => {
+      const texto = `${sw.nome ?? ''} ${sw.marca} ${sw.modelo} ${(sw.ips ?? []).join(' ')} ${(sw.macs ?? []).join(' ')}`.toLowerCase();
+      return texto.includes(termo);
+    });
+  }, [switches, filtroSwitch]);
+
   return (
     <div className={styles.cartao} style={{ padding: '1.5rem' }}>
       <div className={styles.cabecalhoAcoes}>
         <h2>Switches</h2>
+      </div>
+
+      <div className={styles.barraBusca}>
+        <input
+          className={styles.inputBusca}
+          type="search"
+          value={filtroSwitch}
+          onChange={(e) => setFiltroSwitch(e.target.value)}
+          placeholder="Buscar por nome, IP, MAC, marca ou modelo..."
+        />
       </div>
 
       <div className={styles.areaRolagem}>
@@ -52,6 +72,8 @@ export default function SwitchesListagem() {
           <p>Carregando switches...</p>
         ) : switches.length === 0 ? (
           <p className={styles.listaVazia}>Nenhum switch cadastrado.</p>
+        ) : switchesFiltrados.length === 0 ? (
+          <p className={styles.listaVazia}>Nenhum switch encontrado para essa busca.</p>
         ) : (
           <table className={styles.tabela}>
             <thead>
@@ -63,7 +85,7 @@ export default function SwitchesListagem() {
               </tr>
             </thead>
             <tbody>
-              {switches.map((item) => {
+              {switchesFiltrados.map((item) => {
                 const totalPortas = item.numero_portas ?? 0;
                 const emUso = item.portas_ocupadas ?? 0;
                 const textoLocalizacao =

@@ -10,6 +10,8 @@ export interface SwitchResumo {
   portas_ocupadas: number;
   filial: string | null;
   sala: string | null;
+  ips: string[];
+  macs: string[];
 }
 
 export interface EquipamentoConectavel {
