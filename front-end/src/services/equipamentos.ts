@@ -81,11 +81,21 @@ export async function listarEquipamentos(
   pagina = 1,
   limite = 20,
   busca?: string,
+  marca?: string,
+  modelo?: string,
 ): Promise<RespostaListagemEquipamentos> {
   const parametros = new URLSearchParams({ pagina: String(pagina), limite: String(limite) });
-  if (busca) parametros.set('busca', busca);
+  if (busca)  parametros.set('busca',  busca);
+  if (marca)  parametros.set('marca',  marca);
+  if (modelo) parametros.set('modelo', modelo);
   const resposta = await fetchComToken(`/api/equipamentos?${parametros.toString()}`);
   return { dados: resposta.dados, metadados: resposta.metadados };
+}
+
+export async function listarFiltrosDisponiveis(marca?: string) {
+  const parametros = marca ? `?marca=${encodeURIComponent(marca)}` : '';
+  const resposta = await fetchComToken(`/api/equipamentos/filtros-disponiveis${parametros}`);
+  return { marcas: resposta.marcas as string[], modelos: resposta.modelos as string[] };
 }
 
 export async function excluirEquipamento(id: number) {

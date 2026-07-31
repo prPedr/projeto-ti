@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { excluirEquipamento, listarEquipamentos } from '../../../services/equipamentos';
+import { excluirEquipamento, listarEquipamentos, listarFiltrosDisponiveis } from '../../../services/equipamentos';
 import type { Equipamento, RespostaListagemEquipamentos } from '../../../services/equipamentos';
 import { useToast } from '../../../contexts/ToastContext';
 import ModalConfirmacao from '../../../components/ModalConfirmacao';
@@ -19,9 +19,42 @@ export default function Listagem() {
   const [pagina, setPagina] = useState(1);
   const [metadados, setMetadados] = useState<RespostaListagemEquipamentos['metadados'] | null>(null);
 
-  function carregarDados(paginaAlvo = pagina, buscaAlvo = busca) {
+  const [filtroMarca, setFiltroMarca] = useState('');
+  const [filtroModelo, setFiltroModelo] = useState('');
+  const [marcasDisponiveis, setMarcasDisponiveis] = useState<string[]>([]);
+  const [modelosDisponiveis, setModelosDisponiveis] = useState<string[]>([]);
+
+  // Carrega lista inicial de marcas e modelos ao montar
+  useEffect(() => {
+    listarFiltrosDisponiveis().then(({ marcas, modelos }) => {
+      setMarcasDisponiveis(marcas);
+      setModelosDisponiveis(modelos);
+    });
+  }, []);
+
+  // Cascata: quando a marca muda, recarrega modelos disponíveis
+  useEffect(() => {
+    listarFiltrosDisponiveis(filtroMarca || undefined).then(({ modelos }) => {
+      setModelosDisponiveis(modelos);
+      // Reseta modelo se ele não existe mais na nova lista
+      setFiltroModelo((prev) => (modelos.includes(prev) ? prev : ''));
+    });
+  }, [filtroMarca]);
+
+  function carregarDados(
+    paginaAlvo = pagina,
+    buscaAlvo = busca,
+    marcaAlvo = filtroMarca,
+    modeloAlvo = filtroModelo,
+  ) {
     setCarregando(true);
-    listarEquipamentos(paginaAlvo, LIMITE_POR_PAGINA, buscaAlvo || undefined)
+    listarEquipamentos(
+      paginaAlvo,
+      LIMITE_POR_PAGINA,
+      buscaAlvo || undefined,
+      marcaAlvo || undefined,
+      modeloAlvo || undefined,
+    )
       .then(({ dados, metadados: meta }) => {
         setEquipamentos(dados);
         setMetadados(meta);
@@ -34,19 +67,32 @@ export default function Listagem() {
   }
 
   useEffect(() => {
-    carregarDados(1, '');
+    carregarDados(1, '', '', '');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleBuscar(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPagina(1);
-    carregarDados(1, busca);
+    carregarDados(1, busca, filtroMarca, filtroModelo);
+  }
+
+  function handleMarcaChange(novaMarca: string) {
+    setFiltroMarca(novaMarca);
+    setFiltroModelo('');
+    setPagina(1);
+    carregarDados(1, busca, novaMarca, '');
+  }
+
+  function handleModeloChange(novoModelo: string) {
+    setFiltroModelo(novoModelo);
+    setPagina(1);
+    carregarDados(1, busca, filtroMarca, novoModelo);
   }
 
   function irParaPagina(novaPagina: number) {
     setPagina(novaPagina);
-    carregarDados(novaPagina, busca);
+    carregarDados(novaPagina, busca, filtroMarca, filtroModelo);
   }
 
   function handleExcluir(equipamento: Equipamento) {
@@ -58,7 +104,7 @@ export default function Listagem() {
     try {
       await excluirEquipamento(equipamentoParaExcluir.id);
       mostrarToast('Equipamento descartado com sucesso.', 'sucesso');
-      await carregarDados();
+      carregarDados(pagina, busca, filtroMarca, filtroModelo);
     } catch (erro) {
       console.error('Erro ao excluir equipamento:', erro);
       mostrarToast('Não foi possível excluir o equipamento.', 'erro');
@@ -111,6 +157,26 @@ export default function Listagem() {
             onChange={(e) => setBusca(e.target.value)}
             placeholder="Buscar por nome ou IP..."
           />
+          <select
+            className={styles.selectFiltro}
+            value={filtroMarca}
+            onChange={(e) => handleMarcaChange(e.target.value)}
+          >
+            <option value="">Todas as marcas</option>
+            {marcasDisponiveis.map((m) => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
+          <select
+            className={styles.selectFiltro}
+            value={filtroModelo}
+            onChange={(e) => handleModeloChange(e.target.value)}
+          >
+            <option value="">Todos os modelos</option>
+            {modelosDisponiveis.map((m) => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
           <button type="submit" className={styles.botaoNovo} style={{ whiteSpace: 'nowrap' }}>
             Buscar
           </button>
