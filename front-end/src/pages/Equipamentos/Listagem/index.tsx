@@ -182,7 +182,7 @@ export default function Listagem() {
             className={styles.inputBusca}
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            placeholder="Buscar por nome ou IP..."
+            placeholder="Buscar por nome, IP ou MAC..."
           />
           <select
             className={styles.selectFiltro}
