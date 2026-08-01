@@ -26,16 +26,18 @@ export interface SwitchMapeamentoListado {
   numero_portas: number | null
 }
 
-export const listarInterfacesRede = (filtroSubRede?: string): InterfaceRedeListada[] => {
+export const listarInterfacesRede = (termoBusca?: string): InterfaceRedeListada[] => {
   // ip/mac só ficam NULL quando o equipamento é descartado (equipamentosService.ts
   // zera as interfaces no descarte pra liberar o UNIQUE) — filtrar ip IS NOT NULL
   // já exclui descartados automaticamente, sem precisar checar e.status.
   const condicoes: string[] = ['ir.ip IS NOT NULL']
   const parametros: any = {}
 
-  if (filtroSubRede) {
-    condicoes.push('ir.ip LIKE @padrao')
-    parametros.padrao = `${filtroSubRede}.%`
+  if (termoBusca) {
+    // Substring livre: cobre prefixo de sub-rede ("192.168.1"), IP completo
+    // ("192.168.1.42") e MAC parcial — tudo na mesma busca.
+    condicoes.push('(ir.ip LIKE @termo OR ir.mac LIKE @termo)')
+    parametros.termo = `%${termoBusca}%`
   }
 
   const clausulaWhere = `WHERE ${condicoes.join(' AND ')}`
