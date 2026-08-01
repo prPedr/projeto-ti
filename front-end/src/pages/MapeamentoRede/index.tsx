@@ -79,11 +79,34 @@ export default function MapeamentoRede() {
   const [interfaces, setInterfaces] = useState<InterfaceRede[]>([]);
   const [subredeBusca, setSubredeBusca] = useState('');
   const [carregando, setCarregando] = useState(true);
+  const [gruposExpandidos, setGruposExpandidos] = useState<Set<string>>(new Set());
+
+  function alternarGrupo(subRede: string) {
+    setGruposExpandidos((anterior) => {
+      const novo = new Set(anterior);
+      if (novo.has(subRede)) {
+        novo.delete(subRede);
+      } else {
+        novo.add(subRede);
+      }
+      return novo;
+    });
+  }
 
   function carregarDados(subrede?: string) {
     setCarregando(true);
     listarInterfacesRede(subrede || undefined)
-      .then(setInterfaces)
+      .then((dados) => {
+        setInterfaces(dados);
+        // Auto-expandir todos os grupos retornados quando há busca ativa.
+        // Ao limpar a busca (subrede vazia/undefined), recolhe tudo.
+        if (subrede) {
+          const grupos = agruparPorSubRede(dados);
+          setGruposExpandidos(new Set(grupos.map((g) => g.subRede)));
+        } else {
+          setGruposExpandidos(new Set());
+        }
+      })
       .catch((erro) => {
         console.error('Erro ao carregar mapeamento de rede:', erro);
         mostrarToast('Não foi possível carregar o mapeamento de rede.', 'erro');
@@ -102,8 +125,18 @@ export default function MapeamentoRede() {
 
   const grupos = agruparPorSubRede(interfaces);
 
+  const todosExpandidos = grupos.length > 0 && grupos.every((g) => gruposExpandidos.has(g.subRede));
+
+  function alternarTodos() {
+    if (todosExpandidos) {
+      setGruposExpandidos(new Set());
+    } else {
+      setGruposExpandidos(new Set(grupos.map((g) => g.subRede)));
+    }
+  }
+
   return (
-    <div className={styles.cartao} style={{ padding: '1.5rem' }}>
+    <div className={styles.cartao}>
       <div className={styles.cabecalhoAcoes}>
         <h2>Mapeamento de Rede</h2>
         <form className={styles.barraBusca} onSubmit={handleBuscar}>
@@ -111,7 +144,7 @@ export default function MapeamentoRede() {
             className={styles.input}
             value={subredeBusca}
             onChange={(event) => setSubredeBusca(event.target.value)}
-            placeholder="Filtrar por sub-rede (ex: 192.168.1)"
+            placeholder="Filtrar por sub-rede, IP ou MAC (ex: 192.168.1 ou 192.168.1.42)"
           />
         </form>
       </div>
@@ -122,52 +155,92 @@ export default function MapeamentoRede() {
         ) : interfaces.length === 0 ? (
           <p className={styles.listaVazia}>Nenhuma interface de rede cadastrada.</p>
         ) : (
-          grupos.map((grupo) => (
-            <div key={grupo.subRede} className={styles.blocoSubRede}>
-              <h3 className={styles.tituloSubRede}>
-                {grupo.subRede}.0/24
-                <span className={styles.contagem}>{grupo.interfaces.length} IP(s) em uso</span>
-              </h3>
-
-              <table className={styles.tabela}>
-                <thead>
-                  <tr>
-                    <th>IP</th>
-                    <th>MAC</th>
-                    <th>Interface</th>
-                    <th>Equipamento</th>
-                    <th>Status</th>
-                    <th>Localização</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {grupo.interfaces.map((item) => (
-                    <tr
-                      key={item.id}
-                      className={styles.linhaClicavel}
-                      onClick={() =>
-                        navigate(`/equipamentos/${item.equipamento_id}`, { state: { modo: 'visualizar' } })
-                      }
-                    >
-                      <td className={styles.tdMono}>{item.ip}</td>
-                      <td className={styles.tdMono}>{item.mac ?? '—'}</td>
-                      <td>{item.nome_interface}</td>
-                      <td>
-                        {item.categoria} — {item.marca} {item.modelo}
-                        {item.nome ? ` (${item.nome})` : ''}
-                      </td>
-                      <td>
-                        <span className={styles.statusBadge} style={corDoStatus(item.status)}>
-                          {rotuloStatus(item.status)}
-                        </span>
-                      </td>
-                      <td>{[item.filial, item.sala].filter(Boolean).join(' - ') || 'Não definida'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <>
+            <div className={styles.controleExpansao}>
+              <button
+                type="button"
+                className={styles.botaoExpansao}
+                onClick={alternarTodos}
+              >
+                {todosExpandidos ? 'Recolher todos' : 'Expandir todos'}
+              </button>
             </div>
-          ))
+
+            {grupos.map((grupo) => {
+              const expandido = gruposExpandidos.has(grupo.subRede);
+              return (
+                <div key={grupo.subRede} className={styles.blocoSubRede}>
+                  <button
+                    type="button"
+                    className={styles.cabecalhoGrupo}
+                    onClick={() => alternarGrupo(grupo.subRede)}
+                    aria-expanded={expandido}
+                  >
+                    <span className={styles.tituloSubRede}>
+                      {grupo.subRede}.0/24
+                      <span className={styles.contagem}>{grupo.interfaces.length} IP(s) em uso</span>
+                    </span>
+                    <svg
+                      className={`${styles.setaExpansao} ${expandido ? styles.setaExpandida : ''}`}
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </button>
+
+                  {expandido && (
+                    <div className={styles.corpoGrupo}>
+                      <table className={styles.tabela}>
+                        <thead>
+                          <tr>
+                            <th>IP</th>
+                            <th>MAC</th>
+                            <th>Interface</th>
+                            <th>Equipamento</th>
+                            <th>Status</th>
+                            <th>Localização</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {grupo.interfaces.map((item) => (
+                            <tr
+                              key={item.id}
+                              className={styles.linhaClicavel}
+                              onClick={() =>
+                                navigate(`/equipamentos/${item.equipamento_id}`, { state: { modo: 'visualizar' } })
+                              }
+                            >
+                              <td className={styles.tdMono}>{item.ip}</td>
+                              <td className={styles.tdMono}>{item.mac ?? '—'}</td>
+                              <td>{item.nome_interface}</td>
+                              <td>
+                                {item.categoria} — {item.marca} {item.modelo}
+                                {item.nome ? ` (${item.nome})` : ''}
+                              </td>
+                              <td>
+                                <span className={styles.statusBadge} style={corDoStatus(item.status)}>
+                                  {rotuloStatus(item.status)}
+                                </span>
+                              </td>
+                              <td>{[item.filial, item.sala].filter(Boolean).join(' - ') || 'Não definida'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </>
         )}
       </div>
     </div>
