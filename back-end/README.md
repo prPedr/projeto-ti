@@ -70,22 +70,94 @@ npx tsx src/scripts/criarAdmin.ts
 
 ---
 
-## 🚀 Executando a Aplicação
+## 📡 Grupos de Rotas da API
 
-### Modo Desenvolvimento
-Inicia o servidor com hot-reload via `tsx`:
-```bash
-npm run dev
-```
+Todas as rotas requerem o header `Authorization: Bearer <token>` (exceto `/auth/login`).
+As rotas marcadas com `🔒 ADMIN` exigem perfil de administrador.
 
-### Testes Automatizados
-Executa a suíte de testes (Vitest + Supertest contra um banco em memória/isolado `test.db`):
+| Grupo | Método | Endpoint | Descrição |
+|---|---|---|---|
+| **Auth** | `POST` | `/api/auth/login` | Autenticação com e-mail e senha. Rate-limited. |
+| **Equipamentos** | `GET` | `/api/equipamentos` | Lista paginada com filtros (busca, categoria, marca, modelo). |
+| | `GET` | `/api/equipamentos/filtros-disponiveis` | Opções disponíveis para os selects de filtro em cascata. |
+| | `GET` | `/api/equipamentos/:id` | Detalhe de um equipamento. |
+| | `PUT` | `/api/equipamentos/:id` | Editar equipamento. |
+| | `DELETE` | `/api/equipamentos/:id` | Descartar equipamento (soft delete de dados sensíveis). |
+| | `POST` | `/api/equipamentos/:id/anexos` | Upload de anexo PDF (Termo de Responsabilidade). |
+| **Criação por categoria** | `POST` | `/api/computadores` | Criar Computador. |
+| | `POST` | `/api/switches` | Criar Switch. |
+| | `POST` | `/api/celulares` | Criar Celular. |
+| | `POST` | `/api/nvrs` | Criar NVR. |
+| | `POST` | `/api/cameras` | Criar Câmera. |
+| | `POST` | `/api/impressoras` | Criar Impressora. |
+| | `POST` | `/api/antenas` | Criar Antena Wi-Fi. |
+| **Switches — Portas** | `GET` | `/api/switches` | Listar switches. |
+| | `GET` | `/api/switches/equipamentos-conectaveis` | Equipamentos aptos a serem conectados em porta. |
+| | `GET` | `/api/switches/:id/portas` | Mapa de portas do switch (grade ou lista). |
+| | `PUT` | `/api/switches/:id/portas/:numeroPorta` | Vincular/desvincular equipamento a uma porta. |
+| **NVRs — Canais** | `GET` | `/api/nvrs` | Listar NVRs. |
+| | `GET` | `/api/nvrs/cameras-conectaveis` | Câmeras aptas a serem vinculadas a canal. |
+| | `GET` | `/api/nvrs/:id/canais` | Mapa de canais do NVR. |
+| | `PUT` | `/api/nvrs/:id/canais/:numeroCanal` | Vincular/desvincular câmera a um canal. |
+| **Mapeamento de Rede** | `GET` | `/api/mapeamento-rede` | IPs e MACs; aceita `?subrede=` p/ busca livre. |
+| | `GET` | `/api/mapeamento-rede/switches` | Switches listados no mapeamento. |
+| **Dashboard** | `GET` | `/api/dashboard` | Resumo: contadores, distribuição por categoria, garantias, IPs e câmeras. |
+| **Usuários** 🔒 | `GET` | `/api/usuarios` | Listar usuários. |
+| | `POST` | `/api/usuarios` | Criar usuário. |
+| | `PUT` | `/api/usuarios/:id` | Editar usuário. |
+| | `PUT` | `/api/usuarios/:id/senha` | Redefinir senha. |
+| **Opções** | `GET` | `/api/opcoes` | Listar opções pré-definidas (Marca, Modelo, etc.). |
+| | `POST` | `/api/opcoes` 🔒 | Criar opção. |
+| | `PUT` | `/api/opcoes/:id` 🔒 | Editar opção. |
+| | `DELETE` | `/api/opcoes/:id` 🔒 | Excluir opção. |
+| **Localizações** | `GET` | `/api/localizacoes` | Listar filiais/salas. |
+| | `POST` | `/api/localizacoes` 🔒 | Criar localização. |
+| **Impressoras** | `GET` | `/api/impressoras/computadores-conectaveis` | Computadores aptos para vinculação. |
+
+---
+
+## 🛡️ Segurança implementada
+
+- **JWT** para autenticação em todas as rotas (exceto `/auth/login`).
+- **Autorização por perfil** via middleware `exigirPerfil('ADMIN')` nas operações sensíveis.
+- **Proteção contra SQL Injection**: colunas dinâmicas (ex: `ORDER BY`) usam whitelist no serviço, não interpolação direta.
+- **Upload seguro**: extensão e mime-type verificados pelo `uploadMiddleware.ts` antes de persistir.
+- **Rate limiting** no endpoint de login (`express-rate-limit`).
+- **Helmet** e CORS configurados com lista de origens.
+
+---
+
+## 🧪 Testes Automatizados
+
+Executa a suíte de testes (Vitest + Supertest contra banco isolado `test.db`):
 ```bash
 # Execução única
 npm test
 
 # Modo de observação (watch)
 npm run test:watch
+```
+
+Arquivos em `src/tests/`:
+
+| Arquivo | Cobertura |
+|---|---|
+| `sanity.test.ts` | Smoke test básico da API. |
+| `autorizacao.test.ts` | Autorização por perfil (ADMIN vs comum). |
+| `equipamentosService.test.ts` | Serviços de equipamento (CRUD, descarte). |
+| `nvrsAndCanais.test.ts` | CRUD de NVRs e vinculação de canais. |
+| `antena.test.ts` + `antenasEndpoint.test.ts` | Criação e endpoint de antenas. |
+| `migrator.test.ts` | Sistema de migrações automáticas. |
+| `nvrCameraMigration.test.ts` | Migração específica de NVR/Câmera. |
+
+---
+
+## 🚀 Executando a Aplicação
+
+### Modo Desenvolvimento
+Inicia o servidor com hot-reload via `tsx`:
+```bash
+npm run dev
 ```
 
 ### Build de Produção
@@ -109,7 +181,8 @@ back-end/src/
 │   └── migrations/ # Scripts de alteração incremental do banco (.sql).
 ├── cron/           # Rotinas de backup e tarefas agendadas em segundo plano.
 ├── scripts/        # Scripts utilitários de CLI (ex: criarAdmin.ts).
-└── tests/          # Suítes de testes automatizados (unitários e integração).
+└── tests/          # Suítes de testes automatizados (sanity, autorizacao, equipamentos,
+                    # nvrs, antenas, migrator, nvrCameraMigration).
 ```
 
 ---

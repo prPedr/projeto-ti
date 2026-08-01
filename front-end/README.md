@@ -56,12 +56,54 @@ O script automatizado (Playwright) faz o login, percorre as telas principais com
 
 ```text
 front-end/src/
-├── pages/       # Telas da aplicação (Login, Equipamentos, MapeamentoRede, Switches, Admin, etc.).
-├── components/  # Componentes reutilizáveis de UI (Layout, ComboBoxSelect, ModalConfirmacao, etc.).
-├── services/    # Camada de comunicação com a API (api.ts, equipamentos.ts, auth.ts, etc.).
-├── contexts/    # Provedores de estado global do React (AuthContext.tsx, ToastContext.tsx).
-└── utils/       # Utilitários e formatadores reutilizáveis (MAC, IMEI, IP, Tag Patrimonio).
+├── pages/
+│   ├── Login/                 # Tela de autenticação.
+│   ├── Dashboard/             # Painel com métricas e alertas.
+│   ├── Equipamentos/
+│   │   ├── Listagem/          # Tabela paginada com filtros em cascata.
+│   │   ├── Cadastro/          # Formulário de criação por categoria.
+│   │   └── Detalhes/          # Visualização e edição de equipamento.
+│   ├── Switches/
+│   │   ├── Listagem/          # Lista de switches cadastrados.
+│   │   └── Portas.tsx         # Mapa de portas em grade e lista.
+│   ├── Nvrs/
+│   │   ├── Listagem/          # Lista de NVRs cadastrados.
+│   │   └── Canais.tsx         # Mapa de canais em grade e lista.
+│   ├── MapeamentoRede/        # IPs/MACs por sub-rede, colapsáveis, com busca.
+│   └── Admin/
+│       ├── Usuarios/          # CRUD de usuários e redefinição de senha.
+│       ├── Opcoes/            # Cadastro de marcas, modelos e outros valores.
+│       └── Localizacoes/      # Cadastro de filiais e salas.
+├── components/
+│   ├── Layout/                # Shell da aplicação (sidebar, header).
+│   ├── ComboBoxSelect/        # Selects encadeados com busca (Marca → Modelo, etc.).
+│   └── ModalConfirmacao/      # Modal genérico de confirmação de ações destrutivas.
+├── services/              # Camada de comunicação com a API (api.ts, equipamentos.ts, auth.ts, etc.).
+├── contexts/
+│   ├── AuthContext.tsx        # Usuário autenticado e token JWT.
+│   └── ToastContext.tsx        # Sistema global de notificações (toasts).
+└── utils/                 # Utilitários e formatadores reutilizáveis (MAC, IMEI, IP, Tag Patrimônio).
 ```
+
+---
+
+## 🗂️ Páginas e Rotas
+
+| Rota | Página | Descrição |
+|---|---|---|
+| `/login` | Login | Autenticação com e-mail e senha. |
+| `/dashboard` | Dashboard | Métricas, contadores por status e alertas de garantia. |
+| `/equipamentos` | Equipamentos — Listagem | Tabela paginada, busca por nome/IP/MAC, filtros em cascata. |
+| `/equipamentos/novo` | Equipamentos — Cadastro | Formulário dinâmico adaptado à categoria selecionada. |
+| `/equipamentos/:id` | Equipamentos — Detalhes | Visualização, edição e upload de anexo. |
+| `/switches` | Switches — Listagem | Lista de switches com link para o mapa de portas. |
+| `/switches/:id/portas` | Portas do Switch | Grade e lista de portas; vinculação de equipamento a porta. |
+| `/nvrs` | NVRs — Listagem | Lista de NVRs com link para o mapa de canais. |
+| `/nvrs/:id/canais` | Canais do NVR | Grade e lista de canais; vinculação de câmera a canal. |
+| `/mapeamento-rede` | Mapeamento de Rede | IPs e MACs por sub-rede, grupos colapsáveis, busca livre. |
+| `/admin/usuarios` | Admin — Usuários | CRUD de usuários e redefinição de senha (somente ADMIN). |
+| `/admin/opcoes` | Admin — Opções | Gerenciamento de marcas, modelos e outros valores (ADMIN). |
+| `/admin/localizacoes` | Admin — Localizações | Cadastro de filiais e salas (ADMIN). |
 
 ---
 
@@ -70,7 +112,7 @@ front-end/src/
 - O projeto utiliza **Vanilla CSS** com suporte a **CSS Modules** para isolamento de estilos por componente.
 - Os tokens de design globais do sistema estão centralizados em [`src/index.css`](./src/index.css) sob o seletor `:root`:
   - **Cores Semânticas & Tema:** `var(--cor-fundo)`, `var(--cor-cartao)`, `var(--cor-acento)`, `var(--cor-texto)`, etc.
-  - **Espaçamento e Raios de Borda:** `var(--raio-sm)`, `var(--raio-md)`, `var(--sombra-cartao)`.
-  - **Tipografia:** `var(--fonte-corpo)` e `var(--fonte-display)`.
+  - **Espaçamento e Raios de Borda:** `var(--raio-sm)`, `var(--raio-md)`, `var(--raio-lg)`, `var(--sombra-cartao)`.
+  - **Tipografia:** `var(--fonte-corpo)`, `var(--fonte-display)` e `var(--fonte-mono)` (para IPs, MACs e outros identificadores técnicos).
 
 > 💡 **Boa Prática:** Novos componentes desenvolvidos devem sempre consumir as variáveis de CSS globais (`var(--...)`) em vez de utilizar valores hexadecimais ou medidas em píxeis soltas.

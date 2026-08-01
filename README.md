@@ -1,6 +1,6 @@
 # Sistema de Gestão de Inventário de TI
 
-Sistema web para controle e gestão centralizada de ativos e infraestrutura de TI (notebooks, desktops, switches, celulares, NVRs e câmeras de CFTV), incluindo mapeamento de rede e gerenciamento de portas de switches.
+Sistema web para controle e gestão centralizada de ativos e infraestrutura de TI — cobre sete categorias de equipamento (Computador, Switch, Celular, NVR, Câmera, Impressora e Antena Wi-Fi), com mapeamento de rede, gerenciamento de portas de switch, canais de NVR e dashboard de utilização.
 
 ---
 
@@ -65,6 +65,25 @@ Com base no planejamento inicial, as seguintes funcionalidades ficaram **fora de
 - **Biblioteca & Build:** React (v19), Vite, TypeScript
 - **Roteamento:** React Router DOM (v6)
 - **Estilização:** Vanilla CSS com CSS Modules e Design Tokens globais em `:root`
+
+---
+
+## ✅ Funcionalidades Principais
+
+| Funcionalidade | Descrição resumida |
+|---|---|
+| **Gestão de Equipamentos** | Cadastro, edição e descarte de 7 categorias: Computador, Switch, Celular, NVR, Câmera, Impressora e Antena Wi-Fi. |
+| **Listagem com filtros e paginação** | Busca por nome, IP ou MAC; filtros em cascata por categoria → marca → modelo; paginação server-side. |
+| **Mapeamento de Rede** | Visão de IPs e MACs agrupados por sub-rede (/24), grupos colapsáveis; busca por sub-rede, IP completo ou MAC parcial. |
+| **Mapa de Portas de Switch** | Visualização em grade e lista das portas de cada switch; vinculação de equipamento a porta. |
+| **Mapa de Canais de NVR** | Visualização em grade e lista dos canais de cada NVR; vinculação de câmera a canal. |
+| **Dashboard** | Contadores de status (Ativo / Manutenção / Estoque / Descartado), distribuição por categoria, alerta de garantias vencendo em 30 dias, utilização de IPs e câmeras. |
+| **Gestão de Usuários** | CRUD de usuários com dois perfis: `ADMIN` (acesso total) e usuário comum (somente leitura de administração). Redefinição de senha por ADMIN. |
+| **Opções Pré-definidas** | Cadastro de Marcas, Modelos e outros valores pré-definidos por tipo de equipamento; administráveis apenas por ADMIN. |
+| **Upload de Anexos** | Upload de Termo de Responsabilidade em PDF por equipamento. |
+| **Design System** | Tokens de cor, tipografia e espaçamento centralizados em `src/index.css`; componentes reutilizáveis (ComboBoxSelect, ModalConfirmacao, sistema de Toast). |
+| **Testes Automatizados** | Suíte Vitest + Supertest cobrindo rotas, serviços, autorização e migrações. |
+| **Migrações Automáticas** | Arquivos `.sql` em `src/database/migrations/` aplicados automaticamente ao iniciar o servidor. |
 
 ---
 
